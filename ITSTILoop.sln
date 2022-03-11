@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITSTILoop", "ITSTILoop\ITSTILoop.csproj", "{42578122-78BE-4BE1-8658-640FA73F0567}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITSTILoopDTOLibrary", "ITSTILoopDTOLibrary\ITSTILoopDTOLibrary.csproj", "{8E56BB24-E705-4A93-8EB8-34343BD4E12E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42578122-78BE-4BE1-8658-640FA73F0567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42578122-78BE-4BE1-8658-640FA73F0567}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42578122-78BE-4BE1-8658-640FA73F0567}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42578122-78BE-4BE1-8658-640FA73F0567}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E56BB24-E705-4A93-8EB8-34343BD4E12E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E56BB24-E705-4A93-8EB8-34343BD4E12E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E56BB24-E705-4A93-8EB8-34343BD4E12E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E56BB24-E705-4A93-8EB8-34343BD4E12E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49EF5A47-798B-4F6D-BC86-5505D3C98EEF}
+	EndGlobalSection
+EndGlobal
