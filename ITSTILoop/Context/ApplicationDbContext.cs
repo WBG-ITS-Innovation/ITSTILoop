@@ -10,6 +10,7 @@ namespace ITSTILoop.Context
 
         }
         public DbSet<Participant> Participants => Set<Participant>();
-        public DbSet<Party> Parties => Set<Party>();        
+        public DbSet<Party> Parties => Set<Party>();
+        public DbSet<SettlementWindow> SettlementWindows => Set<SettlementWindow>();
     }
 }

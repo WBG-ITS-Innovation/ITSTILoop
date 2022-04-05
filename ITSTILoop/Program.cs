@@ -77,6 +77,7 @@ builder.Services.AddTransient<IPartyRepository, PartyRepository>();
 builder.Services.AddTransient<IPartyLookupService, PartyLookupService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
+builder.Services.AddHostedService<TimedSettlementWindowService>();
 
 
 var app = builder.Build();
