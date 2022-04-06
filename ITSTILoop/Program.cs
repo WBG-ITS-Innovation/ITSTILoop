@@ -2,6 +2,7 @@ using ITSTILoop.Context;
 using ITSTILoop.Context.Repositories;
 using ITSTILoop.Model.Interfaces;
 using ITSTILoop.Services;
+using ITSTILoop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
@@ -74,6 +75,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddTransient<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddTransient<IPartyRepository, PartyRepository>();
+builder.Services.AddTransient<IParticipantPartyQueryService, ParticipantPartyQueryService>();
 builder.Services.AddTransient<IPartyLookupService, PartyLookupService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();

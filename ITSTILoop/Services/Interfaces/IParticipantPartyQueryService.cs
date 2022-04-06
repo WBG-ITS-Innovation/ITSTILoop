@@ -1,9 +1,9 @@
 ﻿using ITSTILoop.DTO;
 using ITSTILoopDTOLibrary;
 
-namespace ITSTILoop.Services
+namespace ITSTILoop.Services.Interfaces
 {
-    public interface IPartyLookupService
+    public interface IParticipantPartyQueryService
     {
         Task<PartyLookupServiceResult> LookupPartyAsync(QueryPartyDTO partyQuery, Uri endpoint);
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ITSTILoopDTOLibrary;
+using System;
 
 namespace ITSTILoop.Model
 {
@@ -8,6 +9,7 @@ namespace ITSTILoop.Model
         public int TransactionId { get; set; }
         public TransactionTypes TransactionType { get; set; }
         public Decimal Amount { get; set; }
+        public CurrencyCodes Currency { get; set; }
         public int From { get; set; }
         public int To { get; set; }
         public DateTime Timestamp { get; set; }

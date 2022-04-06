@@ -52,10 +52,10 @@ namespace ITSTILoop.Controllers
         }
 
         [Route("Fund")]
-        [HttpPost("{participantId}")]
-        public ActionResult FundParticipant(int participantId, [FromBody] FundParticipantDTO fundParticipantDTO)
+        [HttpPost]
+        public ActionResult FundParticipant([FromBody] FundParticipantDTO fundParticipantDTO)
         {
-            _participantRepository.FundParticipant(participantId, fundParticipantDTO.Currency, fundParticipantDTO.Amount);
+            _participantRepository.FundParticipant(fundParticipantDTO.ParticipantId, fundParticipantDTO.Currency, fundParticipantDTO.Amount);
             return Ok();
         }
     }

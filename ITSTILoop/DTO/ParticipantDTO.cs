@@ -18,6 +18,7 @@ namespace ITSTILoop.DTO
 
     public class FundParticipantDTO
     {
+        public int ParticipantId { get; set; }
         public decimal Amount { get; set; }
         public CurrencyCodes Currency { get; set; }
     }

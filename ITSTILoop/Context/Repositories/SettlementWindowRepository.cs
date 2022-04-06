@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITSTILoop.Context.Repositories
 {
-    public class    SettlementWindowRepository : GenericRepository<SettlementWindow>
+    public class SettlementWindowRepository : GenericRepository<SettlementWindow>, ISettlementWindowRepository
     {
         public SettlementWindowRepository(ApplicationDbContext context) : base(context)
         {
         }
 
         public void SettleSettlementWindow()
-        {            
+        {
             SettlementWindow? settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.Status == SettlementWindowStatuses.Open);
             if (settlementWindow != null)
             {
@@ -80,13 +80,13 @@ namespace ITSTILoop.Context.Repositories
                         }
                         else
                         {
-                            settlementAccount.NetSettlementAmount = account.Position;                            
+                            settlementAccount.NetSettlementAmount = account.Position;
                         }
                     }
                 }
                 settlementWindow.ModifiedAt = DateTime.Now;
-            }            
-            _context.SaveChanges();            
+            }
+            _context.SaveChanges();
         }
     }
 }
