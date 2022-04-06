@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITSTILoop.Context.Repositories
 {
-    public class SettlementWindowRepository : GenericRepository<SettlementWindow>
+    public class    SettlementWindowRepository : GenericRepository<SettlementWindow>
     {
         public SettlementWindowRepository(ApplicationDbContext context) : base(context)
         {

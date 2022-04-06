@@ -72,8 +72,7 @@ namespace ITSTILoop.Controllers
                 {
                     var party = _mapper.Map<Party>(registerPartyDTO);
                     party.RegisteredParticipantName = participant.Name;
-                    _participantRepository.AddPartyToParticipant(participant.ParticipantId, party);
-                    _participantRepository.Save();
+                    _participantRepository.AddPartyToParticipant(participant.ParticipantId, party);                    
                     var partyDto = _mapper.Map<PartyDTO>(party);
                     return CreatedAtAction("GetParty", null);
 
