@@ -46,7 +46,7 @@ namespace ITSTILoop.Controllers
         [HttpPost]
         public ActionResult<ParticipantDTO> Post(RegisterParticipantDTO registerParticipantDTO)
         {            
-            var participant = _participantRepository.CreateParticipant(registerParticipantDTO.Name, registerParticipantDTO.ApiKey, registerParticipantDTO.PartyLookupEndpoint);            
+            var participant = _participantRepository.CreateParticipant(registerParticipantDTO.Name, registerParticipantDTO.ApiKey, registerParticipantDTO.PartyLookupEndpoint, registerParticipantDTO.ConfirmTransferEndpoint);            
             var participantDto = _mapper.Map<ParticipantDTO>(participant);
             return CreatedAtAction("GetParticipant", new { id = participant.ParticipantId }, participantDto);
         }

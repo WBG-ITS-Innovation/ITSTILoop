@@ -7,6 +7,7 @@ namespace ITSTILoop.DTO
         public int ParticipantId { get; set; }
         public string Name { get; set; }        
         public Uri PartyLookupEndpoint { get; set; }
+        public Uri ConfirmTransferEndpoint { get; set; }
     }
 
     public class RegisterParticipantDTO
@@ -14,6 +15,7 @@ namespace ITSTILoop.DTO
         public string Name { get; set; }
         public string ApiKey { get; set; }
         public Uri PartyLookupEndpoint { get; set; }
+        public Uri ConfirmTransferEndpoint { get; set; }
     }
 
     public class FundParticipantDTO

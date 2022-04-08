@@ -18,37 +18,68 @@ namespace ITSTILoop.Controllers
     public class TransferController : ControllerBase
     {
         private readonly ILogger<TransferController> _logger;
-        private readonly IParticipantRepository _participantRepository;
-        private readonly IMapper _mapper;
         private readonly IPartyLookupService _partyLookupService;
         private readonly ITransferRequestRepository _transferRequestRepository;
+        private readonly IConfirmTransferService _confirmTransferService;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IParticipantRepository _participantRepository;
 
-        public TransferController(ILogger<TransferController> logger, IParticipantRepository participantRepository, IMapper mapper, IPartyLookupService partyLookupService, ITransferRequestRepository transferRequestRepository)
+        public TransferController(ILogger<TransferController> logger, IPartyLookupService partyLookupService, ITransferRequestRepository transferRequestRepository, IConfirmTransferService confirmTransferService, ITransactionRepository transactionRepository, IParticipantRepository participantRepository)
         {
             _logger = logger;
-            _participantRepository = participantRepository;
-            _mapper = mapper;
             _partyLookupService = partyLookupService;
             _transferRequestRepository = transferRequestRepository;
+            _confirmTransferService = confirmTransferService;
+            _transactionRepository = transactionRepository;
+            _participantRepository = participantRepository;
         }
 
         [HttpPost]
         public async Task<ActionResult<TransferRequestResponseDTO>> PostAsync(TransferRequestDTO transferRequestDTO)
         {
-            var partyLookupResult = await _partyLookupService.FindPartyAsync(transferRequestDTO.To.PartyIdentifierType, transferRequestDTO.To.PartyIdentifier);
-            if (partyLookupResult.Result == PartyLookupServiceResults.Success)
+            Participant? participant = _participantRepository.GetParticipantFromApiKeyId(Request.Headers);
+            if (participant != null)
             {
-                var transferRequestResponse = _transferRequestRepository.CreateTransferRequest(transferRequestDTO, partyLookupResult.FoundParty);
-                return transferRequestResponse;
+                var partyLookupResult = await _partyLookupService.FindPartyAsync(transferRequestDTO.To.PartyIdentifierType, transferRequestDTO.To.Identifier);
+                if (partyLookupResult.Result == PartyLookupServiceResults.Success)
+                {
+                    var transferRequestResponse = _transferRequestRepository.CreateTransferRequest(transferRequestDTO, partyLookupResult.FoundParty, participant.ParticipantId);
+                    return transferRequestResponse;
+                }
+                return Problem(partyLookupResult.Result.ToString());
             }
-            return Problem(partyLookupResult.Result.ToString());
+            return Problem("Either Admin or Participant Not Found");
             
         }
 
         [HttpPut("{transferId}")]
-        public ActionResult<TransferRequestCompleteDTO> Put(Guid transferId, [FromBody] TransferAcceptRejectDTO transferAcceptRejectDTO)
+        public async Task<ActionResult<TransferRequestCompleteDTO>> Put(Guid transferId, [FromBody] TransferAcceptRejectDTO transferAcceptRejectDTO)
         {
-            return Ok();
+            Participant? participant = _participantRepository.GetParticipantFromApiKeyId(Request.Headers);
+            if (participant != null)
+            {
+                TransferRequestResponseDTO? transferRequestResponseDTO = _transferRequestRepository.RetrieveTransferRequest(transferId);
+                if (transferRequestResponseDTO != null)
+                {
+                    if (participant.ParticipantId == transferRequestResponseDTO.FromParticipantId)
+                    {
+                        //TODO:Let's check balances
+                        var result = await _confirmTransferService.ConfirmTransferAsync(transferRequestResponseDTO);
+                        if (result.Result == ParticipantConfirmTransferServiceResults.Success)
+                        {
+                            _transactionRepository.MakeTransfer(transferRequestResponseDTO.FromParticipantId, transferRequestResponseDTO.To.ParticipantId, transferRequestResponseDTO.Amount, transferRequestResponseDTO.Currency, transferRequestResponseDTO.TransferId);
+                            return result.TransferRequestComplete;
+                        }
+                        else
+                        {
+                            return Problem(result.Result.ToString());
+                        }
+                    }
+                    return Problem("Not your transfer");
+                }
+                return Problem("TransferNotFound");
+            }
+            return Problem("Either Admin or Participant Not Found");
         }
     }
 }

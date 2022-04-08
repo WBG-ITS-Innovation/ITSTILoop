@@ -16,8 +16,8 @@ namespace ITSTILoopDTOLibrary
     public class TransferRequestDTO
     {
         public Guid HomeTransactionId { get; set; }
-        public QueryPartyDTO From { get; set; }
-        public QueryPartyDTO To { get; set; }
+        public PartyIdentifierDTO From { get; set; }
+        public PartyIdentifierDTO To { get; set; }
         public CurrencyCodes Currency { get; set; }
         public Decimal Amount { get; set; }
         public string Note { get; set; }
@@ -27,8 +27,9 @@ namespace ITSTILoopDTOLibrary
     {
         public Guid HomeTransactionId { get; set; }
         public Guid TransferId { get; set; }
-        public QueryPartyDTO From { get; set; }
-        public PartyDTO To { get; set; }
+        public int FromParticipantId { get; set; }
+        public PartyIdentifierDTO From { get; set; } = new PartyIdentifierDTO();
+        public PartyDTO To { get; set; } = new PartyDTO();
         public CurrencyCodes Currency { get; set; }
         public Decimal Amount { get; set; }
         public string Note { get; set; }
@@ -36,14 +37,10 @@ namespace ITSTILoopDTOLibrary
         public DateTime InitiatedTimestamp { get; set; }
     }
 
-    public class TransferFulfilmentDTO
-    {
-        public DateTime CompletedTimestamp { get; set; }
-        public string Fullfilment { get; set; }
-    }
     
     public class TransferRequestCompleteDTO : TransferRequestResponseDTO
     {
-        public TransferFulfilmentDTO Fulfil { get; set; }
+        public DateTime CompletedTimestamp { get; set; }
+        public string Fullfilment { get; set; }
     }
 }

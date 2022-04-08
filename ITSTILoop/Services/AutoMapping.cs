@@ -12,9 +12,10 @@ namespace ITSTILoop.Services
             CreateMap<Participant, ParticipantDTO>();
             CreateMap<RegisterParticipantDTO, Participant>();
             CreateMap<Party, PartyDTO>();
-            CreateMap<RegisterPartyDTO, Party>();
+            CreateMap<PartyIdentifierDTO, Party>();
             CreateMap<TransferRequestDTO, TransferRequest>();
             CreateMap<TransferRequestDTO, TransferRequestResponseDTO>().ForMember(k => k.To, act => act.Ignore());
+            CreateMap<TransferRequest, TransferRequestResponseDTO>();
         }
     }
 }

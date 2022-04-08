@@ -75,8 +75,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddTransient<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddTransient<IPartyRepository, PartyRepository>();
+builder.Services.AddTransient<ISettlementWindowRepository, SettlementWindowRepository>();
+builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
+builder.Services.AddTransient<ITransferRequestRepository, TransferRequestRepository>();
+
 builder.Services.AddTransient<IParticipantPartyQueryService, ParticipantPartyQueryService>();
 builder.Services.AddTransient<IPartyLookupService, PartyLookupService>();
+builder.Services.AddTransient<IParticipantConfirmTransferService, ParticipantConfirmTransferService>();
+builder.Services.AddTransient<IConfirmTransferService, ConfirmTransferService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
 builder.Services.AddHostedService<TimedSettlementWindowService>();

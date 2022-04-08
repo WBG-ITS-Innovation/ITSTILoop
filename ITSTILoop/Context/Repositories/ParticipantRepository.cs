@@ -1,7 +1,9 @@
 ﻿using ITSTILoop.Model;
 using ITSTILoop.Model.Interfaces;
 using ITSTILoopDTOLibrary;
+using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 
 namespace ITSTILoop.Context.Repositories
 {
@@ -26,6 +28,17 @@ namespace ITSTILoop.Context.Repositories
             return Find(k => k.ApiKey == apiKey && k.Name == apiId).FirstOrDefault();
         }
 
+        public Participant? GetParticipantFromApiKeyId(IHeaderDictionary requestHeaders)
+        {
+            StringValues apiKey;
+            StringValues apiId;
+            if (requestHeaders.TryGetValue("ApiKey", out apiKey) && requestHeaders.TryGetValue("ApiId", out apiId))
+            {
+                return GetParticipantFromApiKey(apiId.First(), apiKey.First());
+            }
+            return null;
+        }
+
         public Participant? GetParticipantByName(string name)
         {
             return Find(k => k.Name == name).FirstOrDefault();
@@ -41,9 +54,9 @@ namespace ITSTILoop.Context.Repositories
             }
         }
 
-        public Participant CreateParticipant(string name, string apiKey, Uri partyLookupEndpoint)
+        public Participant CreateParticipant(string name, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint)
         {
-            Participant participant = new Participant() { Name = name, ApiKey = apiKey, PartyLookupEndpoint = partyLookupEndpoint };
+            Participant participant = new Participant() { Name = name, ApiKey = apiKey, PartyLookupEndpoint = partyLookupEndpoint, ConfirmTransferEndpoint = confirmTransferEndpoint };
             _context.Participants.Add(participant);
             Save();
             return participant;

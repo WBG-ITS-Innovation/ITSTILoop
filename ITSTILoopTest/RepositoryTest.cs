@@ -69,8 +69,9 @@ namespace ITSTILoopTest
                 var participantName = fixture.Create<string>();
                 var participantApiKey = fixture.Create<string>();
                 var participantEndpoint = fixture.Create<Uri>();
+                var participantEndpoint2 = fixture.Create<Uri>();
                 // Act
-                _participantRepository.CreateParticipant(participantName, participantApiKey, participantEndpoint);
+                _participantRepository.CreateParticipant(participantName, participantApiKey, participantEndpoint, participantEndpoint2);
                 // Assert
                 var participantResult = _participantRepository.Find(k => k.Name == participantName).First();
                 participantResult.Should().NotBeNull();
@@ -85,10 +86,11 @@ namespace ITSTILoopTest
                 var fixture = new Fixture().Customize(new AutoMoqCustomization());
                 var participantName = fixture.Create<string>();
                 var participantApiKey = fixture.Create<string>();
-                var participantEndpoint = fixture.Create<Uri>();                
+                var participantEndpoint = fixture.Create<Uri>();
+                var participantEndpoint2 = fixture.Create<Uri>();
                 var amount = fixture.Create<Decimal>();
                 var currency = fixture.Create<CurrencyCodes>();
-                var participant = _participantRepository.CreateParticipant(participantName, participantApiKey, participantEndpoint);
+                var participant = _participantRepository.CreateParticipant(participantName, participantApiKey, participantEndpoint, participantEndpoint2);
                 // Act
                 _participantRepository.FundParticipant(participant.ParticipantId, currency, amount);
                 // Assert
@@ -126,16 +128,34 @@ namespace ITSTILoopTest
                 var fixture = new Fixture();
                 var transferRequestDTO = fixture.Create<TransferRequestDTO>();
                 var partyDTO = fixture.Create<PartyDTO>();
+                transferRequestDTO.To.Identifier = partyDTO.PartyIdentifier.Identifier;
+                transferRequestDTO.To.PartyIdentifierType = partyDTO.PartyIdentifier.PartyIdentifierType;
                 //act
-                var result = _tranferRequestRepository.CreateTransferRequest(transferRequestDTO, partyDTO);
+                var result = _tranferRequestRepository.CreateTransferRequest(transferRequestDTO, partyDTO,0);
                 //assert
                 result.Amount.Should().Be(transferRequestDTO.Amount);
-                result.From.PartyIdentifier.Should().Be(transferRequestDTO.From.PartyIdentifier);
+                result.From.Identifier.Should().Be(transferRequestDTO.From.Identifier);
                 result.From.PartyIdentifierType.Should().Be(transferRequestDTO.From.PartyIdentifierType);
                 result.To.Should().BeEquivalentTo(partyDTO);
                 var result2 = _context.TransferRequests.First();
                 result2.FirstName.Should().Be(partyDTO.FirstName);
-            }   
+            }
+
+            [Fact]
+            public void TestRetrieveTransferRequest()
+            {
+                //arrange
+                var fixture = new Fixture();
+                var transferRequestDTO = fixture.Create<TransferRequestDTO>();
+                var partyDTO = fixture.Create<PartyDTO>();
+                transferRequestDTO.To.Identifier = partyDTO.PartyIdentifier.Identifier;
+                transferRequestDTO.To.PartyIdentifierType = partyDTO.PartyIdentifier.PartyIdentifierType;                
+                var transferRequestResponseDTOExpected = _tranferRequestRepository.CreateTransferRequest(transferRequestDTO, partyDTO,0);
+                //act
+                var transferRequestResponseDTOResult = _tranferRequestRepository.RetrieveTransferRequest(transferRequestResponseDTOExpected.TransferId);
+                //assert
+                transferRequestResponseDTOResult.Should().BeEquivalentTo(transferRequestResponseDTOExpected);
+            }
 
         }
 

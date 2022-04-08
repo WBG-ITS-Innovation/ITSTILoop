@@ -39,7 +39,7 @@ namespace ITSTILoop.Context.Repositories
             if (settlementWindow != null)
             {
                 settlementWindow.Status = SettlementWindowStatuses.Closed;
-                settlementWindow.ModifiedAt = DateTime.Now;
+                settlementWindow.ModifiedAt = DateTime.Now.ToUniversalTime();
             }
             _context.SaveChanges();
         }

@@ -43,7 +43,7 @@ namespace ITSTILoop.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PartyDTO> Post(RegisterPartyDTO registerPartyDTO)
+        public ActionResult<PartyDTO> Post(PartyIdentifierDTO registerPartyDTO)
         {
             StringValues apiKey;
             StringValues apiId;
@@ -53,7 +53,7 @@ namespace ITSTILoop.Controllers
                 if (participant != null)
                 {
                     var party = _mapper.Map<Party>(registerPartyDTO);
-                    party.RegisteredParticipantName = participant.Name;
+                    party.ParticipantId = participant.ParticipantId;
                     _participantRepository.AddPartyToParticipant(participant.ParticipantId, party);                    
                     var partyDto = _mapper.Map<PartyDTO>(party);
                     return CreatedAtAction("GetParty", null);

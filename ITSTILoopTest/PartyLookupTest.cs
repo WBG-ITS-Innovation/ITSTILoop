@@ -27,22 +27,22 @@ namespace ITSTILoopTest
         string partyName = "Mert";
         string partyLastName = "Ozdag";
         string partyBank = "BankA";
-        QueryPartyDTO queryParty = new QueryPartyDTO();
+        PartyIdentifierDTO queryParty = new PartyIdentifierDTO();
         PartyDTO partyDTO;
 
         public PartyLookupTest()
         {
-            queryParty.PartyIdentifier = partyIdentifier;
+            queryParty.Identifier = partyIdentifier;
             queryParty.PartyIdentifierType = PartyIdTypes.MSISDN;
-            partyDTO = new PartyDTO() { FirstName = partyName, LastName = partyLastName, PartyIdentifierType = PartyIdTypes.MSISDN, PartyIdentifier = partyIdentifier, RegisteredParticipantName = partyBank };
+            partyDTO = new PartyDTO() { FirstName = partyName, LastName = partyLastName, PartyIdentifier = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = PartyIdTypes.MSISDN}};
 
             var handler = new Mock<HttpMessageHandler>();
             handler.SetupRequest(HttpMethod.Post, sampleUri, async request =>
             {
                 // This setup will only match calls with the expected id
                 var json = await request.Content.ReadAsStringAsync();
-                var model = JsonConvert.DeserializeObject<QueryPartyDTO>(json);
-                return (model.PartyIdentifier == partyIdentifier && model.PartyIdentifierType == PartyIdTypes.MSISDN);
+                var model = JsonConvert.DeserializeObject<PartyIdentifierDTO>(json);
+                return (model.Identifier == partyIdentifier && model.PartyIdentifierType == PartyIdTypes.MSISDN);
             }).ReturnsResponse(JsonConvert.SerializeObject(partyDTO), "application/json");
             _clientFactory = handler.CreateClientFactory();
             var loggerMock = new Mock<ILogger<ParticipantPartyQueryService>>();
@@ -57,8 +57,7 @@ namespace ITSTILoopTest
             var result = await partyLookupService.LookupPartyAsync(queryParty, new Uri(sampleUri));
 
             Assert.Equal(partyName, result.FoundParty.FirstName);
-            Assert.Equal(partyLastName, result.FoundParty.LastName);
-            Assert.Equal(partyBank, result.FoundParty.RegisteredParticipantName);
+            Assert.Equal(partyLastName, result.FoundParty.LastName);            
             Assert.Equal(PartyLookupServiceResults.Success, result.Result);
         }
 
@@ -67,17 +66,16 @@ namespace ITSTILoopTest
         {
             //arrange
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
-            fixture.Freeze<Mock<IPartyRepository>>().Setup(k => k.GetPartyFromTypeAndId(PartyIdTypes.MSISDN, partyIdentifier)).Returns(new Party() { PartyIdentifier = partyIdentifier, RegisteredParticipantName = partyBank });
+            fixture.Freeze<Mock<IPartyRepository>>().Setup(k => k.GetPartyFromTypeAndId(PartyIdTypes.MSISDN, partyIdentifier)).Returns(new Party() { PartyIdentifier = partyIdentifier });
             fixture.Freeze<Mock<IParticipantRepository>>().Setup(k => k.GetParticipantByName(partyBank)).Returns(new Participant { PartyLookupEndpoint = new Uri(sampleUri) });
             fixture.Freeze<Mock<ILogger<PartyLookupService>>>();
-            fixture.Freeze<Mock<IParticipantPartyQueryService>>().Setup(k => k.LookupPartyAsync(It.IsAny<QueryPartyDTO>(), It.IsAny<Uri>())).Returns(Task.FromResult(new PartyLookupServiceResult() { FoundParty = partyDTO, Result = PartyLookupServiceResults.Success}));
+            fixture.Freeze<Mock<IParticipantPartyQueryService>>().Setup(k => k.LookupPartyAsync(It.IsAny<PartyIdentifierDTO>(), It.IsAny<Uri>())).Returns(Task.FromResult(new PartyLookupServiceResult() { FoundParty = partyDTO, Result = PartyLookupServiceResults.Success}));
             var sut = fixture.Create<PartyLookupService>();
             //act
             var result = await sut.FindPartyAsync(PartyIdTypes.MSISDN, partyIdentifier);
             //assert
             Assert.Equal(partyName, result.FoundParty.FirstName);
-            Assert.Equal(partyLastName, result.FoundParty.LastName);
-            Assert.Equal(partyBank, result.FoundParty.RegisteredParticipantName);
+            Assert.Equal(partyLastName, result.FoundParty.LastName);            
             Assert.Equal(PartyLookupServiceResults.Success, result.Result);
         }
     }

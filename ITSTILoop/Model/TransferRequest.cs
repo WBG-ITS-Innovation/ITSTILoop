@@ -12,7 +12,8 @@ namespace ITSTILoop.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ToPartyIdentifier { get; set; }
-        public string ToRegisteredParticipantName { get; set; }
+        public int ToParticipantId { get; set; }
+        public int FromParticipantId { get; set; }
         public PartyIdTypes ToPartyIdentifierType { get; set; }
         public CurrencyCodes Currency { get; set; }
         public Decimal Amount { get; set; }

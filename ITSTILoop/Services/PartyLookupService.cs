@@ -25,10 +25,10 @@ namespace ITSTILoop.Services
             var party = _partyRepository.GetPartyFromTypeAndId(partyIdType, partyIdentifier);
             if (party != null)
             {
-                var participant = _participantRepository.GetParticipantByName(party.RegisteredParticipantName);
+                var participant = _participantRepository.GetById(party.ParticipantId);
                 if (participant != null)
                 {
-                    QueryPartyDTO queryPartyDTO = new QueryPartyDTO() { PartyIdentifier = partyIdentifier, PartyIdentifierType = partyIdType };
+                    PartyIdentifierDTO queryPartyDTO = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = partyIdType };
                     result = await _partyLookupService.LookupPartyAsync(queryPartyDTO, participant.PartyLookupEndpoint);
                 }
                 else

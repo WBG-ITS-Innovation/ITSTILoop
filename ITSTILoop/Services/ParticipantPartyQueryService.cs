@@ -24,13 +24,13 @@ namespace ITSTILoop.Services
         }
 
 
-        public async Task<PartyLookupServiceResult> LookupPartyAsync(QueryPartyDTO partyQuery, Uri endpoint)
+        public async Task<PartyLookupServiceResult> LookupPartyAsync(PartyIdentifierDTO partyQuery, Uri endpoint)
         {
             PartyLookupServiceResult result = new PartyLookupServiceResult();
             var client = _clientFactory.CreateClient();
             if (client != null)
             {
-                var httpResult = await client.PostAsJsonAsync<QueryPartyDTO>(endpoint, partyQuery);
+                var httpResult = await client.PostAsJsonAsync<PartyIdentifierDTO>(endpoint, partyQuery);
                 if (httpResult.StatusCode == System.Net.HttpStatusCode.Accepted || httpResult.IsSuccessStatusCode)
                 {
                     var contentResult = await httpResult.Content.ReadFromJsonAsync<PartyDTO>();

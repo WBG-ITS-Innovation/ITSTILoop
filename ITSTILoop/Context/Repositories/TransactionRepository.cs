@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ITSTILoop.Context.Repositories
 {
     public enum TransferResults { Success, SourceNotFound, DestinationNotFound, SourceAccountNotFound, DestinationAccountNotFound, InsufficientFunds };
-    public class TransactionRepository : GenericRepository<TransactionRepository>, ITransactionRepository
+    public class TransactionRepository : GenericRepository<Transaction>, ITransactionRepository
     {
         public TransactionRepository(ApplicationDbContext context) : base(context)
         {
