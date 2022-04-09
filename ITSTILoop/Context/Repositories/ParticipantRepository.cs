@@ -24,7 +24,7 @@ namespace ITSTILoop.Context.Repositories
 
         public Participant? GetParticipantFromApiKey(string apiId, string apiKey)
         {
-            return Find(k => k.ApiKey == apiKey && k.Name == apiId).FirstOrDefault();
+            return Find(k => k.ApiKey == apiKey && k.ApiId == apiId).FirstOrDefault();
         }
 
         public Participant? GetParticipantFromApiKeyId(IHeaderDictionary requestHeaders)

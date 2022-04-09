@@ -105,6 +105,8 @@ try
         SampleFspSeedingService? seeding = (SampleFspSeedingService?)scope.ServiceProvider.GetRequiredService<ISampleFspSeedingService>();
         seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1, EnvVarDefaultValues.SAMPLE_FSP_1),
             EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_1_PARTIES));
+        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2, EnvVarDefaultValues.SAMPLE_FSP_2),
+                    EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_2_PARTIES));
     }
 }
 catch (Exception ex)
@@ -114,13 +116,13 @@ catch (Exception ex)
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

@@ -27,8 +27,8 @@ namespace ITSTILoop.Services
                 string name = splitText[0];
                 string apiId = splitText[1];
                 string apiKey = splitText[2];
-                string lookupEndpoint = $"http://{name}/itsti/itstilooppartylookup";
-                string transferEndpoint = $"http://{name}/itsti/itstilooptransfer";
+                string lookupEndpoint = $"http://{name}/itstiloop/ITSTILoopPartyLookup";
+                string transferEndpoint = $"http://{name}/itstiloop/ITSTILoopTransfer";
                 return _participantRepository.CreateParticipant(name, apiId, apiKey, new Uri(lookupEndpoint), new Uri(transferEndpoint));
             }
             return null;

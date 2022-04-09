@@ -25,6 +25,10 @@ services:
        DB_CONNECTION: PostgresComposeConnection
        SAMPLE_FSP_1: bankbethesda|BETHESDAAPIID|BETHESDAAPIKEY
        SAMPLE_FSP_1_PARTIES: 5551234567|5551234568
+       SAMPLE_FSP_2: bankwheaton|WHEATONAPIID|WHEATONAPIKEY
+       SAMPLE_FSP_2_PARTIES: 5551234569|5551234566
+     ports:
+       - "8081:80"
      depends_on:
        - db
 
@@ -34,10 +38,30 @@ services:
        context: .
        dockerfile: ITSTILoopSampleFSP/Dockerfile
      environment:
+       FSP_NAME: BANKBETHESDA
        PARTICIPANT_ID: 1
        ITSTILOOP_URI: http://itstiloop/
        ITSTILOOP_API_ID: BETHESDAAPIID
        ITSTILOOP_API_KEY: BETHESDAAPIKEY
        ACCOUNTS: Mert:Ozdag:5551234567:10000|Ava:Jeay:5551234568:20000
+     ports:
+       - "8083:80"
+     depends_on:
+       - itstiloop
+
+   bankwheaton:
+     image: ${DOCKER_REGISTRY-}itstiloopsamplefsp
+     build:
+       context: .
+       dockerfile: ITSTILoopSampleFSP/Dockerfile
+     environment:
+       FSP_NAME: BANKWHEATON
+       PARTICIPANT_ID: 2
+       ITSTILOOP_URI: http://itstiloop/
+       ITSTILOOP_API_ID: WHEATONAPIID
+       ITSTILOOP_API_KEY: WHEATONAPIKEY
+       ACCOUNTS: Clemence:Jeay:5551234569:10000|Ella:Jeay:5551234566:20000
+     ports:
+       - "8084:80"
      depends_on:
        - itstiloop     

@@ -10,6 +10,12 @@ namespace ITSTILoop.Context.Repositories
         {
         }
 
+
+        public new IEnumerable<SettlementWindow> GetAll()
+        {
+            return _context.SettlementWindows.Include(k => k.SettlementAccounts).ToList();
+        }
+
         public void SettleSettlementWindow()
         {
             SettlementWindow? settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.Status == SettlementWindowStatuses.Open);
@@ -85,7 +91,7 @@ namespace ITSTILoop.Context.Repositories
                         }
                     }
                 }
-                settlementWindow.ModifiedAt = DateTime.Now;
+                settlementWindow.ModifiedAt = DateTime.Now.ToUniversalTime();
             }
             _context.SaveChanges();
         }

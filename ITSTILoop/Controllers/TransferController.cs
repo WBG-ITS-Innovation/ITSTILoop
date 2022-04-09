@@ -23,8 +23,9 @@ namespace ITSTILoop.Controllers
         private readonly IConfirmTransferService _confirmTransferService;
         private readonly ITransactionRepository _transactionRepository;
         private readonly IParticipantRepository _participantRepository;
+        private readonly ISettlementWindowRepository _settlementWindowRepository;
 
-        public TransferController(ILogger<TransferController> logger, IPartyLookupService partyLookupService, ITransferRequestRepository transferRequestRepository, IConfirmTransferService confirmTransferService, ITransactionRepository transactionRepository, IParticipantRepository participantRepository)
+        public TransferController(ILogger<TransferController> logger, IPartyLookupService partyLookupService, ITransferRequestRepository transferRequestRepository, IConfirmTransferService confirmTransferService, ITransactionRepository transactionRepository, IParticipantRepository participantRepository, ISettlementWindowRepository settlementWindowRepository)
         {
             _logger = logger;
             _partyLookupService = partyLookupService;
@@ -32,6 +33,7 @@ namespace ITSTILoop.Controllers
             _confirmTransferService = confirmTransferService;
             _transactionRepository = transactionRepository;
             _participantRepository = participantRepository;
+            _settlementWindowRepository = settlementWindowRepository;
         }
 
         [HttpPost]
@@ -68,6 +70,7 @@ namespace ITSTILoop.Controllers
                         if (result.Result == ParticipantConfirmTransferServiceResults.Success)
                         {
                             _transactionRepository.MakeTransfer(transferRequestResponseDTO.FromParticipantId, transferRequestResponseDTO.To.ParticipantId, transferRequestResponseDTO.Amount, transferRequestResponseDTO.Currency, transferRequestResponseDTO.TransferId);
+                            _settlementWindowRepository.UpdateSettlementWindow();
                             return result.TransferRequestComplete;
                         }
                         else

@@ -6,6 +6,7 @@ using EntityFrameworkCore.AutoFixture.InMemory;
 using FluentAssertions;
 using ITSTILoop.Context;
 using ITSTILoop.Context.Repositories;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Helpers;
 using ITSTILoop.Services;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +46,8 @@ namespace ITSTILoopTest
 
             var participantRepository = new ParticipantRepository(_context);
             var loggerMock = new Mock<ILogger<SampleFspSeedingService>>();
-            var sut = new SampleFspSeedingService(loggerMock.Object, participantRepository);
+            var settlementMon = new Mock<ISettlementWindowRepository>();
+            var sut = new SampleFspSeedingService(loggerMock.Object, participantRepository, settlementMon.Object);
             //act
             sut.SeedFsp(participantText, partiesText);
             //assert

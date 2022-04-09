@@ -16,39 +16,36 @@ namespace ITSTILoop.Services
     {
         private readonly ILogger<ParticipantPartyQueryService> _logger;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly IHttpPostClient _httpPostClient;
 
-        public ParticipantPartyQueryService(ILogger<ParticipantPartyQueryService> logger, IHttpClientFactory clientFactory)
+        public ParticipantPartyQueryService(ILogger<ParticipantPartyQueryService> logger, IHttpClientFactory clientFactory, IHttpPostClient httpPostClient)
         {
             _logger = logger;
             _clientFactory = clientFactory;
+            _httpPostClient = httpPostClient;
         }
 
 
         public async Task<PartyLookupServiceResult> LookupPartyAsync(PartyIdentifierDTO partyQuery, Uri endpoint)
         {
             PartyLookupServiceResult result = new PartyLookupServiceResult();
-            var client = _clientFactory.CreateClient();
-            if (client != null)
+            var postResult = await _httpPostClient.PostAsync<PartyIdentifierDTO, PartyDTO>(partyQuery, endpoint);
+            result.Result = (PartyLookupServiceResults)postResult.Result;
+            if (postResult.Result == HttpPostClientResults.Success)
             {
-                var httpResult = await client.PostAsJsonAsync<PartyIdentifierDTO>(endpoint, partyQuery);
-                if (httpResult.StatusCode == System.Net.HttpStatusCode.Accepted || httpResult.IsSuccessStatusCode)
-                {
-                    var contentResult = await httpResult.Content.ReadFromJsonAsync<PartyDTO>();
-                    result.FoundParty = contentResult;
-                    result.Result = PartyLookupServiceResults.Success;
-                }
-                else
-                {
-                    var contentResult = await httpResult.Content.ReadAsStringAsync();
-                    _logger.LogError("LookupPartyAsync-" + httpResult.StatusCode + "-" + httpResult.ReasonPhrase + "-" + contentResult);
-                    result.Result = PartyLookupServiceResults.EndpointError;
-                }
+                result.FoundParty = postResult.ResponseContent;   
             }
             else
             {
-                result.Result = PartyLookupServiceResults.UriMalformed;
+                if (postResult.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    result.Result = PartyLookupServiceResults.PartyNotFound;
+                }
             }
             return result;
+            
         }
+
+
     }
 }
