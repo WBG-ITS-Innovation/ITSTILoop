@@ -67,7 +67,7 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(requirement2);
 });
 
-var connectionStringName = Environment.GetEnvironmentVariable("ConnectionStringName");
+var connectionStringName = Environment.GetEnvironmentVariable("DB_CONNECTION");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringName)));
 
