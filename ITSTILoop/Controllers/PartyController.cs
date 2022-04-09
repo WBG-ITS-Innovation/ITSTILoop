@@ -1,7 +1,7 @@
 using AutoMapper;
 using ITSTILoop.Attributes;
 using ITSTILoop.Model;
-using ITSTILoop.Model.Interfaces;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services;
 using ITSTILoop.Services.Interfaces;
 using ITSTILoopDTOLibrary;

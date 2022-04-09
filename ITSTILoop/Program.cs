@@ -1,6 +1,7 @@
 using ITSTILoop.Context;
 using ITSTILoop.Context.Repositories;
-using ITSTILoop.Model.Interfaces;
+using ITSTILoop.Helpers;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services;
 using ITSTILoop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -67,7 +68,8 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(requirement2);
 });
 
-var connectionStringName = Environment.GetEnvironmentVariable("DB_CONNECTION");
+
+var connectionStringName = EnvVars.GetEnvironmentVariable(EnvVarNames.DB_CONNECTION, EnvVarDefaultValues.DB_CONNECTION);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringName)));
 
@@ -83,6 +85,7 @@ builder.Services.AddTransient<IParticipantPartyQueryService, ParticipantPartyQue
 builder.Services.AddTransient<IPartyLookupService, PartyLookupService>();
 builder.Services.AddTransient<IParticipantConfirmTransferService, ParticipantConfirmTransferService>();
 builder.Services.AddTransient<IConfirmTransferService, ConfirmTransferService>();
+builder.Services.AddTransient<ISampleFspSeedingService, SampleFspSeedingService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
 builder.Services.AddHostedService<TimedSettlementWindowService>();
@@ -99,6 +102,9 @@ try
     {
         context?.Database.EnsureDeleted();
         context?.Database.EnsureCreated();
+        SampleFspSeedingService? seeding = (SampleFspSeedingService?)scope.ServiceProvider.GetRequiredService<ISampleFspSeedingService>();
+        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1, EnvVarDefaultValues.SAMPLE_FSP_1),
+            EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_1_PARTIES));
     }
 }
 catch (Exception ex)

@@ -15,7 +15,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStringName": "PostgresConnection"
+        "DB_CONNECTION": "PostgresConnection"
       },
       "applicationUrl": "https://localhost:7034;http://localhost:5034",
       "dotnetRunMessages": true

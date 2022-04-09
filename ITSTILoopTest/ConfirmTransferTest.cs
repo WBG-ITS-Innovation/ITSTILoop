@@ -8,14 +8,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 using System;
-using ITSTILoop.Context;
 using AutoFixture;
-using EntityFrameworkCore.AutoFixture.InMemory;
-using ITSTILoop.Model.Interfaces;
 using ITSTILoop.Model;
 using AutoFixture.AutoMoq;
 using ITSTILoop.Services.Interfaces;
 using FluentAssertions;
+using ITSTILoop.Context.Repositories.Interfaces;
 
 namespace ITSTILoopTest
 {

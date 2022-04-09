@@ -1,7 +1,7 @@
 ﻿using ITSTILoop.Model;
 using ITSTILoopDTOLibrary;
 
-namespace ITSTILoop.Model.Interfaces
+namespace ITSTILoop.Context.Repositories.Interfaces
 {
     public interface IParticipantRepository : IGenericRepository<Participant>
     {
@@ -10,6 +10,6 @@ namespace ITSTILoop.Model.Interfaces
         Participant? GetParticipantByName(string name);
         void FundParticipant(int participantId, CurrencyCodes currency, decimal amount);        
         Participant? GetParticipantFromApiKeyId(IHeaderDictionary requestHeaders);
-        Participant CreateParticipant(string name, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint);
+        Participant CreateParticipant(string name, string apiId, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint);
     }
 }

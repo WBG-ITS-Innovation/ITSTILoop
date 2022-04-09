@@ -1,4 +1,4 @@
-﻿using ITSTILoop.Model.Interfaces;
+﻿using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services.Interfaces;
 using ITSTILoopDTOLibrary;
 

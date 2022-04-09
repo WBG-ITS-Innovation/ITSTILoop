@@ -11,7 +11,8 @@ namespace ITSTILoop.Model
         public List<Account> Accounts { get; set; } = new List<Account>();
         public List<Party> Parties { get; set; } = new List<Party>();
         public string ApiKey { get; set; }
-        
+        public string ApiId { get; set; }
+
         public void FundAccount(CurrencyCodes currency, decimal amount)
         {
             Account? account = Accounts.FirstOrDefault(k => k.Currency == currency);

@@ -1,4 +1,5 @@
 ﻿using ITSTILoop.Context.Repositories;
+using ITSTILoop.Context.Repositories.Interfaces;
 
 namespace ITSTILoop.Services
 {
@@ -18,7 +19,7 @@ namespace ITSTILoop.Services
         public Task StartAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Timed Hosted Service running.");
-            _timer = new Timer(DoWork, null, TimeSpan.FromSeconds(5),
+            _timer = new Timer(DoWork, null, TimeSpan.FromSeconds(10),
                 TimeSpan.FromDays(1.0));
 
             return Task.CompletedTask;

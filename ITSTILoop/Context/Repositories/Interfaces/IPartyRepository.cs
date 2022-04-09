@@ -1,7 +1,7 @@
 ﻿using ITSTILoop.Model;
 using ITSTILoopDTOLibrary;
 
-namespace ITSTILoop.Model.Interfaces
+namespace ITSTILoop.Context.Repositories.Interfaces
 {
     public interface IPartyRepository : IGenericRepository<Party>
     {

@@ -1,7 +1,6 @@
 ﻿using ITSTILoop.Model;
-using ITSTILoop.Model.Interfaces;
 
-namespace ITSTILoop.Context.Repositories
+namespace ITSTILoop.Context.Repositories.Interfaces
 {
     public interface ISettlementWindowRepository : IGenericRepository<SettlementWindow>
     {

@@ -1,5 +1,5 @@
-﻿using ITSTILoop.Model;
-using ITSTILoop.Model.Interfaces;
+﻿using ITSTILoop.Context.Repositories.Interfaces;
+using ITSTILoop.Model;
 using ITSTILoopDTOLibrary;
 
 namespace ITSTILoop.Context.Repositories

@@ -24,7 +24,7 @@ services:
      environment:
        DB_CONNECTION: PostgresComposeConnection
        SAMPLE_FSP_1: bankbethesda|BETHESDAAPIID|BETHESDAAPIKEY
-       SAMPLE_FSP_1_PARTIES: Mert:Ozdag:5551234567|Ava:Jeay:5551234568
+       SAMPLE_FSP_1_PARTIES: 5551234567|5551234568
      depends_on:
        - db
 

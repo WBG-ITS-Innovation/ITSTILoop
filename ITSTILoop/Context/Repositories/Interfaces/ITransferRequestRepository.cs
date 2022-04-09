@@ -1,8 +1,7 @@
 ﻿using ITSTILoop.Model;
-using ITSTILoop.Model.Interfaces;
 using ITSTILoopDTOLibrary;
 
-namespace ITSTILoop.Context.Repositories
+namespace ITSTILoop.Context.Repositories.Interfaces
 {
     public interface ITransferRequestRepository : IGenericRepository<TransferRequest>
     {        

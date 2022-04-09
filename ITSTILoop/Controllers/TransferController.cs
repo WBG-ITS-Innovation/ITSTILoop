@@ -2,7 +2,7 @@ using AutoMapper;
 using ITSTILoop.Attributes;
 using ITSTILoop.Context;
 using ITSTILoop.DTO;
-using ITSTILoop.Model.Interfaces;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Model;
 using Microsoft.AspNetCore.Mvc;
 using ITSTILoopDTOLibrary;
