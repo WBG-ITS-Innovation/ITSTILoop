@@ -38,9 +38,10 @@ namespace ITSTILoopDTOLibrary
     }
 
     
-    public class TransferRequestCompleteDTO : TransferRequestResponseDTO
+    public class TransferRequestCompleteDTO
     {
         public DateTime CompletedTimestamp { get; set; }
         public string Fullfilment { get; set; }
+        public Guid TransferId { get; set; }
     }
 }

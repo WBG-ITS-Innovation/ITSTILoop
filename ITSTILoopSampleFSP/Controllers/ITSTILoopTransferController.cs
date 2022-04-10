@@ -30,8 +30,7 @@ namespace ITSTILoopSampleFSP.Controllers
             var account = _accountService.Accounts.FirstOrDefault(k => k.PartyDefinition.PartyIdentifier.Identifier == partyIdentifierDTO.Identifier && k.PartyDefinition.PartyIdentifier.PartyIdentifierType == partyIdentifierDTO.PartyIdentifierType);
             if (account != null)
             {
-                account.TransferIn(transferRequestResponseDTO.Amount);
-                account.Transactions.Add(new FspTransaction() { Amount = transferRequestResponseDTO.Amount, Timestamp = DateTime.Now, TransactionType = TransactionTypes.MoneyRecieved });
+                account.TransferIn(transferRequestResponseDTO.Amount); 
                 return new TransferRequestCompleteDTO() { TransferId = transferRequestResponseDTO.TransferId, Fullfilment = "Fullfilled" };
             }
             return NotFound();

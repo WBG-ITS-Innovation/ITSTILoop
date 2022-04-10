@@ -36,6 +36,12 @@ namespace ITSTILoop.Controllers
             _settlementWindowRepository = settlementWindowRepository;
         }
 
+        [HttpGet]
+        public IEnumerable<TransferRequest> GetTransfers()
+        {
+            return _transferRequestRepository.GetAll();
+        }
+
         [HttpPost]
         public async Task<ActionResult<TransferRequestResponseDTO>> PostAsync(TransferRequestDTO transferRequestDTO)
         {
@@ -54,8 +60,8 @@ namespace ITSTILoop.Controllers
             
         }
 
-        [HttpPut("{transferId}")]
-        public async Task<ActionResult<TransferRequestCompleteDTO>> Put(Guid transferId, [FromBody] TransferAcceptRejectDTO transferAcceptRejectDTO)
+        [HttpPost("{transferId}")]
+        public async Task<ActionResult<TransferRequestCompleteDTO>> Confirm(Guid transferId, [FromBody] TransferAcceptRejectDTO transferAcceptRejectDTO)
         {
             Participant? participant = _participantRepository.GetParticipantFromApiKeyId(Request.Headers);
             if (participant != null)

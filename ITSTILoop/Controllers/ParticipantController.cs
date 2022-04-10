@@ -35,15 +35,15 @@ namespace ITSTILoop.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ParticipantDTO> GetParticipant(int id)
+        public ActionResult<Participant> GetParticipant(int id)
         {
-            var participant = _participantRepository.GetById(id);
+            var participant = _participantRepository.GetByIdFull(id);
 
             if (participant == null)
             {
                 return NotFound();
             }
-            return _mapper.Map<ParticipantDTO>(participant);            
+            return participant;            
         }
 
         [HttpPost]

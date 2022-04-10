@@ -22,6 +22,11 @@ namespace ITSTILoop.Context.Repositories
             Save();
         }
 
+        public Participant? GetByIdFull(int id)
+        {
+            return _context.Participants.Include(k => k.Accounts).Include(k => k.Parties).FirstOrDefault(k => k.ParticipantId == id);
+        }
+
         public Participant? GetParticipantFromApiKey(string apiId, string apiKey)
         {
             return Find(k => k.ApiKey == apiKey && k.ApiId == apiId).FirstOrDefault();

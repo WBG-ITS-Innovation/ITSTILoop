@@ -11,5 +11,6 @@ namespace ITSTILoop.Context.Repositories.Interfaces
         void FundParticipant(int participantId, CurrencyCodes currency, decimal amount);        
         Participant? GetParticipantFromApiKeyId(IHeaderDictionary requestHeaders);
         Participant CreateParticipant(string name, string apiId, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint);
+        Participant? GetByIdFull(int id);
     }
 }

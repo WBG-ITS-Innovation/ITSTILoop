@@ -19,7 +19,7 @@ namespace ITSTILoopTest
     public class PartyLookupTest
     {
         IHttpClientFactory _clientFactory;
-        ILogger<ParticipantPartyQueryService> _logger;
+        ILogger<HttpPostClient> _logger;
         string sampleUri = "https://example.com/api/stuff";
         string partyIdentifier = "(555)12345678";
         string partyName = "Mert";
@@ -43,7 +43,7 @@ namespace ITSTILoopTest
                 return (model.Identifier == partyIdentifier && model.PartyIdentifierType == PartyIdTypes.MSISDN);
             }).ReturnsResponse(JsonConvert.SerializeObject(partyDTO), "application/json");
             _clientFactory = handler.CreateClientFactory();
-            var loggerMock = new Mock<ILogger<ParticipantPartyQueryService>>();
+            var loggerMock = new Mock<ILogger<HttpPostClient>>();
             _logger = loggerMock.Object;
 
         }
@@ -51,12 +51,12 @@ namespace ITSTILoopTest
         [Fact]
         public async Task TestLookupAsync()
         {
-            ParticipantPartyQueryService partyLookupService = new ParticipantPartyQueryService(_logger, _clientFactory);
-            var result = await partyLookupService.LookupPartyAsync(queryParty, new Uri(sampleUri));
+            HttpPostClient postClient = new HttpPostClient(_logger, _clientFactory);
+            var result = await postClient.PostAsync<PartyIdentifierDTO, PartyDTO>(queryParty, new Uri(sampleUri));
 
-            Assert.Equal(partyName, result.FoundParty.FirstName);
-            Assert.Equal(partyLastName, result.FoundParty.LastName);            
-            Assert.Equal(PartyLookupServiceResults.Success, result.Result);
+            Assert.Equal(partyName, result.ResponseContent.FirstName);
+            Assert.Equal(partyLastName, result.ResponseContent.LastName);            
+            Assert.Equal(HttpPostClientResults.Success, result.Result);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace ITSTILoopTest
             fixture.Freeze<Mock<IPartyRepository>>().Setup(k => k.GetPartyFromTypeAndId(PartyIdTypes.MSISDN, partyIdentifier)).Returns(new Party() { PartyIdentifier = partyIdentifier });
             fixture.Freeze<Mock<IParticipantRepository>>().Setup(k => k.GetParticipantByName(partyBank)).Returns(new Participant { PartyLookupEndpoint = new Uri(sampleUri) });
             fixture.Freeze<Mock<ILogger<PartyLookupService>>>();
-            fixture.Freeze<Mock<IParticipantPartyQueryService>>().Setup(k => k.LookupPartyAsync(It.IsAny<PartyIdentifierDTO>(), It.IsAny<Uri>())).Returns(Task.FromResult(new PartyLookupServiceResult() { FoundParty = partyDTO, Result = PartyLookupServiceResults.Success}));
+            fixture.Freeze<Mock<IHttpPostClient>>().Setup(k => k.PostAsync<PartyIdentifierDTO, PartyDTO>(It.IsAny<PartyIdentifierDTO>(), It.IsAny<Uri>(), "")).Returns(Task.FromResult(new HttpPostClientResponse<PartyDTO>() { ResponseContent = partyDTO, Result = HttpPostClientResults.Success}));
             var sut = fixture.Create<PartyLookupService>();
             //act
             var result = await sut.FindPartyAsync(PartyIdTypes.MSISDN, partyIdentifier);

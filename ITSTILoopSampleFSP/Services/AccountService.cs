@@ -20,7 +20,7 @@ namespace ITSTILoopSampleFSP.Services
                 var firstName = accountStringSplit[0];
                 var lastName = accountStringSplit[1];
                 var pi = accountStringSplit[2];
-                Accounts.Add(new FspAccount() { Balance = 10000, PartyDefinition = new PartyDTO() { FirstName = firstName, LastName = lastName, PartyIdentifier = new PartyIdentifierDTO() { Identifier = pi, PartyIdentifierType = PartyIdTypes.MSISDN }, ParticipantId = participantId } });
+                Accounts.Add(new FspAccount() { Balance = initialBalance, PartyDefinition = new PartyDTO() { FirstName = firstName, LastName = lastName, PartyIdentifier = new PartyIdentifierDTO() { Identifier = pi, PartyIdentifierType = PartyIdTypes.MSISDN }, ParticipantId = participantId } });
             }
             //let's seed some accounts
             

@@ -7,13 +7,13 @@ using ITSTILoop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using ITSTILoopDTOLibrary;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -80,10 +80,8 @@ builder.Services.AddTransient<IPartyRepository, PartyRepository>();
 builder.Services.AddTransient<ISettlementWindowRepository, SettlementWindowRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
 builder.Services.AddTransient<ITransferRequestRepository, TransferRequestRepository>();
-
-builder.Services.AddTransient<IParticipantPartyQueryService, ParticipantPartyQueryService>();
 builder.Services.AddTransient<IPartyLookupService, PartyLookupService>();
-builder.Services.AddTransient<IParticipantConfirmTransferService, ParticipantConfirmTransferService>();
+builder.Services.AddTransient<IHttpPostClient, HttpPostClient>();
 builder.Services.AddTransient<IConfirmTransferService, ConfirmTransferService>();
 builder.Services.AddTransient<ISampleFspSeedingService, SampleFspSeedingService>();
 builder.Services.AddAutoMapper(typeof(Program));

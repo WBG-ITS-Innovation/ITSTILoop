@@ -5,6 +5,13 @@ using ITSTILoopDTOLibrary;
 
 namespace ITSTILoop.Services
 {
+    public enum PartyLookupServiceResults { Success, UriMalformed, EndpointError, ParticipantNotRegistered, PartyNotFound };
+    public class PartyLookupServiceResult
+    {
+        public PartyLookupServiceResults Result { get; set; }
+        public PartyDTO FoundParty { get; set; }
+    }
+
     public class PartyLookupService : IPartyLookupService
     {
         private readonly ILogger<PartyLookupService> _logger;

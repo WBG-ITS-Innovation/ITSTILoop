@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using System.Net;
-using System.Net.Http.Json;
+﻿using System.Net;
 
-namespace ITSTILoopDTOLibrary
+namespace ITSTILoopSampleFSP.Services
 {
     public enum HttpPostClientResults { Success, UriMalformed, EndpointError };
     public class HttpPostClientResponse<T>
@@ -24,12 +21,21 @@ namespace ITSTILoopDTOLibrary
             _clientFactory = clientFactory;
         }
 
-        public async Task<HttpPostClientResponse<TResponseType>> PostAsync<TPostType, TResponseType>(TPostType postContent, Uri endpoint)
+        public async Task<HttpPostClientResponse<TResponseType>> PostAsync<TPostType, TResponseType>(TPostType postContent, string endpoint, string clientName = "")
         {
             HttpPostClientResponse<TResponseType> result = new HttpPostClientResponse<TResponseType>();
-            var client = _clientFactory.CreateClient();
-            if (client != null)
+            HttpClient? client = null;
+            if (String.IsNullOrEmpty(clientName))
             {
+                client = _clientFactory.CreateClient();
+            }
+            else
+            {
+                client = _clientFactory.CreateClient(clientName);
+            }
+
+            if (client != null)
+            { 
                 var httpResult = await client.PostAsJsonAsync<TPostType>(endpoint, postContent);
                 result.StatusCode = httpResult.StatusCode;
                 if (httpResult.StatusCode == System.Net.HttpStatusCode.Accepted || httpResult.IsSuccessStatusCode)
@@ -40,7 +46,7 @@ namespace ITSTILoopDTOLibrary
                 }
                 else
                 {
-                    
+
                     var contentResult = await httpResult.Content.ReadAsStringAsync();
                     _logger.LogError("PostAsync-" + httpResult.StatusCode + "-" + httpResult.ReasonPhrase + "-" + contentResult);
                     result.Result = HttpPostClientResults.EndpointError;
