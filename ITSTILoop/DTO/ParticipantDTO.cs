@@ -13,6 +13,7 @@ namespace ITSTILoop.DTO
     public class RegisterParticipantDTO
     {
         public string Name { get; set; }
+        public string ApiId { get; set; }
         public string ApiKey { get; set; }
         public Uri PartyLookupEndpoint { get; set; }
         public Uri ConfirmTransferEndpoint { get; set; }

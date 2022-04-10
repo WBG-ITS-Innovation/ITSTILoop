@@ -1,7 +1,6 @@
-﻿using ITSTILoop.Model;
-using ITSTILoop.Model.Interfaces;
+﻿using ITSTILoop.Context.Repositories.Interfaces;
+using ITSTILoop.Model;
 using ITSTILoopDTOLibrary;
-using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 
@@ -23,9 +22,14 @@ namespace ITSTILoop.Context.Repositories
             Save();
         }
 
+        public Participant? GetByIdFull(int id)
+        {
+            return _context.Participants.Include(k => k.Accounts).Include(k => k.Parties).FirstOrDefault(k => k.ParticipantId == id);
+        }
+
         public Participant? GetParticipantFromApiKey(string apiId, string apiKey)
         {
-            return Find(k => k.ApiKey == apiKey && k.Name == apiId).FirstOrDefault();
+            return Find(k => k.ApiKey == apiKey && k.ApiId == apiId).FirstOrDefault();
         }
 
         public Participant? GetParticipantFromApiKeyId(IHeaderDictionary requestHeaders)
@@ -54,9 +58,9 @@ namespace ITSTILoop.Context.Repositories
             }
         }
 
-        public Participant CreateParticipant(string name, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint)
+        public Participant CreateParticipant(string name, string apiId, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint)
         {
-            Participant participant = new Participant() { Name = name, ApiKey = apiKey, PartyLookupEndpoint = partyLookupEndpoint, ConfirmTransferEndpoint = confirmTransferEndpoint };
+            Participant participant = new Participant() { Name = name, ApiId = apiId, ApiKey = apiKey, PartyLookupEndpoint = partyLookupEndpoint, ConfirmTransferEndpoint = confirmTransferEndpoint };
             _context.Participants.Add(participant);
             Save();
             return participant;

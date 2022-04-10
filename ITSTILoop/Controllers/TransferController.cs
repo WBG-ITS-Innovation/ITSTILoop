@@ -2,7 +2,7 @@ using AutoMapper;
 using ITSTILoop.Attributes;
 using ITSTILoop.Context;
 using ITSTILoop.DTO;
-using ITSTILoop.Model.Interfaces;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Model;
 using Microsoft.AspNetCore.Mvc;
 using ITSTILoopDTOLibrary;
@@ -23,8 +23,9 @@ namespace ITSTILoop.Controllers
         private readonly IConfirmTransferService _confirmTransferService;
         private readonly ITransactionRepository _transactionRepository;
         private readonly IParticipantRepository _participantRepository;
+        private readonly ISettlementWindowRepository _settlementWindowRepository;
 
-        public TransferController(ILogger<TransferController> logger, IPartyLookupService partyLookupService, ITransferRequestRepository transferRequestRepository, IConfirmTransferService confirmTransferService, ITransactionRepository transactionRepository, IParticipantRepository participantRepository)
+        public TransferController(ILogger<TransferController> logger, IPartyLookupService partyLookupService, ITransferRequestRepository transferRequestRepository, IConfirmTransferService confirmTransferService, ITransactionRepository transactionRepository, IParticipantRepository participantRepository, ISettlementWindowRepository settlementWindowRepository)
         {
             _logger = logger;
             _partyLookupService = partyLookupService;
@@ -32,6 +33,13 @@ namespace ITSTILoop.Controllers
             _confirmTransferService = confirmTransferService;
             _transactionRepository = transactionRepository;
             _participantRepository = participantRepository;
+            _settlementWindowRepository = settlementWindowRepository;
+        }
+
+        [HttpGet]
+        public IEnumerable<TransferRequest> GetTransfers()
+        {
+            return _transferRequestRepository.GetAll();
         }
 
         [HttpPost]
@@ -52,8 +60,8 @@ namespace ITSTILoop.Controllers
             
         }
 
-        [HttpPut("{transferId}")]
-        public async Task<ActionResult<TransferRequestCompleteDTO>> Put(Guid transferId, [FromBody] TransferAcceptRejectDTO transferAcceptRejectDTO)
+        [HttpPost("{transferId}")]
+        public async Task<ActionResult<TransferRequestCompleteDTO>> Confirm(Guid transferId, [FromBody] TransferAcceptRejectDTO transferAcceptRejectDTO)
         {
             Participant? participant = _participantRepository.GetParticipantFromApiKeyId(Request.Headers);
             if (participant != null)
@@ -68,6 +76,7 @@ namespace ITSTILoop.Controllers
                         if (result.Result == ParticipantConfirmTransferServiceResults.Success)
                         {
                             _transactionRepository.MakeTransfer(transferRequestResponseDTO.FromParticipantId, transferRequestResponseDTO.To.ParticipantId, transferRequestResponseDTO.Amount, transferRequestResponseDTO.Currency, transferRequestResponseDTO.TransferId);
+                            _settlementWindowRepository.UpdateSettlementWindow();
                             return result.TransferRequestComplete;
                         }
                         else

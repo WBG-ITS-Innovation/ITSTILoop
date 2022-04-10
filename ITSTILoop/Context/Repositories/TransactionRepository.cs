@@ -1,4 +1,5 @@
-﻿using ITSTILoop.Model;
+﻿using ITSTILoop.Context.Repositories.Interfaces;
+using ITSTILoop.Model;
 using ITSTILoopDTOLibrary;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,7 +42,7 @@ namespace ITSTILoop.Context.Repositories
             }
             sourceAccount.TransferOut(amount);
             destinationAccount.TransferIn(amount);
-            Transaction transaction = new Transaction() { Amount = amount, Currency = currency, From = from, To = to, Timestamp = DateTime.Now, TraceId = traceId, TransactionType = TransactionTypes.Transfer };
+            Transaction transaction = new Transaction() { Amount = amount, Currency = currency, From = from, To = to, Timestamp = DateTime.Now.ToUniversalTime(), TraceId = traceId, TransactionType = TransactionTypes.Transfer };
             _context.Transactions.Add(transaction);
             Save();
             return result;

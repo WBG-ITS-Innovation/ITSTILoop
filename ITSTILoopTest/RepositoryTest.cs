@@ -68,10 +68,11 @@ namespace ITSTILoopTest
                 var fixture = new Fixture().Customize(new AutoMoqCustomization());
                 var participantName = fixture.Create<string>();
                 var participantApiKey = fixture.Create<string>();
+                var participantApiId = fixture.Create<string>();
                 var participantEndpoint = fixture.Create<Uri>();
                 var participantEndpoint2 = fixture.Create<Uri>();
                 // Act
-                _participantRepository.CreateParticipant(participantName, participantApiKey, participantEndpoint, participantEndpoint2);
+                _participantRepository.CreateParticipant(participantName, participantApiId, participantApiKey, participantEndpoint, participantEndpoint2);
                 // Assert
                 var participantResult = _participantRepository.Find(k => k.Name == participantName).First();
                 participantResult.Should().NotBeNull();
@@ -88,9 +89,10 @@ namespace ITSTILoopTest
                 var participantApiKey = fixture.Create<string>();
                 var participantEndpoint = fixture.Create<Uri>();
                 var participantEndpoint2 = fixture.Create<Uri>();
+                var participantApiId = fixture.Create<string>();
                 var amount = fixture.Create<Decimal>();
                 var currency = fixture.Create<CurrencyCodes>();
-                var participant = _participantRepository.CreateParticipant(participantName, participantApiKey, participantEndpoint, participantEndpoint2);
+                var participant = _participantRepository.CreateParticipant(participantName, participantApiId, participantApiKey, participantEndpoint, participantEndpoint2);
                 // Act
                 _participantRepository.FundParticipant(participant.ParticipantId, currency, amount);
                 // Assert

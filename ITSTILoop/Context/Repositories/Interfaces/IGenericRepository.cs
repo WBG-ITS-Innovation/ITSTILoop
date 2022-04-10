@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ITSTILoop.Model.Interfaces
+namespace ITSTILoop.Context.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {

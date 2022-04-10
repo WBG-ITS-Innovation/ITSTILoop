@@ -10,15 +10,18 @@ namespace ITSTILoopSampleFSP.Models
         public void Deposit(decimal amount)
         {
             Balance += amount;
+            Transactions.Add(new FspTransaction() { Amount = amount, Timestamp = DateTime.Now, TransactionType = TransactionTypes.Deposit });
         }
         public void TransferOut(decimal amount)
         {
             Balance -= amount;
+            Transactions.Add(new FspTransaction() { Amount = amount, Timestamp = DateTime.Now, TransactionType = TransactionTypes.MoneySent });
         }
 
         public void TransferIn(decimal amount)
         {
             Balance += amount;
+            Transactions.Add(new FspTransaction() { Amount = amount, Timestamp = DateTime.Now, TransactionType = TransactionTypes.MoneyRecieved });
         }
     }
 }

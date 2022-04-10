@@ -1,23 +1,31 @@
 ﻿using AutoMapper;
-using ITSTILoop.Model.Interfaces;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services.Interfaces;
 using ITSTILoopDTOLibrary;
 
 namespace ITSTILoop.Services
 {
+    public enum PartyLookupServiceResults { Success, UriMalformed, EndpointError, ParticipantNotRegistered, PartyNotFound };
+    public class PartyLookupServiceResult
+    {
+        public PartyLookupServiceResults Result { get; set; }
+        public PartyDTO FoundParty { get; set; }
+    }
+
     public class PartyLookupService : IPartyLookupService
     {
         private readonly ILogger<PartyLookupService> _logger;
         private readonly IParticipantRepository _participantRepository;
         private readonly IPartyRepository _partyRepository;
-        private readonly IParticipantPartyQueryService _partyLookupService;
+        private readonly IHttpPostClient _httpPostClient;        
 
-        public PartyLookupService(ILogger<PartyLookupService> logger, IParticipantRepository participantRepository, IPartyRepository partyRepository, IParticipantPartyQueryService partyLookupService)
+        public PartyLookupService(ILogger<PartyLookupService> logger, IParticipantRepository participantRepository, IPartyRepository partyRepository, IHttpPostClient httpPostClient)
         {
             _logger = logger;
             _participantRepository = participantRepository;
             _partyRepository = partyRepository;
-            _partyLookupService = partyLookupService;
+            _httpPostClient = httpPostClient;
+
         }
         public async Task<PartyLookupServiceResult> FindPartyAsync(PartyIdTypes partyIdType, string partyIdentifier)
         {
@@ -28,8 +36,16 @@ namespace ITSTILoop.Services
                 var participant = _participantRepository.GetById(party.ParticipantId);
                 if (participant != null)
                 {
-                    PartyIdentifierDTO queryPartyDTO = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = partyIdType };
-                    result = await _partyLookupService.LookupPartyAsync(queryPartyDTO, participant.PartyLookupEndpoint);
+                    PartyIdentifierDTO queryPartyDTO = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = partyIdType };                    
+                    var postResponse = await _httpPostClient.PostAsync<PartyIdentifierDTO, PartyDTO>(queryPartyDTO, participant.PartyLookupEndpoint);
+                    if (postResponse.Result == HttpPostClientResults.Success)
+                    {
+                        result.FoundParty = postResponse.ResponseContent;
+                    }
+                    else
+                    {
+                        result.Result = PartyLookupServiceResults.EndpointError;
+                    }
                 }
                 else
                 {

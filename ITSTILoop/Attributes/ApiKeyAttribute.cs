@@ -39,7 +39,7 @@ namespace ITSTILoop.Attributes
 
             bool isAdmin = apiKey.Equals(extractedApiKey) && APIADMIN.Equals(extractedApiId);
 
-            bool isParticipant = dbContext.Participants.Count(k => k.ApiKey == extractedApiKey.First() && k.Name == extractedApiId.First()) > 0;
+            bool isParticipant = dbContext.Participants.Count(k => k.ApiKey == extractedApiKey.First() && k.ApiId == extractedApiId.First()) > 0;
 
             if (isAdmin || isParticipant)
             {

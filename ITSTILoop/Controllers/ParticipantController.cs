@@ -2,9 +2,10 @@ using AutoMapper;
 using ITSTILoop.Attributes;
 using ITSTILoop.Context;
 using ITSTILoop.DTO;
-using ITSTILoop.Model.Interfaces;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Model;
 using Microsoft.AspNetCore.Mvc;
+using ITSTILoop.Context.Repositories;
 
 namespace ITSTILoop.Controllers
 {
@@ -15,12 +16,14 @@ namespace ITSTILoop.Controllers
     {
         private readonly ILogger<ParticipantController> _logger;
         private readonly IParticipantRepository _participantRepository;
+        private readonly ISettlementWindowRepository _settlementWindowRepository;
         private readonly IMapper _mapper;
 
-        public ParticipantController(ILogger<ParticipantController> logger, IParticipantRepository participantRepository, IMapper mapper)
+        public ParticipantController(ILogger<ParticipantController> logger, IParticipantRepository participantRepository, IMapper mapper, ISettlementWindowRepository settlementWindowRepository)
         {
             _logger = logger;
             _participantRepository = participantRepository;
+            _settlementWindowRepository = settlementWindowRepository;
             _mapper = mapper;
         }
 
@@ -32,21 +35,21 @@ namespace ITSTILoop.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ParticipantDTO> GetParticipant(int id)
+        public ActionResult<Participant> GetParticipant(int id)
         {
-            var participant = _participantRepository.GetById(id);
+            var participant = _participantRepository.GetByIdFull(id);
 
             if (participant == null)
             {
                 return NotFound();
             }
-            return _mapper.Map<ParticipantDTO>(participant);            
+            return participant;            
         }
 
         [HttpPost]
         public ActionResult<ParticipantDTO> Post(RegisterParticipantDTO registerParticipantDTO)
         {            
-            var participant = _participantRepository.CreateParticipant(registerParticipantDTO.Name, registerParticipantDTO.ApiKey, registerParticipantDTO.PartyLookupEndpoint, registerParticipantDTO.ConfirmTransferEndpoint);            
+            var participant = _participantRepository.CreateParticipant(registerParticipantDTO.Name, registerParticipantDTO.ApiId, registerParticipantDTO.ApiKey, registerParticipantDTO.PartyLookupEndpoint, registerParticipantDTO.ConfirmTransferEndpoint);            
             var participantDto = _mapper.Map<ParticipantDTO>(participant);
             return CreatedAtAction("GetParticipant", new { id = participant.ParticipantId }, participantDto);
         }
@@ -56,6 +59,7 @@ namespace ITSTILoop.Controllers
         public ActionResult FundParticipant([FromBody] FundParticipantDTO fundParticipantDTO)
         {
             _participantRepository.FundParticipant(fundParticipantDTO.ParticipantId, fundParticipantDTO.Currency, fundParticipantDTO.Amount);
+            _settlementWindowRepository.UpdateSettlementWindow();
             return Ok();
         }
     }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ITSTILoop.Model;
-using ITSTILoop.Model.Interfaces;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoopDTOLibrary;
 
 namespace ITSTILoop.Context.Repositories
@@ -23,7 +23,7 @@ namespace ITSTILoop.Context.Repositories
             transferRequest.ToPartyIdentifierType = transferRequestDTO.To.PartyIdentifierType;
             transferRequest.FirstName = partyDTO.FirstName;
             transferRequest.LastName = partyDTO.LastName;
-            transferRequest.InitiatedTimestamp = DateTime.Now;
+            transferRequest.InitiatedTimestamp = DateTime.Now.ToUniversalTime();
             transferRequest.ToParticipantId = partyDTO.ParticipantId;
             transferRequest.FromParticipantId = fromParticipantId;
             transferRequest.TransferId = Guid.NewGuid();

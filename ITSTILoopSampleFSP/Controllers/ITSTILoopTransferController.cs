@@ -25,12 +25,12 @@ namespace ITSTILoopSampleFSP.Controllers
         [HttpPost(Name = "confirmTransfer")]
         public ActionResult<TransferRequestCompleteDTO> Post(TransferRequestResponseDTO transferRequestResponseDTO)
         {
+            _logger.LogInformation($"ITSTILoopTransferController-Post-{transferRequestResponseDTO.To.PartyIdentifier.Identifier}");
             var partyIdentifierDTO = transferRequestResponseDTO.To.PartyIdentifier;
             var account = _accountService.Accounts.FirstOrDefault(k => k.PartyDefinition.PartyIdentifier.Identifier == partyIdentifierDTO.Identifier && k.PartyDefinition.PartyIdentifier.PartyIdentifierType == partyIdentifierDTO.PartyIdentifierType);
             if (account != null)
             {
-                account.TransferIn(transferRequestResponseDTO.Amount);
-                account.Transactions.Add(new FspTransaction() { Amount = transferRequestResponseDTO.Amount, Timestamp = DateTime.Now, TransactionType = TransactionTypes.MoneyRecieved });
+                account.TransferIn(transferRequestResponseDTO.Amount); 
                 return new TransferRequestCompleteDTO() { TransferId = transferRequestResponseDTO.TransferId, Fullfilment = "Fullfilled" };
             }
             return NotFound();

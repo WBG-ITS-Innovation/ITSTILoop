@@ -1,4 +1,5 @@
-﻿using ITSTILoop.Model;
+﻿using ITSTILoop.Context.Repositories.Interfaces;
+using ITSTILoop.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITSTILoop.Context.Repositories
@@ -7,6 +8,12 @@ namespace ITSTILoop.Context.Repositories
     {
         public SettlementWindowRepository(ApplicationDbContext context) : base(context)
         {
+        }
+
+
+        public new IEnumerable<SettlementWindow> GetAll()
+        {
+            return _context.SettlementWindows.Include(k => k.SettlementAccounts).ToList();
         }
 
         public void SettleSettlementWindow()
@@ -84,7 +91,7 @@ namespace ITSTILoop.Context.Repositories
                         }
                     }
                 }
-                settlementWindow.ModifiedAt = DateTime.Now;
+                settlementWindow.ModifiedAt = DateTime.Now.ToUniversalTime();
             }
             _context.SaveChanges();
         }

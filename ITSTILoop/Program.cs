@@ -1,18 +1,19 @@
 using ITSTILoop.Context;
 using ITSTILoop.Context.Repositories;
-using ITSTILoop.Model.Interfaces;
+using ITSTILoop.Helpers;
+using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services;
 using ITSTILoop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using ITSTILoopDTOLibrary;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -67,7 +68,8 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(requirement2);
 });
 
-var connectionStringName = Environment.GetEnvironmentVariable("ConnectionStringName");
+
+var connectionStringName = EnvVars.GetEnvironmentVariable(EnvVarNames.DB_CONNECTION, EnvVarDefaultValues.DB_CONNECTION);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringName)));
 
@@ -78,11 +80,10 @@ builder.Services.AddTransient<IPartyRepository, PartyRepository>();
 builder.Services.AddTransient<ISettlementWindowRepository, SettlementWindowRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
 builder.Services.AddTransient<ITransferRequestRepository, TransferRequestRepository>();
-
-builder.Services.AddTransient<IParticipantPartyQueryService, ParticipantPartyQueryService>();
 builder.Services.AddTransient<IPartyLookupService, PartyLookupService>();
-builder.Services.AddTransient<IParticipantConfirmTransferService, ParticipantConfirmTransferService>();
+builder.Services.AddTransient<IHttpPostClient, HttpPostClient>();
 builder.Services.AddTransient<IConfirmTransferService, ConfirmTransferService>();
+builder.Services.AddTransient<ISampleFspSeedingService, SampleFspSeedingService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
 builder.Services.AddHostedService<TimedSettlementWindowService>();
@@ -99,6 +100,11 @@ try
     {
         context?.Database.EnsureDeleted();
         context?.Database.EnsureCreated();
+        SampleFspSeedingService? seeding = (SampleFspSeedingService?)scope.ServiceProvider.GetRequiredService<ISampleFspSeedingService>();
+        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1, EnvVarDefaultValues.SAMPLE_FSP_1),
+            EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_1_PARTIES));
+        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2, EnvVarDefaultValues.SAMPLE_FSP_2),
+                    EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_2_PARTIES));
     }
 }
 catch (Exception ex)
@@ -108,13 +114,13 @@ catch (Exception ex)
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

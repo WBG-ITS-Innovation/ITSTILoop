@@ -11,9 +11,20 @@ namespace ITSTILoopSampleFSP.Services
         public AccountService()
         {
             int participantId = Convert.ToInt32(Environment.GetEnvironmentVariable("PARTICIPANT_ID"));
+            var accountsString = Environment.GetEnvironmentVariable("ACCOUNTS");
+            var accountsStringSplit = accountsString.Split('|');
+            foreach (var accountString in accountsStringSplit)
+            {
+                var accountStringSplit = accountString.Split(':');
+                var initialBalance = Convert.ToDecimal(accountStringSplit[3]);
+                var firstName = accountStringSplit[0];
+                var lastName = accountStringSplit[1];
+                var pi = accountStringSplit[2];
+                Accounts.Add(new FspAccount() { Balance = initialBalance, PartyDefinition = new PartyDTO() { FirstName = firstName, LastName = lastName, PartyIdentifier = new PartyIdentifierDTO() { Identifier = pi, PartyIdentifierType = PartyIdTypes.MSISDN }, ParticipantId = participantId } });
+            }
             //let's seed some accounts
-            Accounts.Add(new FspAccount() { Balance = 10000, PartyDefinition = new PartyDTO() { FirstName = "Mert", LastName = "Ozdag", PartyIdentifier = new PartyIdentifierDTO() { Identifier = "5551234567", PartyIdentifierType = PartyIdTypes.MSISDN }, ParticipantId = participantId } });
-            Accounts.Add(new FspAccount() { Balance = 20000, PartyDefinition = new PartyDTO() { FirstName = "Ava", LastName = "Jeay", PartyIdentifier = new PartyIdentifierDTO() { Identifier = "5551234568", PartyIdentifierType = PartyIdTypes.MSISDN }, ParticipantId = participantId } });
+            
+            
         }
     }
 }

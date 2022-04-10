@@ -12,7 +12,9 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "FSP_NAME": "Sample FSP",
+        "ACCOUNTS": "Mert:Ozdag:5551234567:10000|Ava:Jeay:5551234568:20000"
       },
       "applicationUrl": "https://localhost:7005;http://localhost:5005",
       "dotnetRunMessages": true

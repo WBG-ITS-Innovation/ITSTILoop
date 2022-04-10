@@ -1,5 +1,4 @@
-﻿using ITSTILoop.Model.Interfaces;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace ITSTILoop.Context.Repositories
 {
