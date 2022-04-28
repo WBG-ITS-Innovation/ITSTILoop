@@ -12,6 +12,7 @@ namespace ITSTILoop.Model
         public List<Party> Parties { get; set; } = new List<Party>();
         public string ApiKey { get; set; }
         public string ApiId { get; set; }
+        public string CBDCAddress { get; set; }
 
         public void FundAccount(CurrencyCodes currency, decimal amount)
         {

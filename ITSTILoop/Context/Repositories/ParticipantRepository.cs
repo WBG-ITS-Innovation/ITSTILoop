@@ -58,9 +58,9 @@ namespace ITSTILoop.Context.Repositories
             }
         }
 
-        public Participant CreateParticipant(string name, string apiId, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint)
+        public Participant CreateParticipant(string name, string apiId, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint, string cdbcAddress)
         {
-            Participant participant = new Participant() { Name = name, ApiId = apiId, ApiKey = apiKey, PartyLookupEndpoint = partyLookupEndpoint, ConfirmTransferEndpoint = confirmTransferEndpoint };
+            Participant participant = new Participant() { Name = name, ApiId = apiId, ApiKey = apiKey, PartyLookupEndpoint = partyLookupEndpoint, ConfirmTransferEndpoint = confirmTransferEndpoint, CBDCAddress = cdbcAddress };
             _context.Participants.Add(participant);
             Save();
             return participant;

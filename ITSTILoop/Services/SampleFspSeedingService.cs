@@ -22,14 +22,15 @@ namespace ITSTILoop.Services
         public Participant? CreateParticipant(string participantText)
         {
             var splitText = participantText.Split('|');
-            if (splitText.Length == 3)
+            if (splitText.Length == 4)
             {
                 string name = splitText[0];
                 string apiId = splitText[1];
                 string apiKey = splitText[2];
+                string cdbcAddress = splitText[3];
                 string lookupEndpoint = $"http://{name}/itstiloop/ITSTILoopPartyLookup";
                 string transferEndpoint = $"http://{name}/itstiloop/ITSTILoopTransfer";
-                return _participantRepository.CreateParticipant(name, apiId, apiKey, new Uri(lookupEndpoint), new Uri(transferEndpoint));
+                return _participantRepository.CreateParticipant(name, apiId, apiKey, new Uri(lookupEndpoint), new Uri(transferEndpoint), cdbcAddress);
             }
             return null;
         }
@@ -49,8 +50,8 @@ namespace ITSTILoop.Services
             var participant = CreateParticipant(participantText);
             if (participant != null)
             {
-                _participantRepository.FundParticipant(participant.ParticipantId, ITSTILoopDTOLibrary.CurrencyCodes.USD, 50000);
-                _settlementWindowRepository.UpdateSettlementWindow();
+                //_participantRepository.FundParticipant(participant.ParticipantId, ITSTILoopDTOLibrary.CurrencyCodes.USD, 50000);
+                //_settlementWindowRepository.UpdateSettlementWindow();
                 CreateParties(participant.ParticipantId, partiesText);
             }
         }

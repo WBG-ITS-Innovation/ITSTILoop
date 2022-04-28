@@ -27,5 +27,12 @@ namespace ITSTILoop.Controllers
         {            
             return _settlementWindowRepository.GetAll();
         }
+
+        [HttpPost("{windowId}")]
+        public ActionResult<bool> Post(int windowId)
+        {
+            _settlementWindowRepository.SettleSettlementWindow();
+            return true;
+        }
     }
 }

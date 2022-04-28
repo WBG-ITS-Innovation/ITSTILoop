@@ -5,14 +5,12 @@ volumes:
     name: postgresql_data
 
 services:
+
    reverse-proxy:     
-     image: ${DOCKER_REGISTRY-}reverseproxy
-     build:
-       context: ./ReverseProxy
-       dockerfile: Dockerfile       
-     ports:
-       - "80:80"
-       - "443:443"
+      image: mozdag.azurecr.io/reverseproxy:latest
+      ports:
+        - "80:80"
+        - "443:443"
 
    db:
      image: postgres
@@ -26,10 +24,7 @@ services:
        - "5432:5432"
 
    itstiloop:
-     image: ${DOCKER_REGISTRY-}itstiloop
-     build:
-       context: .
-       dockerfile: ITSTILoop/Dockerfile
+     image: mozdag.azurecr.io/itstiloop
      environment:
        DB_CONNECTION: PostgresComposeConnection
        SAMPLE_FSP_1: bankbethesda|BETHESDAAPIID|BETHESDAAPIKEY|0x4FB12e252800A12A3c58D9F3Fb3eD13F6d1A6092
@@ -42,10 +37,7 @@ services:
        - db
 
    bankbethesda:
-     image: ${DOCKER_REGISTRY-}itstiloopsamplefsp
-     build:
-       context: .
-       dockerfile: ITSTILoopSampleFSP/Dockerfile
+     image: mozdag.azurecr.io/itstiloopsamplefsp
      environment:
        FSP_NAME: BANKBETHESDA
        PARTICIPANT_ID: 1
@@ -59,10 +51,7 @@ services:
        - itstiloop
 
    bankwheaton:
-     image: ${DOCKER_REGISTRY-}itstiloopsamplefsp
-     build:
-       context: .
-       dockerfile: ITSTILoopSampleFSP/Dockerfile
+     image: mozdag.azurecr.io/itstiloopsamplefsp
      environment:
        FSP_NAME: BANKWHEATON
        PARTICIPANT_ID: 2

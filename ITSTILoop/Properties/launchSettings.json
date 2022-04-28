@@ -15,7 +15,11 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DB_CONNECTION": "PostgresConnection"
+        "DB_CONNECTION": "PostgresConnection",
+        "SAMPLE_FSP_1": "bankbethesda|BETHESDAAPIID|BETHESDAAPIKEY|0x4FB12e252800A12A3c58D9F3Fb3eD13F6d1A6092",
+        "SAMPLE_FSP_1_PARTIES": "5551234567|5551234568",
+        "SAMPLE_FSP_2": "bankwheaton|WHEATONAPIID|WHEATONAPIKEY|0x82e1f895C18aCF34E39763306b616bf6170257ea",
+        "SAMPLE_FSP_2_PARTIES": "5551234569|5551234566"
       },
       "applicationUrl": "https://localhost:7034;http://localhost:5034",
       "dotnetRunMessages": true

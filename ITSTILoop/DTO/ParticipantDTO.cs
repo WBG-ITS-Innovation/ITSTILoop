@@ -8,6 +8,7 @@ namespace ITSTILoop.DTO
         public string Name { get; set; }        
         public Uri PartyLookupEndpoint { get; set; }
         public Uri ConfirmTransferEndpoint { get; set; }
+        public string CBDCAddress { get; set; }
     }
 
     public class RegisterParticipantDTO

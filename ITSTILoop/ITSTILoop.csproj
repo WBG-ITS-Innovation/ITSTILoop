@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CBDCHubContract\CBDCHubContract.csproj" />
     <ProjectReference Include="..\ITSTILoopDTOLibrary\ITSTILoopDTOLibrary.csproj" />
   </ItemGroup>
 
