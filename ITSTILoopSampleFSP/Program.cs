@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using ITSTILoopDTOLibrary;
 using ITSTILoopSampleFSP.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 
 var name = Environment.GetEnvironmentVariable("FSP_NAME");
@@ -47,8 +48,17 @@ if (!app.Environment.IsDevelopment())
 
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger(c =>
+{
+    c.RouteTemplate = "swagger/{documentName}/swagger.json";
+    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+    {
+        
+        swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"https://itstiloop.azurewebsites.net/{name.ToLower()}" } };
+    });
+});
+app.UseSwaggerUI();
+
 //}
 
 //app.UseHttpsRedirection();
