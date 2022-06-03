@@ -1,9 +1,15 @@
-﻿using CBDCFPShubContract.Contracts.HubContract.ContractDefinition;
+﻿using CBDCHubContract.Contracts.HubContract;
+using CBDCHubContract.Contracts.HubContract.ContractDefinition;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nethereum.Contracts;
+using Nethereum.JsonRpc.Client;
+using Nethereum.Web3;
+using Nethereum.Web3.Accounts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,8 +33,11 @@ namespace CBDCHubContract.Services
         private readonly ILogger<CBDCBridgeService> _logger;
         private List<RegisteredFspDTO> _registeredFspDTOs = new List<RegisteredFspDTO>();
         private List<AccountFundedEventDTO> _fundedAccounts = new List<AccountFundedEventDTO>();
+        private readonly IOptions<EthereumConfig> _config;
+        private readonly Web3 _web3;
+        private readonly HubContractService _hubContractService;
 
-        public CBDCBridgeService(ILogger<CBDCBridgeService> logger, EthereumEventRetriever ethereumEventRetriever)
+        public CBDCBridgeService(ILogger<CBDCBridgeService> logger, EthereumEventRetriever ethereumEventRetriever, IOptions<EthereumConfig> config)
         {
             _ethereumEventRetriever = ethereumEventRetriever;
             _fspRegistrationHandler = _ethereumEventRetriever.CreateEventHandler<FSPRegistrationEventDTO>();
@@ -37,59 +46,37 @@ namespace CBDCHubContract.Services
             _fspPayout = _ethereumEventRetriever.CreateEventHandler<FSPpayoutEventDTO>();
             _fspDebt = _ethereumEventRetriever.CreateEventHandler<FSPdebtEventDTO>();
             _logger = logger;
+            _config = config;
+            IClient client = new RpcClient(new Uri(config.Value.RpcEndpoint));
+            _web3 = new Web3(new Account(config.Value.ContractOwnerKey, 1492), client);
+            _web3.TransactionManager.UseLegacyAsDefault = true;
+            _hubContractService = new HubContractService(_web3, _config.Value.ContractAddress);
         }
 
-        public async Task<List<RegisteredFspDTO>> GetRegisteredFSPAsync()
+        public async Task<Dictionary<string, decimal>> CheckBalancesAsync(List<string> addresses)
         {
-            _registeredFspDTOs.Clear();
-            await _ethereumEventRetriever.RetrievePastLogsAsync<FSPRegistrationEventDTO>(_fspRegistrationHandler, ProcessRegisteredFSPAsync, 0);
-            return _registeredFspDTOs;
-        }
-
-        public async Task<List<AccountFundedEventDTO>> GetFundEventsAsync()
-        {
-            _fundedAccounts.Clear();
-            await _ethereumEventRetriever.RetrievePastLogsAsync<AccountFundedEventDTO>(_accountFunded, ProcessAccountFundedAsync, 0);
-            return _fundedAccounts;
-        }
-
-        public async Task ProcessAccountFundedAsync(List<EventLog<AccountFundedEventDTO>> eventLogs)
-        {
-            try
+            Dictionary<string, decimal> result = new Dictionary<string, decimal>();
+            foreach(string address in addresses)
             {
-                foreach (var accountFundedEvent in eventLogs)
-                {
-                    _fundedAccounts.Add(accountFundedEvent.Event);
-                }
+                var balance = await _hubContractService.GetFSPBalanceQueryAsync(address);
+                result.Add(address, (decimal)balance);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"ProcessAccountFundedAsync-Error-{ex}");
-            }
+            return result;
         }
 
-        public async Task ProcessRegisteredFSPAsync(List<EventLog<FSPRegistrationEventDTO>> eventLogs)
+        public async Task SettleAccountsAsync(int settlementId, Dictionary<string, decimal> netSettlementValues)
         {
-            try
+            List<string> accounts = new List<string>();
+            List<BigInteger> positions = new List<BigInteger>();
+            foreach(KeyValuePair<string, decimal> kvp in netSettlementValues)
             {
-                foreach(var fspRegisteredEvent in eventLogs)
-                {
-                    RegisteredFspDTO registeredFspDTO = new RegisteredFspDTO();
-                    registeredFspDTO.Address = fspRegisteredEvent.Event.Addr;
-                    registeredFspDTO.Name = fspRegisteredEvent.Event.Name;
-                    registeredFspDTO.RegisteredFspId = fspRegisteredEvent.Event.Id;
-                    _registeredFspDTOs.Add(registeredFspDTO);
-                }
+                accounts.Add(kvp.Key);
+                positions.Add((BigInteger)kvp.Value);
             }
-            catch(Exception ex)
-            {
-                _logger.LogError($"ProcessRegisteredFSPAsync-Error-{ex}");
-            }
+            var result = await _hubContractService.MultilateralSettlementRequestAsync(settlementId, accounts, positions);            
         }
 
-        public async Task RegisterFSP(string name, string address, int id)
-        {
 
-        }
+
     }
 }

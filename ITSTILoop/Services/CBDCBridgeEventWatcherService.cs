@@ -1,4 +1,4 @@
-﻿using CBDCFPShubContract.Contracts.HubContract.ContractDefinition;
+﻿using CBDCHubContract.Contracts.HubContract.ContractDefinition;
 using CBDCHubContract.Services;
 using ITSTILoop.Context.Repositories.Interfaces;
 using Nethereum.Contracts;

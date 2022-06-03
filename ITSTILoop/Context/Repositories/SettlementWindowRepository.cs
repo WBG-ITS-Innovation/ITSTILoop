@@ -59,7 +59,7 @@ namespace ITSTILoop.Context.Repositories
                 Account? account = participant.Accounts.FirstOrDefault();
                 if (account != null)
                 {
-                    SettlementAccount settlementAccount = new SettlementAccount() { AccountId = account.AccountId, ParticipantName = participant.Name, NetSettlementAmount = account.Settlement };
+                    SettlementAccount settlementAccount = new SettlementAccount() { AccountId = account.AccountId, ParticipantName = participant.Name, NetSettlementAmount = account.Position };
                     settlementWindow.SettlementAccounts.Add(settlementAccount);
                 }
             }

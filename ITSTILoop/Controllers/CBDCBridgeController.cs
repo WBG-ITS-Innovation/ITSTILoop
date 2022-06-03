@@ -18,11 +18,7 @@ namespace ITSTILoop.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<RegisteredFspDTO>> GetRegisteredFSPs()
-        {
-            return await _bridgeService.GetRegisteredFSPAsync();
-        }
+
 
         [HttpPost("{participantId}")]
         public async Task<ActionResult> MapFSPs(int participantId, string cbdcAddress)

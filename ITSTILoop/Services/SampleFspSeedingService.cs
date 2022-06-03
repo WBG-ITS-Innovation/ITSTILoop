@@ -50,8 +50,6 @@ namespace ITSTILoop.Services
             var participant = CreateParticipant(participantText);
             if (participant != null)
             {
-                _participantRepository.FundParticipant(participant.ParticipantId, ITSTILoopDTOLibrary.CurrencyCodes.USD, 500);
-                _settlementWindowRepository.UpdateSettlementWindow();
                 CreateParties(participant.ParticipantId, partiesText);
             }
         }

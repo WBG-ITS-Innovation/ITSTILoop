@@ -1,18 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Numerics;
-using Nethereum.Hex.HexTypes;
-using Nethereum.ABI.FunctionEncoding.Attributes;
-using Nethereum.Web3;
 using Nethereum.RPC.Eth.DTOs;
-using Nethereum.Contracts.CQS;
 using Nethereum.Contracts.ContractHandlers;
-using Nethereum.Contracts;
-using System.Threading;
-using CBDCFPShubContract.Contracts.HubContract.ContractDefinition;
+using CBDCHubContract.Contracts.HubContract.ContractDefinition;
 
-namespace CBDCFPShubContract.Contracts.HubContract
+namespace CBDCHubContract.Contracts.HubContract
 {
     public partial class HubContractService
     {
@@ -70,6 +61,182 @@ namespace CBDCFPShubContract.Contracts.HubContract
              return ContractHandler.SendRequestAndWaitForReceiptAsync(debtFSPFunction, cancellationToken);
         }
 
+        public Task<string> FundFSPRequestAsync(FundFSPFunction fundFSPFunction)
+        {
+             return ContractHandler.SendRequestAsync(fundFSPFunction);
+        }
+
+        public Task<TransactionReceipt> FundFSPRequestAndWaitForReceiptAsync(FundFSPFunction fundFSPFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(fundFSPFunction, cancellationToken);
+        }
+
+        public Task<string> FundFSPRequestAsync(BigInteger numTokens)
+        {
+            var fundFSPFunction = new FundFSPFunction();
+                fundFSPFunction.NumTokens = numTokens;
+            
+             return ContractHandler.SendRequestAsync(fundFSPFunction);
+        }
+
+        public Task<TransactionReceipt> FundFSPRequestAndWaitForReceiptAsync(BigInteger numTokens, CancellationTokenSource cancellationToken = null)
+        {
+            var fundFSPFunction = new FundFSPFunction();
+                fundFSPFunction.NumTokens = numTokens;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(fundFSPFunction, cancellationToken);
+        }
+
+        public Task<string> GetCBDCTokenQueryAsync(GetCBDCTokenFunction getCBDCTokenFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<GetCBDCTokenFunction, string>(getCBDCTokenFunction, blockParameter);
+        }
+
+        
+        public Task<string> GetCBDCTokenQueryAsync(BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<GetCBDCTokenFunction, string>(null, blockParameter);
+        }
+
+        public Task<BigInteger> GetContractBalanceQueryAsync(GetContractBalanceFunction getContractBalanceFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<GetContractBalanceFunction, BigInteger>(getContractBalanceFunction, blockParameter);
+        }
+
+        
+        public Task<BigInteger> GetContractBalanceQueryAsync(BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<GetContractBalanceFunction, BigInteger>(null, blockParameter);
+        }
+
+        public Task<BigInteger> GetFSPBalanceQueryAsync(GetFSPBalanceFunction getFSPBalanceFunction, BlockParameter blockParameter = null)
+        {
+            return ContractHandler.QueryAsync<GetFSPBalanceFunction, BigInteger>(getFSPBalanceFunction, blockParameter);
+        }
+
+        
+        public Task<BigInteger> GetFSPBalanceQueryAsync(string fspAddress, BlockParameter blockParameter = null)
+        {
+            var getFSPBalanceFunction = new GetFSPBalanceFunction();
+                getFSPBalanceFunction.FspAddress = fspAddress;
+            
+            return ContractHandler.QueryAsync<GetFSPBalanceFunction, BigInteger>(getFSPBalanceFunction, blockParameter);
+        }
+
+        public Task<string> MultilateralSettlementRequestAsync(MultilateralSettlementFunction multilateralSettlementFunction)
+        {
+             return ContractHandler.SendRequestAsync(multilateralSettlementFunction);
+        }
+
+        public Task<TransactionReceipt> MultilateralSettlementRequestAndWaitForReceiptAsync(MultilateralSettlementFunction multilateralSettlementFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(multilateralSettlementFunction, cancellationToken);
+        }
+
+        public Task<string> MultilateralSettlementRequestAsync(BigInteger settlementId, List<string> accounts, List<BigInteger> positions)
+        {
+            var multilateralSettlementFunction = new MultilateralSettlementFunction();
+                multilateralSettlementFunction.SettlementId = settlementId;
+                multilateralSettlementFunction.Accounts = accounts;
+                multilateralSettlementFunction.Positions = positions;
+            
+             return ContractHandler.SendRequestAsync(multilateralSettlementFunction);
+        }
+
+        public Task<TransactionReceipt> MultilateralSettlementRequestAndWaitForReceiptAsync(BigInteger settlementId, List<string> accounts, List<BigInteger> positions, CancellationTokenSource cancellationToken = null)
+        {
+            var multilateralSettlementFunction = new MultilateralSettlementFunction();
+                multilateralSettlementFunction.SettlementId = settlementId;
+                multilateralSettlementFunction.Accounts = accounts;
+                multilateralSettlementFunction.Positions = positions;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(multilateralSettlementFunction, cancellationToken);
+        }
+
+        public Task<string> PayoutFSPRequestAsync(PayoutFSPFunction payoutFSPFunction)
+        {
+             return ContractHandler.SendRequestAsync(payoutFSPFunction);
+        }
+
+        public Task<TransactionReceipt> PayoutFSPRequestAndWaitForReceiptAsync(PayoutFSPFunction payoutFSPFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(payoutFSPFunction, cancellationToken);
+        }
+
+        public Task<string> PayoutFSPRequestAsync(string payee, BigInteger numTokens)
+        {
+            var payoutFSPFunction = new PayoutFSPFunction();
+                payoutFSPFunction.Payee = payee;
+                payoutFSPFunction.NumTokens = numTokens;
+            
+             return ContractHandler.SendRequestAsync(payoutFSPFunction);
+        }
+
+        public Task<TransactionReceipt> PayoutFSPRequestAndWaitForReceiptAsync(string payee, BigInteger numTokens, CancellationTokenSource cancellationToken = null)
+        {
+            var payoutFSPFunction = new PayoutFSPFunction();
+                payoutFSPFunction.Payee = payee;
+                payoutFSPFunction.NumTokens = numTokens;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(payoutFSPFunction, cancellationToken);
+        }
+
+        public Task<string> RegisterFSPRequestAsync(RegisterFSPFunction registerFSPFunction)
+        {
+             return ContractHandler.SendRequestAsync(registerFSPFunction);
+        }
+
+        public Task<TransactionReceipt> RegisterFSPRequestAndWaitForReceiptAsync(RegisterFSPFunction registerFSPFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(registerFSPFunction, cancellationToken);
+        }
+
+        public Task<string> RegisterFSPRequestAsync(string fspAddress, string fspName, string fspId)
+        {
+            var registerFSPFunction = new RegisterFSPFunction();
+                registerFSPFunction.FspAddress = fspAddress;
+                registerFSPFunction.FspName = fspName;
+                registerFSPFunction.FspId = fspId;
+            
+             return ContractHandler.SendRequestAsync(registerFSPFunction);
+        }
+
+        public Task<TransactionReceipt> RegisterFSPRequestAndWaitForReceiptAsync(string fspAddress, string fspName, string fspId, CancellationTokenSource cancellationToken = null)
+        {
+            var registerFSPFunction = new RegisterFSPFunction();
+                registerFSPFunction.FspAddress = fspAddress;
+                registerFSPFunction.FspName = fspName;
+                registerFSPFunction.FspId = fspId;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(registerFSPFunction, cancellationToken);
+        }
+
+        public Task<string> SetCBDCTokenRequestAsync(SetCBDCTokenFunction setCBDCTokenFunction)
+        {
+             return ContractHandler.SendRequestAsync(setCBDCTokenFunction);
+        }
+
+        public Task<TransactionReceipt> SetCBDCTokenRequestAndWaitForReceiptAsync(SetCBDCTokenFunction setCBDCTokenFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setCBDCTokenFunction, cancellationToken);
+        }
+
+        public Task<string> SetCBDCTokenRequestAsync(string tokenAddress)
+        {
+            var setCBDCTokenFunction = new SetCBDCTokenFunction();
+                setCBDCTokenFunction.TokenAddress = tokenAddress;
+            
+             return ContractHandler.SendRequestAsync(setCBDCTokenFunction);
+        }
+
+        public Task<TransactionReceipt> SetCBDCTokenRequestAndWaitForReceiptAsync(string tokenAddress, CancellationTokenSource cancellationToken = null)
+        {
+            var setCBDCTokenFunction = new SetCBDCTokenFunction();
+                setCBDCTokenFunction.TokenAddress = tokenAddress;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(setCBDCTokenFunction, cancellationToken);
+        }
+
         public Task<string> SetOwnerRequestAsync(SetOwnerFunction setOwnerFunction)
         {
              return ContractHandler.SendRequestAsync(setOwnerFunction);
@@ -80,18 +247,18 @@ namespace CBDCFPShubContract.Contracts.HubContract
              return ContractHandler.SendRequestAndWaitForReceiptAsync(setOwnerFunction, cancellationToken);
         }
 
-        public Task<string> SetOwnerRequestAsync(string owner)
+        public Task<string> SetOwnerRequestAsync(string ownerAddress)
         {
             var setOwnerFunction = new SetOwnerFunction();
-                setOwnerFunction.Owner = owner;
+                setOwnerFunction.OwnerAddress = ownerAddress;
             
              return ContractHandler.SendRequestAsync(setOwnerFunction);
         }
 
-        public Task<TransactionReceipt> SetOwnerRequestAndWaitForReceiptAsync(string owner, CancellationTokenSource cancellationToken = null)
+        public Task<TransactionReceipt> SetOwnerRequestAndWaitForReceiptAsync(string ownerAddress, CancellationTokenSource cancellationToken = null)
         {
             var setOwnerFunction = new SetOwnerFunction();
-                setOwnerFunction.Owner = owner;
+                setOwnerFunction.OwnerAddress = ownerAddress;
             
              return ContractHandler.SendRequestAndWaitForReceiptAsync(setOwnerFunction, cancellationToken);
         }
@@ -126,69 +293,6 @@ namespace CBDCFPShubContract.Contracts.HubContract
              return ContractHandler.SendRequestAndWaitForReceiptAsync(settleAccountFunction, cancellationToken);
         }
 
-        public Task<string> FundFSPRequestAsync(FundFSPFunction fundFSPFunction)
-        {
-             return ContractHandler.SendRequestAsync(fundFSPFunction);
-        }
-
-        public Task<TransactionReceipt> FundFSPRequestAndWaitForReceiptAsync(FundFSPFunction fundFSPFunction, CancellationTokenSource cancellationToken = null)
-        {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(fundFSPFunction, cancellationToken);
-        }
-
-        public Task<string> FundFSPRequestAsync(BigInteger numTokens)
-        {
-            var fundFSPFunction = new FundFSPFunction();
-                fundFSPFunction.NumTokens = numTokens;
-            
-             return ContractHandler.SendRequestAsync(fundFSPFunction);
-        }
-
-        public Task<TransactionReceipt> FundFSPRequestAndWaitForReceiptAsync(BigInteger numTokens, CancellationTokenSource cancellationToken = null)
-        {
-            var fundFSPFunction = new FundFSPFunction();
-                fundFSPFunction.NumTokens = numTokens;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(fundFSPFunction, cancellationToken);
-        }
-
-        public Task<BigInteger> ContractBalanceQueryAsync(ContractBalanceFunction contractBalanceFunction, BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<ContractBalanceFunction, BigInteger>(contractBalanceFunction, blockParameter);
-        }
-
-        
-        public Task<BigInteger> ContractBalanceQueryAsync(BlockParameter blockParameter = null)
-        {
-            return ContractHandler.QueryAsync<ContractBalanceFunction, BigInteger>(null, blockParameter);
-        }
-
-        public Task<string> SetCBDCTokenRequestAsync(SetCBDCTokenFunction setCBDCTokenFunction)
-        {
-             return ContractHandler.SendRequestAsync(setCBDCTokenFunction);
-        }
-
-        public Task<TransactionReceipt> SetCBDCTokenRequestAndWaitForReceiptAsync(SetCBDCTokenFunction setCBDCTokenFunction, CancellationTokenSource cancellationToken = null)
-        {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(setCBDCTokenFunction, cancellationToken);
-        }
-
-        public Task<string> SetCBDCTokenRequestAsync(string tokenaddr)
-        {
-            var setCBDCTokenFunction = new SetCBDCTokenFunction();
-                setCBDCTokenFunction.Tokenaddr = tokenaddr;
-            
-             return ContractHandler.SendRequestAsync(setCBDCTokenFunction);
-        }
-
-        public Task<TransactionReceipt> SetCBDCTokenRequestAndWaitForReceiptAsync(string tokenaddr, CancellationTokenSource cancellationToken = null)
-        {
-            var setCBDCTokenFunction = new SetCBDCTokenFunction();
-                setCBDCTokenFunction.Tokenaddr = tokenaddr;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(setCBDCTokenFunction, cancellationToken);
-        }
-
         public Task<BigInteger> SettlementBalanceOfQueryAsync(SettlementBalanceOfFunction settlementBalanceOfFunction, BlockParameter blockParameter = null)
         {
             return ContractHandler.QueryAsync<SettlementBalanceOfFunction, BigInteger>(settlementBalanceOfFunction, blockParameter);
@@ -201,64 +305,6 @@ namespace CBDCFPShubContract.Contracts.HubContract
                 settlementBalanceOfFunction.TokenOwner = tokenOwner;
             
             return ContractHandler.QueryAsync<SettlementBalanceOfFunction, BigInteger>(settlementBalanceOfFunction, blockParameter);
-        }
-
-        public Task<string> RegisterFSPRequestAsync(RegisterFSPFunction registerFSPFunction)
-        {
-             return ContractHandler.SendRequestAsync(registerFSPFunction);
-        }
-
-        public Task<TransactionReceipt> RegisterFSPRequestAndWaitForReceiptAsync(RegisterFSPFunction registerFSPFunction, CancellationTokenSource cancellationToken = null)
-        {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(registerFSPFunction, cancellationToken);
-        }
-
-        public Task<string> RegisterFSPRequestAsync(string addr, string name, string id)
-        {
-            var registerFSPFunction = new RegisterFSPFunction();
-                registerFSPFunction.Addr = addr;
-                registerFSPFunction.Name = name;
-                registerFSPFunction.Id = id;
-            
-             return ContractHandler.SendRequestAsync(registerFSPFunction);
-        }
-
-        public Task<TransactionReceipt> RegisterFSPRequestAndWaitForReceiptAsync(string addr, string name, string id, CancellationTokenSource cancellationToken = null)
-        {
-            var registerFSPFunction = new RegisterFSPFunction();
-                registerFSPFunction.Addr = addr;
-                registerFSPFunction.Name = name;
-                registerFSPFunction.Id = id;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(registerFSPFunction, cancellationToken);
-        }
-
-        public Task<string> PayoutFSPRequestAsync(PayoutFSPFunction payoutFSPFunction)
-        {
-             return ContractHandler.SendRequestAsync(payoutFSPFunction);
-        }
-
-        public Task<TransactionReceipt> PayoutFSPRequestAndWaitForReceiptAsync(PayoutFSPFunction payoutFSPFunction, CancellationTokenSource cancellationToken = null)
-        {
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(payoutFSPFunction, cancellationToken);
-        }
-
-        public Task<string> PayoutFSPRequestAsync(string payee, BigInteger numTokens)
-        {
-            var payoutFSPFunction = new PayoutFSPFunction();
-                payoutFSPFunction.Payee = payee;
-                payoutFSPFunction.NumTokens = numTokens;
-            
-             return ContractHandler.SendRequestAsync(payoutFSPFunction);
-        }
-
-        public Task<TransactionReceipt> PayoutFSPRequestAndWaitForReceiptAsync(string payee, BigInteger numTokens, CancellationTokenSource cancellationToken = null)
-        {
-            var payoutFSPFunction = new PayoutFSPFunction();
-                payoutFSPFunction.Payee = payee;
-                payoutFSPFunction.NumTokens = numTokens;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(payoutFSPFunction, cancellationToken);
         }
     }
 }

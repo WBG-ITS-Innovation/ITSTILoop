@@ -92,7 +92,7 @@ builder.Services.AddTransient<CBDCBridgeService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
 builder.Services.AddHostedService<TimedSettlementWindowService>();
-builder.Services.AddHostedService<CBDCBridgeEventWatcherService>();
+//builder.Services.AddHostedService<CBDCBridgeEventWatcherService>();
 
 
 var app = builder.Build();
