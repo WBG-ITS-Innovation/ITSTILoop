@@ -1,4 +1,5 @@
-﻿using ITSTILoop.Attributes;
+﻿using CBDCHubContract.Services;
+using ITSTILoop.Attributes;
 using ITSTILoop.Context.Repositories;
 using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Model;
@@ -14,12 +15,14 @@ namespace ITSTILoop.Controllers
     public class SettlementController : ControllerBase
     {
         private readonly ILogger<SettlementController> _logger;        
-        private readonly ISettlementWindowRepository _settlementWindowRepository;        
+        private readonly ISettlementWindowRepository _settlementWindowRepository;
+        private readonly CBDCBridgeService _cbdcBridgeService;
 
-        public SettlementController(ILogger<SettlementController> logger, ISettlementWindowRepository settlementWindowRepository)
+        public SettlementController(ILogger<SettlementController> logger, ISettlementWindowRepository settlementWindowRepository, CBDCBridgeService cBDCBridgeService)
         {
             _logger = logger;            
-            _settlementWindowRepository = settlementWindowRepository;            
+            _settlementWindowRepository = settlementWindowRepository;
+            _cbdcBridgeService = cBDCBridgeService;
         }
 
         [HttpGet(Name = "GetSettlementWindows")]
@@ -28,11 +31,14 @@ namespace ITSTILoop.Controllers
             return _settlementWindowRepository.GetAll();
         }
 
-        [HttpPost("{windowId}")]
-        public ActionResult<bool> Post(int windowId)
+        [HttpPost("{settlementId}")]
+        public async Task<ActionResult> Post(int settlementId)
         {
-            _settlementWindowRepository.SettleSettlementWindow();
-            return true;
+            //initiate the settlement
+            var netSettlementDictionary = _settlementWindowRepository.GetNetSettlementDictionary();
+            //TODO: We need some error/exception checking here
+            await _cbdcBridgeService.SettleAccountsAsync(settlementId, netSettlementDictionary);
+            return Ok();
         }
     }
 }

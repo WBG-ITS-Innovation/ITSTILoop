@@ -56,24 +56,31 @@ namespace CBDCHubContract.Services
         public async Task<Dictionary<string, decimal>> CheckBalancesAsync(List<string> addresses)
         {
             Dictionary<string, decimal> result = new Dictionary<string, decimal>();
-            foreach(string address in addresses)
+            foreach (string address in addresses)
             {
-                var balance = await _hubContractService.GetFSPBalanceQueryAsync(address);
-                result.Add(address, (decimal)balance);
+                var balance = await CheckBalanceAsync(address);
+                result.Add(address, balance);
             }
             return result;
+        }
+
+        public async Task<decimal> CheckBalanceAsync(string fspAddress)
+        {
+            Decimal balance = 0;
+            balance = (decimal)await _hubContractService.GetFSPBalanceQueryAsync(fspAddress);
+            return balance;
         }
 
         public async Task SettleAccountsAsync(int settlementId, Dictionary<string, decimal> netSettlementValues)
         {
             List<string> accounts = new List<string>();
             List<BigInteger> positions = new List<BigInteger>();
-            foreach(KeyValuePair<string, decimal> kvp in netSettlementValues)
+            foreach (KeyValuePair<string, decimal> kvp in netSettlementValues)
             {
                 accounts.Add(kvp.Key);
                 positions.Add((BigInteger)kvp.Value);
             }
-            var result = await _hubContractService.MultilateralSettlementRequestAsync(settlementId, accounts, positions);            
+            var result = await _hubContractService.MultilateralSettlementRequestAsync(settlementId, accounts, positions);
         }
 
 

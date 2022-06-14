@@ -11,8 +11,9 @@ namespace ITSTILoop.Services
         private readonly ILogger<CBDCBridgeEventWatcherService> _logger;
         private readonly EthereumEventRetriever _ethereumEventRetriever;
         private readonly IParticipantRepository _participantRepository;
+        private readonly ISettlementWindowRepository _settlementWindowRepository;
         private Event<AccountFundedEventDTO> _accountFunded;
-        private Event<SettlementEventDTO> _settlement;
+        private Event<MultilateralSettlementEventDTO> _settlement;
         private Event<FSPpayoutEventDTO> _fspPayout;
         private Event<FSPdebtEventDTO> _fspDebt;
 
@@ -21,15 +22,11 @@ namespace ITSTILoop.Services
             _logger = logger;
             _ethereumEventRetriever = ethereumEventRetriever;
             _participantRepository = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IParticipantRepository>();
-            CreateEventHandlers();
-        }
-
-        public void CreateEventHandlers()
-        {
+            _settlementWindowRepository = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<ISettlementWindowRepository>();
             _accountFunded = _ethereumEventRetriever.CreateEventHandler<AccountFundedEventDTO>();
-            _settlement = _ethereumEventRetriever.CreateEventHandler<SettlementEventDTO>();
+            _settlement = _ethereumEventRetriever.CreateEventHandler<MultilateralSettlementEventDTO>();
             _fspPayout = _ethereumEventRetriever.CreateEventHandler<FSPpayoutEventDTO>();
-            _fspDebt = _ethereumEventRetriever.CreateEventHandler<FSPdebtEventDTO>();            
+            _fspDebt = _ethereumEventRetriever.CreateEventHandler<FSPdebtEventDTO>();
         }
 
         public async Task BlockHandler(BlockParameter start, BlockParameter end)
@@ -40,9 +37,9 @@ namespace ITSTILoop.Services
                 //await _ethereumEventRetriever.RetrievePastLogsAsync<CoopAddedEventDTO>(_coopHandler, ProcessCoopAddedLogsAsync, start, end);
                 //await _ethereumEventRetriever.RetrievePastLogsAsync<VendorAddedEventDTO>(_vendorHandler, ProcessVendorAddedLogsAsync, start, end);
                 await _ethereumEventRetriever.RetrievePastLogsAsync<AccountFundedEventDTO>(_accountFunded, ProcessAccountFundedAsync, start, end);
-                await _ethereumEventRetriever.RetrievePastLogsAsync<SettlementEventDTO>(_settlement, ProcessSettlementAsync, start, end);
-                await _ethereumEventRetriever.RetrievePastLogsAsync<FSPpayoutEventDTO>(_fspPayout, ProcessFspPayoutAsync, start, end);
-                await _ethereumEventRetriever.RetrievePastLogsAsync<FSPdebtEventDTO>(_fspDebt, ProcessFspDebtAsync, start, end);
+                await _ethereumEventRetriever.RetrievePastLogsAsync<MultilateralSettlementEventDTO>(_settlement, ProcessSettlementAsync, start, end);
+                //await _ethereumEventRetriever.RetrievePastLogsAsync<FSPpayoutEventDTO>(_fspPayout, ProcessFspPayoutAsync, start, end);
+                //await _ethereumEventRetriever.RetrievePastLogsAsync<FSPdebtEventDTO>(_fspDebt, ProcessFspDebtAsync, start, end);
             }
             catch (Exception ex)
             {
@@ -62,10 +59,14 @@ namespace ITSTILoop.Services
             //throw new NotImplementedException();
         }
 
-        private async Task ProcessSettlementAsync(List<EventLog<SettlementEventDTO>> arg)
+        private async Task ProcessSettlementAsync(List<EventLog<MultilateralSettlementEventDTO>> arg)
         {
             _logger.LogInformation($"ProcessSettlementAsync-{arg.Count}");
-            //throw new NotImplementedException();
+            foreach (var log in arg)
+            {
+                _logger.LogInformation($"ProcessSettlementAsync-{log.Event.SettlementId}");
+                _settlementWindowRepository.SettleSettlementWindow();
+            }
         }
 
         private async Task ProcessAccountFundedAsync(List<EventLog<AccountFundedEventDTO>> arg)
@@ -74,11 +75,7 @@ namespace ITSTILoop.Services
             foreach (var log in arg)
             {
                 _logger.LogInformation($"ProcessAccountFundedAsync-{log.Event.Fsp}");
-                var part = _participantRepository.Find(k => k.CBDCAddress == log.Event.Fsp).First();
-                if (part != null)
-                {
-                    part.FundAccount(ITSTILoopDTOLibrary.CurrencyCodes.USD, (decimal) log.Event.Tokens);
-                }
+                _participantRepository.FundParticipant(log.Event.Fsp, (decimal) log.Event.Tokens);                
             }
         }
 

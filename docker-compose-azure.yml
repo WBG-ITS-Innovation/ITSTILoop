@@ -13,7 +13,7 @@ services:
         - "443:443"
 
    db:
-     image: postgres
+     image: mozdag.azurecr.io/postgres
      restart: always
      environment:
        POSTGRES_PASSWORD: example

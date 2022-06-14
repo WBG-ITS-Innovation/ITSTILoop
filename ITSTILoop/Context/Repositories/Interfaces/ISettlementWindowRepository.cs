@@ -6,6 +6,7 @@ namespace ITSTILoop.Context.Repositories.Interfaces
     {
         void CloseOpenSettlementWindow();
         SettlementWindow CreateNewSettlementWindow();
+        Dictionary<string, decimal> GetNetSettlementDictionary();
         void SettleSettlementWindow();
         void UpdateSettlementWindow();
     }

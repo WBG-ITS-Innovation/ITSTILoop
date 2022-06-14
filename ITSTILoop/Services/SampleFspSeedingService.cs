@@ -3,6 +3,7 @@ using ITSTILoop.Helpers;
 using ITSTILoop.Model;
 using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services.Interfaces;
+using CBDCHubContract.Services;
 
 namespace ITSTILoop.Services
 {
@@ -11,12 +12,14 @@ namespace ITSTILoop.Services
         private readonly ILogger<SampleFspSeedingService> _logger;
         private readonly IParticipantRepository _participantRepository;
         private readonly ISettlementWindowRepository _settlementWindowRepository;
+        private readonly CBDCBridgeService _cbdcBridgeService;
 
-        public SampleFspSeedingService(ILogger<SampleFspSeedingService> logger, IParticipantRepository participantRepository, ISettlementWindowRepository settlementWindowRepository)
+        public SampleFspSeedingService(ILogger<SampleFspSeedingService> logger, IParticipantRepository participantRepository, ISettlementWindowRepository settlementWindowRepository, CBDCBridgeService cBDCBridgeService)
         {
             _logger = logger;
             _participantRepository = participantRepository;
             _settlementWindowRepository = settlementWindowRepository;
+            _cbdcBridgeService = cBDCBridgeService;
         }
 
         public Participant? CreateParticipant(string participantText)
@@ -45,11 +48,17 @@ namespace ITSTILoop.Services
             }
         }
 
-        public void SeedFsp(string participantText, string partiesText)
+        public async Task SeedFspAsync(string participantText, string partiesText)
         {
             var participant = CreateParticipant(participantText);
             if (participant != null)
             {
+                var balance = await _cbdcBridgeService.CheckBalanceAsync(participant.CBDCAddress);
+                _logger.LogInformation($"Participant {participant.Name} {participant.CBDCAddress} balance = {balance}");
+                participant.CreateAccount(ITSTILoopDTOLibrary.CurrencyCodes.USD);
+                participant.FundAccount(ITSTILoopDTOLibrary.CurrencyCodes.USD, balance);
+                _participantRepository.Save();
+                _settlementWindowRepository.UpdateSettlementWindow();
                 CreateParties(participant.ParticipantId, partiesText);
             }
         }

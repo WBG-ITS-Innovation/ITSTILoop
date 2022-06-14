@@ -65,5 +65,15 @@ namespace ITSTILoop.Context.Repositories
             Save();
             return participant;
         }
+
+        public void FundParticipant(string cbdcAddress, decimal tokens)
+        {
+            var part = _context.Participants.Include(k => k.Accounts).FirstOrDefault(k => k.CBDCAddress.ToUpper() == cbdcAddress.ToUpper());
+            if (part != null)
+            {
+                part.FundAccount(ITSTILoopDTOLibrary.CurrencyCodes.USD, tokens);
+                _context.SaveChanges();
+            }
+        }
     }
 }

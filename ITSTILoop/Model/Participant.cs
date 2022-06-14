@@ -20,12 +20,15 @@ namespace ITSTILoop.Model
             if (account != null)
             {
                 account.FundsIn(amount);
-            }
-            else
+            }            
+        }
+
+        public void CreateAccount(CurrencyCodes currency)
+        {
+            Account? account = Accounts.FirstOrDefault(k => k.Currency == currency);
+            if (account == null)
             {
-                Account newAccount = new Account() { Currency = currency };
-                newAccount.FundsIn(amount);
-                Accounts.Add(newAccount);
+                Accounts.Add(new Account() { Currency = currency });
             }
         }
     }

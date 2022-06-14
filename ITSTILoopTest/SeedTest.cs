@@ -2,6 +2,7 @@
 using System.Linq;
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using CBDCHubContract.Services;
 using EntityFrameworkCore.AutoFixture.InMemory;
 using FluentAssertions;
 using ITSTILoop.Context;
@@ -48,9 +49,11 @@ namespace ITSTILoopTest
             var participantRepository = new ParticipantRepository(_context);
             var loggerMock = new Mock<ILogger<SampleFspSeedingService>>();
             var settlementMon = new Mock<ISettlementWindowRepository>();
-            var sut = new SampleFspSeedingService(loggerMock.Object, participantRepository, settlementMon.Object);
+            var cbdcMock = new Mock<CBDCBridgeService>();
+
+            var sut = new SampleFspSeedingService(loggerMock.Object, participantRepository, settlementMon.Object, cbdcMock.Object);
             //act
-            sut.SeedFsp(participantText, partiesText);
+            sut.SeedFspAsync(participantText, partiesText);
             //assert
             var participant = _context.Participants.Include(k => k.Parties).FirstOrDefault();
             participant.Name.Should().Be(name);

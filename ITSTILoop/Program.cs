@@ -92,7 +92,7 @@ builder.Services.AddTransient<CBDCBridgeService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
 builder.Services.AddHostedService<TimedSettlementWindowService>();
-//builder.Services.AddHostedService<CBDCBridgeEventWatcherService>();
+builder.Services.AddHostedService<CBDCBridgeEventWatcherService>();
 
 
 var app = builder.Build();
@@ -108,12 +108,15 @@ try
         context?.Database.EnsureDeleted();
         context?.Database.EnsureCreated();
         SampleFspSeedingService? seeding = (SampleFspSeedingService?)scope.ServiceProvider.GetRequiredService<ISampleFspSeedingService>();
-        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1, EnvVarDefaultValues.SAMPLE_FSP_1),
-            EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_1_PARTIES));
-        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2, EnvVarDefaultValues.SAMPLE_FSP_2),
-                    EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_2_PARTIES));
-        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_3, EnvVarDefaultValues.SAMPLE_FSP_3),
-                    EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_3_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_3_PARTIES));
+        if (seeding != null)
+        {
+            seeding.SeedFspAsync(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1, EnvVarDefaultValues.SAMPLE_FSP_1),
+                EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_1_PARTIES)).Wait();
+            seeding.SeedFspAsync(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2, EnvVarDefaultValues.SAMPLE_FSP_2),
+                        EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_2_PARTIES)).Wait();
+            seeding.SeedFspAsync(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_3, EnvVarDefaultValues.SAMPLE_FSP_3),
+                        EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_3_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_3_PARTIES)).Wait();
+        }
     }
 }
 catch (Exception ex)

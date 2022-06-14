@@ -1,7 +1,7 @@
 ﻿namespace ITSTILoop.Services.Interfaces
 {
     public interface ISampleFspSeedingService
-    {
-        void SeedFsp(string participantText, string partiesText);
+    {        
+        Task SeedFspAsync(string participantText, string partiesText);
     }
 }
