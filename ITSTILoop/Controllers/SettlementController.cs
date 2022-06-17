@@ -35,7 +35,7 @@ namespace ITSTILoop.Controllers
         public async Task<ActionResult> Post(int settlementId)
         {
             //initiate the settlement
-            var netSettlementDictionary = _settlementWindowRepository.GetNetSettlementDictionary();
+            var netSettlementDictionary = _settlementWindowRepository.GetNetSettlementDictionary(settlementId);
             //TODO: We need some error/exception checking here
             await _cbdcBridgeService.SettleAccountsAsync(settlementId, netSettlementDictionary);
             return Ok();

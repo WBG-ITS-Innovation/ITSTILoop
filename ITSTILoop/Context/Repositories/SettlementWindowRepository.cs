@@ -97,13 +97,13 @@ namespace ITSTILoop.Context.Repositories
             _context.SaveChanges();
         }
 
-        public Dictionary<string, decimal> GetNetSettlementDictionary()
+        public Dictionary<string, decimal> GetNetSettlementDictionary(int id)
         {
             Dictionary<string, decimal> result = new Dictionary<string, decimal>();
-            SettlementWindow? settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.Status == SettlementWindowStatuses.Open);
+            SettlementWindow? settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.SettlementWindowId == id);
             if (settlementWindow != null)
             {
-                foreach (var participant in _context.Participants)
+                foreach (var participant in _context.Participants.Include(k => k.Accounts))
                 {
                     Account? account = participant.Accounts.FirstOrDefault();
                     if (account != null)

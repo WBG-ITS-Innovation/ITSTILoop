@@ -80,6 +80,7 @@ namespace CBDCHubContract.Services
                 accounts.Add(kvp.Key);
                 positions.Add((BigInteger)kvp.Value);
             }
+
             var result = await _hubContractService.MultilateralSettlementRequestAsync(settlementId, accounts, positions);
         }
 
