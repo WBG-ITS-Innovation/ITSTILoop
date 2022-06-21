@@ -21,7 +21,7 @@ namespace ITSTILoop.Context.Repositories
             SettlementWindow? settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.Status == SettlementWindowStatuses.Open);
             if (settlementWindow != null)
             {
-                foreach (var participant in _context.Participants)
+                foreach (var participant in _context.Participants.Include(k => k.Accounts))
                 {
                     Account? account = participant.Accounts.FirstOrDefault();
                     if (account != null)
@@ -34,7 +34,7 @@ namespace ITSTILoop.Context.Repositories
                     }
                 }
                 settlementWindow.Status = SettlementWindowStatuses.Settled;
-                settlementWindow.ModifiedAt = DateTime.Now;
+                settlementWindow.ModifiedAt = DateTime.Now.ToUniversalTime();
                 CreateNewSettlementWindow();
             }
             _context.SaveChanges();
