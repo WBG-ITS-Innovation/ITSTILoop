@@ -30,10 +30,11 @@ namespace ITSTILoop.Services
                 string name = splitText[0];
                 string apiId = splitText[1];
                 string apiKey = splitText[2];
-                string cdbcAddress = splitText[3];
+                string cdbcAddress = splitText[3];                
                 string lookupEndpoint = $"http://{name}/itstiloop/ITSTILoopPartyLookup";
                 string transferEndpoint = $"http://{name}/itstiloop/ITSTILoopTransfer";
-                return _participantRepository.CreateParticipant(name, apiId, apiKey, new Uri(lookupEndpoint), new Uri(transferEndpoint), cdbcAddress);
+                var participant = _participantRepository.CreateParticipant(name, apiId, apiKey, new Uri(lookupEndpoint), new Uri(transferEndpoint), cdbcAddress);
+                return participant;
             }
             return null;
         }

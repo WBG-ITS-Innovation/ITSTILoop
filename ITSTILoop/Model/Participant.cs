@@ -31,5 +31,14 @@ namespace ITSTILoop.Model
                 Accounts.Add(new Account() { Currency = currency });
             }
         }
+
+        public void SetPosition(decimal position, CurrencyCodes currency)
+        {
+            Account? account = Accounts.FirstOrDefault(k => k.Currency == currency);
+            if (account != null)
+            {
+                account.Position = position;
+            }
+        }
     }
 }

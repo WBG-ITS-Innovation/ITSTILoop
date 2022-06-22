@@ -75,5 +75,22 @@ namespace ITSTILoop.Context.Repositories
                 _context.SaveChanges();
             }
         }
+
+        public void ModifyParticipant(int participantId, CurrencyCodes currency, decimal position, decimal netSettlement)
+        {
+            var part = _context.Participants.Include(k => k.Accounts).FirstOrDefault(k => k.ParticipantId == participantId);
+            if (part != null)
+            {
+                var account = part.Accounts.FirstOrDefault(k => k.Currency == currency);
+                if (account != null)
+                {
+                    account.Position = position;
+                    account.Settlement = netSettlement;
+                    _context.SaveChanges();
+                }
+                
+
+            }
+        }
     }
 }

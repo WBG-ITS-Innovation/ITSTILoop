@@ -63,5 +63,14 @@ namespace ITSTILoop.Controllers
             _settlementWindowRepository.UpdateSettlementWindow();
             return Ok();
         }
+
+        [Route("Modify")]
+        [HttpPost]
+        public ActionResult ModifyParticipant([FromBody] ModifyParticipantDTO modifyParticipantDTO)
+        {
+            _participantRepository.ModifyParticipant(modifyParticipantDTO.ParticipantId, modifyParticipantDTO.Currency, modifyParticipantDTO.Position, modifyParticipantDTO.NetSettlement);
+            _settlementWindowRepository.UpdateSettlementWindow();
+            return Ok();
+        }
     }
 }

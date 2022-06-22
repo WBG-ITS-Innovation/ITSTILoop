@@ -14,20 +14,20 @@ namespace ITSTILoop.Controllers
     [ApiKey]
     public class SettlementController : ControllerBase
     {
-        private readonly ILogger<SettlementController> _logger;        
+        private readonly ILogger<SettlementController> _logger;
         private readonly ISettlementWindowRepository _settlementWindowRepository;
         private readonly CBDCBridgeService _cbdcBridgeService;
 
         public SettlementController(ILogger<SettlementController> logger, ISettlementWindowRepository settlementWindowRepository, CBDCBridgeService cBDCBridgeService)
         {
-            _logger = logger;            
+            _logger = logger;
             _settlementWindowRepository = settlementWindowRepository;
             _cbdcBridgeService = cBDCBridgeService;
         }
 
         [HttpGet(Name = "GetSettlementWindows")]
         public IEnumerable<SettlementWindow> Get()
-        {            
+        {
             return _settlementWindowRepository.GetAll();
         }
 
@@ -38,6 +38,13 @@ namespace ITSTILoop.Controllers
             var netSettlementDictionary = _settlementWindowRepository.GetNetSettlementDictionary(settlementId);
             //TODO: We need some error/exception checking here
             await _cbdcBridgeService.SettleAccountsAsync(settlementId, netSettlementDictionary);
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Test(int id)
+        {
+            _settlementWindowRepository.SettleSettlementWindow(id);
             return Ok();
         }
     }

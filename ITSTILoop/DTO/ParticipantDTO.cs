@@ -26,4 +26,12 @@ namespace ITSTILoop.DTO
         public decimal Amount { get; set; }
         public CurrencyCodes Currency { get; set; }
     }
+
+    public class ModifyParticipantDTO
+    {
+        public int ParticipantId { get; set; }
+        public decimal Position { get; set; }
+        public decimal NetSettlement { get; set; }
+        public CurrencyCodes Currency { get; set; }
+    }
 }

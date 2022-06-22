@@ -10,23 +10,21 @@ namespace ITSTILoop.Services
     {
         private readonly ILogger<CBDCBridgeEventWatcherService> _logger;
         private readonly EthereumEventRetriever _ethereumEventRetriever;
-        private readonly IParticipantRepository _participantRepository;
-        private readonly ISettlementWindowRepository _settlementWindowRepository;
         private Event<AccountFundedEventDTO> _accountFunded;
         private Event<MultilateralSettlementEventDTO> _settlement;
         private Event<FSPpayoutEventDTO> _fspPayout;
         private Event<FSPdebtEventDTO> _fspDebt;
+        private readonly IServiceProvider _serviceProvider;
 
         public CBDCBridgeEventWatcherService(ILogger<CBDCBridgeEventWatcherService> logger, EthereumEventRetriever ethereumEventRetriever, IServiceProvider serviceProvider)
         {
             _logger = logger;
-            _ethereumEventRetriever = ethereumEventRetriever;
-            _participantRepository = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IParticipantRepository>();
-            _settlementWindowRepository = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<ISettlementWindowRepository>();
+            _ethereumEventRetriever = ethereumEventRetriever;                        
             _accountFunded = _ethereumEventRetriever.CreateEventHandler<AccountFundedEventDTO>();
             _settlement = _ethereumEventRetriever.CreateEventHandler<MultilateralSettlementEventDTO>();
             _fspPayout = _ethereumEventRetriever.CreateEventHandler<FSPpayoutEventDTO>();
             _fspDebt = _ethereumEventRetriever.CreateEventHandler<FSPdebtEventDTO>();
+            _serviceProvider = serviceProvider;
         }
 
         public async Task BlockHandler(BlockParameter start, BlockParameter end)
@@ -65,7 +63,11 @@ namespace ITSTILoop.Services
             foreach (var log in arg)
             {
                 _logger.LogInformation($"ProcessSettlementAsync-{log.Event.SettlementId}");
-                _settlementWindowRepository.SettleSettlementWindow();
+                using(var scope = _serviceProvider.CreateScope())
+                {
+                    var settlementWindowRepository = scope.ServiceProvider.GetRequiredService<ISettlementWindowRepository>();
+                    settlementWindowRepository.SettleSettlementWindow((int)log.Event.SettlementId);
+                }
             }
         }
 
@@ -75,7 +77,11 @@ namespace ITSTILoop.Services
             foreach (var log in arg)
             {
                 _logger.LogInformation($"ProcessAccountFundedAsync-{log.Event.Fsp}");
-                _participantRepository.FundParticipant(log.Event.Fsp, (decimal) log.Event.Tokens);                
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var participantRepository = scope.ServiceProvider.GetRequiredService<IParticipantRepository>();
+                    participantRepository.FundParticipant(log.Event.Fsp, (decimal)log.Event.Tokens);
+                }
             }
         }
 

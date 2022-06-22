@@ -7,7 +7,8 @@ namespace ITSTILoop.Context.Repositories.Interfaces
         void CloseOpenSettlementWindow();
         SettlementWindow CreateNewSettlementWindow();        
         Dictionary<string, decimal> GetNetSettlementDictionary(int id);
-        void SettleSettlementWindow();
+        //void SettleSettlementWindow();
+        void SettleSettlementWindow(int windowId);
         void UpdateSettlementWindow();
     }
 }

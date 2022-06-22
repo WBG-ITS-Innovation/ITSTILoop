@@ -16,9 +16,9 @@ namespace ITSTILoop.Context.Repositories
             return _context.SettlementWindows.Include(k => k.SettlementAccounts).ToList();
         }
 
-        public void SettleSettlementWindow()
+        public void SettleSettlementWindow(int windowId)
         {
-            SettlementWindow? settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.Status == SettlementWindowStatuses.Open);
+            var settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.SettlementWindowId == windowId);            
             if (settlementWindow != null)
             {
                 foreach (var participant in _context.Participants.Include(k => k.Accounts))
