@@ -65,10 +65,10 @@ namespace CBDCHubContract.Services
         }
 
         public async Task<decimal> CheckBalanceAsync(string fspAddress)
-        {
-            Decimal balance = 0;
-            balance = (decimal)await _hubContractService.GetFSPBalanceQueryAsync(fspAddress);
-            return balance;
+        {            
+            var bigBalance = await _hubContractService.GetFSPBalanceQueryAsync(fspAddress);
+            bigBalance = bigBalance / (BigInteger) Math.Pow(10, 18);
+            return (decimal) bigBalance;
         }
 
         public async Task SettleAccountsAsync(int settlementId, Dictionary<string, decimal> netSettlementValues)
@@ -78,7 +78,9 @@ namespace CBDCHubContract.Services
             foreach (KeyValuePair<string, decimal> kvp in netSettlementValues)
             {
                 accounts.Add(kvp.Key);
-                positions.Add((BigInteger)kvp.Value);
+                BigInteger bigPosition = (BigInteger)kvp.Value;
+                bigPosition = bigPosition * (BigInteger) Math.Pow(10, 18);
+                positions.Add(bigPosition);
             }
 
             var result = await _hubContractService.MultilateralSettlementRequestAsync(settlementId, accounts, positions);

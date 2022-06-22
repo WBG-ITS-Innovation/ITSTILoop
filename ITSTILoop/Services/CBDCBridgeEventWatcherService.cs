@@ -3,6 +3,7 @@ using CBDCHubContract.Services;
 using ITSTILoop.Context.Repositories.Interfaces;
 using Nethereum.Contracts;
 using Nethereum.RPC.Eth.DTOs;
+using System.Numerics;
 
 namespace ITSTILoop.Services
 {
@@ -80,7 +81,7 @@ namespace ITSTILoop.Services
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var participantRepository = scope.ServiceProvider.GetRequiredService<IParticipantRepository>();
-                    participantRepository.FundParticipant(log.Event.Fsp, (decimal)log.Event.Tokens);
+                    participantRepository.FundParticipant(log.Event.Fsp, (decimal)(log.Event.Tokens / (BigInteger)Math.Pow(10, 18)));
                 }
             }
         }

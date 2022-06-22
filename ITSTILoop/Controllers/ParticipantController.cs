@@ -55,15 +55,6 @@ namespace ITSTILoop.Controllers
             return CreatedAtAction("GetParticipant", new { id = participant.ParticipantId }, participantDto);
         }
 
-        [Route("Fund")]
-        [HttpPost]
-        public ActionResult FundParticipant([FromBody] FundParticipantDTO fundParticipantDTO)
-        {
-            _participantRepository.FundParticipant(fundParticipantDTO.ParticipantId, fundParticipantDTO.Currency, fundParticipantDTO.Amount);
-            _settlementWindowRepository.UpdateSettlementWindow();
-            return Ok();
-        }
-
         [Route("Modify")]
         [HttpPost]
         public ActionResult ModifyParticipant([FromBody] ModifyParticipantDTO modifyParticipantDTO)

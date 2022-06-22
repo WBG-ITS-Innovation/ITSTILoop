@@ -41,11 +41,5 @@ namespace ITSTILoop.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Test(int id)
-        {
-            _settlementWindowRepository.SettleSettlementWindow(id);
-            return Ok();
-        }
     }
 }
