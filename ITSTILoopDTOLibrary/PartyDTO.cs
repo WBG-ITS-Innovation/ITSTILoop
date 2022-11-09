@@ -17,4 +17,9 @@ namespace ITSTILoopDTOLibrary
         public PartyIdTypes PartyIdentifierType { get; set; }
     }
 
+    public class GlobalPartyIdentifierDTO
+    {
+        public PartyIdentifierDTO Identifier { get; set; } = new PartyIdentifierDTO();
+        public string MemberOfFSP { get; set; } = string.Empty;
+    }
 }
