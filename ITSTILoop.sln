@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoop", "ITSTILoop\ITSTILoop.csproj", "{42578122-78BE-4BE1-8658-640FA73F0567}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopDTOLibrary", "ITSTILoopDTOLibrary\ITSTILoopDTOLibrary.csproj", "{8E56BB24-E705-4A93-8EB8-34343BD4E12E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopLibrary", "ITSTILoopDTOLibrary\ITSTILoopLibrary.csproj", "{8E56BB24-E705-4A93-8EB8-34343BD4E12E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopTest", "ITSTILoopTest\ITSTILoopTest.csproj", "{3CC0375D-88AA-4625-8BFE-EDFDA82C0DE2}"
 EndProject
@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CBDCHubContract", "CBDCHubContract\CBDCHubContract.csproj", "{6D82DCE7-01ED-4837-A004-9CF68FDB88FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITSTILoopAddressLookup", "ITSTILoopAddressLookup\ITSTILoopAddressLookup.csproj", "{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopAddressLookup", "ITSTILoopAddressLookup\ITSTILoopAddressLookup.csproj", "{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITSTILoopCBDCAdapter", "ITSTILoopCBDCAdapter\ITSTILoopCBDCAdapter.csproj", "{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -24,7 +24,7 @@ namespace ITSTILoopAddressLookup.Controllers
             var partyQueryResult = _partyLookupService.FindParty(partyIdType, partyIdentifier);
             if (partyQueryResult.Result == PartyLookupServiceResults.Success)
             {
-                return partyQueryResult.FoundParty;
+                return Ok(partyQueryResult.FoundParty);
             }
             else
             {

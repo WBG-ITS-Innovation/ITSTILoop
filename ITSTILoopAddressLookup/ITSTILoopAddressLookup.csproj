@@ -19,7 +19,7 @@
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ITSTILoopDTOLibrary\ITSTILoopDTOLibrary.csproj">
+    <ProjectReference Include="..\ITSTILoopDTOLibrary\ITSTILoopLibrary.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>
