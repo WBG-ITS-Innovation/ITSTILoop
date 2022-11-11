@@ -7,9 +7,30 @@ using Microsoft.OpenApi.Models;
 var name = Environment.GetEnvironmentVariable("FSP_NAME");
 
 var builder = WebApplication.CreateBuilder(args);
-var loopBaseUriString = Environment.GetEnvironmentVariable("ITSTILOOP_URI");
-var apiId = Environment.GetEnvironmentVariable("ITSTILOOP_API_ID");
-var apiKey = Environment.GetEnvironmentVariable("ITSTILOOP_API_KEY");
+
+
+//let's configure for participant fsp
+if (Environment.GetEnvironmentVariable("IS_LOOP_PARTICIPANT").ToLower() == "true")
+{
+    var loopBaseUriString = Environment.GetEnvironmentVariable("ITSTILOOP_URI");
+    var apiId = Environment.GetEnvironmentVariable("ITSTILOOP_API_ID");
+    var apiKey = Environment.GetEnvironmentVariable("ITSTILOOP_API_KEY");
+    builder.Services.AddHttpClient("itstiloop", httpClient =>
+    {
+        httpClient.BaseAddress = new Uri(loopBaseUriString);
+        httpClient.DefaultRequestHeaders.Add(
+            "ApiKey", apiKey);
+        httpClient.DefaultRequestHeaders.Add(
+            "ApiId", apiId);
+    });
+}
+else
+{
+    //non patricipant fsp
+    builder.Services.AddHttpClient();
+}
+
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -27,14 +48,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddSingleton<AccountService>();
 builder.Services.AddTransient<IHttpPostClient, HttpPostClient>();
 
-builder.Services.AddHttpClient("itstiloop", httpClient =>
-{
-    httpClient.BaseAddress = new Uri(loopBaseUriString);
-    httpClient.DefaultRequestHeaders.Add(
-        "ApiKey", apiKey);
-    httpClient.DefaultRequestHeaders.Add(
-        "ApiId", apiId);
-});
+
 
 var app = builder.Build();
 

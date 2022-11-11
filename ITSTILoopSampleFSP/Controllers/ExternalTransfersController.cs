@@ -1,4 +1,5 @@
 ﻿using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.Utility;
 using ITSTILoopSampleFSP.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,14 @@ namespace ITSTILoopSampleFSP.Controllers
         private readonly ILogger<ExternalTransfersController> _logger;
         private readonly IHttpPostClient _httpPostClient;
         private readonly AccountService _accountService;
+        private readonly CBDCBridgeService _cBDCBridgeService;
 
-        public ExternalTransfersController(ILogger<ExternalTransfersController> logger, IHttpPostClient httpPostClient, AccountService accountService)
+        public ExternalTransfersController(ILogger<ExternalTransfersController> logger, IHttpPostClient httpPostClient, AccountService accountService, CBDCBridgeService cBDCBridgeService)
         {
             _logger = logger;
             _httpPostClient = httpPostClient;
             _accountService = accountService;
+            _cBDCBridgeService = cBDCBridgeService;
         }
 
         [HttpGet]
@@ -32,15 +35,24 @@ namespace ITSTILoopSampleFSP.Controllers
         [HttpPost(Name = "InitiateTransfer")]
         public async Task<ActionResult<TransferRequestResponseDTO>> PostAsync(TransferRequestDTO transferRequestDTO)
         {
-            
-            var response = await _httpPostClient.PostAsync<TransferRequestDTO, TransferRequestResponseDTO>(transferRequestDTO, "/Transfer", "itstiloop");
-            if (response.Result == HttpPostClientResults.Success)
+            if (EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.IS_LOOP_PARTICIPANT, EnvironmentVariableDefaultValues.IS_LOOP_PARTICIPANT_DEFAULT_VALUE).ToLower() == "true")
             {
-                _accountService.TransferRequests.Add(response.ResponseContent.TransferId, response.ResponseContent);
-                
-                return response.ResponseContent;
+                var response = await _httpPostClient.PostAsync<TransferRequestDTO, TransferRequestResponseDTO>(transferRequestDTO, "/Transfer", "itstiloop");
+                if (response.Result == HttpPostClientResults.Success)
+                {
+                    _accountService.TransferRequests.Add(response.ResponseContent.TransferId, response.ResponseContent);
+
+                    return response.ResponseContent;
+                }
+                return Problem(response.Result.ToString());
             }
-            return Problem(response.Result.ToString());
+            else
+            {
+                //we need to call the global address lookup
+                //call the bc service
+                
+                //await _cBDCBridgeService.MakeTransfer(transferRequestDTO.From.Identifier, transferRequestDTO.To.Identifier, )
+            }
         }
 
         [HttpPost("{transferId}")]

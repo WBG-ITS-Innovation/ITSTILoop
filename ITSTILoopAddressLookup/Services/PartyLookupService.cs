@@ -1,4 +1,5 @@
 ﻿using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.Utility;
 
 namespace ITSTILoopAddressLookup.Services
 {
@@ -17,7 +18,18 @@ namespace ITSTILoopAddressLookup.Services
         public PartyLookupService(ILogger<PartyLookupService> logger)
         {
             _logger = logger;
+            string partiesString = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.GLOBAL_ADDRESS_LOOKUP_PARTIES, String.Empty);
+            if (!String.IsNullOrEmpty(partiesString))
+            {
+                string[] partiesStringSplit = partiesString.Split('|');
+                foreach (var partyString in partiesStringSplit)
+                {
+                    string[] partyStringSplit = partyString.Split(':');
+                    string partyIdentifier = partiesStringSplit[0];
 
+
+                }
+            }
         }
         public PartyLookupServiceResult FindParty(PartyIdTypes partyIdType, string partyIdentifier)
         {
