@@ -26,15 +26,19 @@ namespace ITSTILoopAddressLookup.Services
                 {
                     string[] partyStringSplit = partyString.Split(':');
                     string partyIdentifier = partiesStringSplit[0];
-
-
+                    string hubName = partiesStringSplit[1];
+                    string fspName = partiesStringSplit[2];
+                    GlobalPartyIdentifierDTO globalPartyIdentifierDTO = new GlobalPartyIdentifierDTO() { FSPName = fspName, HubName = hubName };
+                    PartyIdentifierDTO partyIdentifierDto = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = PartyIdTypes.MSISDN };
+                    globalPartyIdentifierDTO.IdentifierDto = partyIdentifierDto;
+                    Parties.Add(globalPartyIdentifierDTO);
                 }
             }
         }
         public PartyLookupServiceResult FindParty(PartyIdTypes partyIdType, string partyIdentifier)
         {
             PartyLookupServiceResult result = new PartyLookupServiceResult() { Result = PartyLookupServiceResults.PartyNotFound };
-            var p = Parties.FirstOrDefault(k => k.Identifier.PartyIdentifierType == partyIdType && k.Identifier.Identifier == partyIdentifier);
+            var p = Parties.FirstOrDefault(k => k.IdentifierDto.PartyIdentifierType == partyIdType && k.IdentifierDto.Identifier == partyIdentifier);
             if (p != null)
             {
                 result.FoundParty = p;

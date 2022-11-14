@@ -19,7 +19,7 @@ namespace ITSTILoopAddressLookup.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PartyDTO>> GetPartyAsync(PartyIdTypes partyIdType, string partyIdentifier)
+        public async Task<ActionResult<GlobalPartyIdentifierDTO>> GetPartyAsync(PartyIdTypes partyIdType, string partyIdentifier)
         {
             var partyQueryResult = _partyLookupService.FindParty(partyIdType, partyIdentifier);
             if (partyQueryResult.Result == PartyLookupServiceResults.Success)
