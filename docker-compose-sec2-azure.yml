@@ -5,6 +5,12 @@ volumes:
     name: postgresql_data
 
 services:   
+   reverse-proxy:     
+      image: mozdag.azurecr.io/reverseproxy:latest
+      ports:
+        - "80:80"
+        - "443:443"
+
    db:
      image: postgres
      restart: always
@@ -56,7 +62,7 @@ services:
        ACCOUNTS: Mert:Ozdag:5551234567:250|Ava:Jeay:5551234568:250
        IS_LOOP_PARTICIPANT: false
        GLOBAL_ADDRESS_LOOKUP_URL: http://globalpartylookup/Party
-       CBDC_TRANSFER_CONTRACT_ADDRESS: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+       CBDC_TRANSFER_CONTRACT_ADDRESS: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
        CBDC_RPC_ENDPOINT: https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net
        CBDC_NETWORK_ID: 31337
        CBDC_TRANSFER_CONTRACT_OWNER_KEY: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
@@ -74,7 +80,7 @@ services:
        ITSTILOOP_URI: http://itstiloop/
        ITSTILOOP_API_ID: CBDCAPIID
        ITSTILOOP_API_KEY: CBDCAPIKEY
-       CBDC_TRANSFER_CONTRACT_ADDRESS: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+       CBDC_TRANSFER_CONTRACT_ADDRESS: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
        CBDC_RPC_ENDPOINT: https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net
        CBDC_NETWORK_ID: 31337
        CBDC_TRANSFER_CONTRACT_OWNER_KEY: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
