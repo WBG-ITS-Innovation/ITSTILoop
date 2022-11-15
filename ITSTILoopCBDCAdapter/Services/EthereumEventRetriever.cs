@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using ITSTILoopLibrary.Utility;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 using Nethereum.JsonRpc.Client;
@@ -12,11 +13,11 @@ namespace ITSTILoopCBDCAdapter.Services
     {
         public EthereumConfig()
         {
-            //ContractAddress = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.BESU_CONTRACT_ADDRESS, EnvironmentVariableDefaultValues.BESU_CONTRACT_ADDRESS_DEFAULT_VALUE);
-            //ContractOwnerKey = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.BESU_CONTRACT_OWNER_KEY, EnvironmentVariableDefaultValues.BESU_CONTRACT_OWNER_KEY_DEFAULT_VALUE);
+            ContractAddress = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_ADDRESS, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_ADDRESS_DEFAULT_VALUE);
+            ContractOwnerKey = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_OWNER_KEY, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_OWNER_KEY_DEFAULT_VALUE);
             //ContractTransactionHash = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.BESU_CONTRACT_TRANSACTION_HASH, EnvironmentVariableDefaultValues.BESU_CONTRACT_TRANSACTION_HASH_DEFAULT_VALUE);
-            //RpcEndpoint = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.BESU_RPC_ENDPOINT, EnvironmentVariableDefaultValues.BESU_RPC_ENDPOINT_DEFAULT_VALUE);
-            //NetworkId = Convert.ToInt32(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.BESU_NETWORK_ID, EnvironmentVariableDefaultValues.BESU_NETWORK_ID_DEFAULT_VALUE));
+            RpcEndpoint = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_RPC_ENDPOINT, EnvironmentVariableDefaultValues.CBDC_RPC_ENDPOINT_DEFAULT_VALUE);
+            NetworkId = Convert.ToInt32(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_NETWORK_ID, EnvironmentVariableDefaultValues.CBDC_NETWORK_ID_DEFAULT_VALUE));
         }
 
         public string ContractAddress { get; set; } = String.Empty;
@@ -32,6 +33,14 @@ namespace ITSTILoopCBDCAdapter.Services
         private readonly Web3 _web3;
         private EthereumConfig _config;
 
+        public EthereumConfig Config
+        {
+            get
+            {
+                return _config;
+            }
+        }
+        
         public EthereumEventRetriever(ILogger<EthereumEventRetriever> logger, EthereumConfig config)
         {
             _logger = logger;
@@ -156,20 +165,23 @@ namespace ITSTILoopCBDCAdapter.Services
             _logger.LogInformation("CheckForNewLogs-ENTRY");
             BigInteger latestBlock = 0;
             BigInteger fromBlock = 0;
+            BigInteger lastBlock = 0;
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 latestBlock = await GetLatestBlockAsync();
-                if (latestBlock > 0 && latestBlock > fromBlock)
+                if (latestBlock > 0 && (latestBlock > fromBlock || lastBlock != latestBlock))
                 {
                     if (fromBlock == 0)
                     {
-                        fromBlock = startBlock - 5;
+                        fromBlock = startBlock;
                     }
 
                     try
                     {
-                        BlockParameter fromBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(fromBlock));
+                        BlockParameter fromBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(fromBlock));                        
                         BlockParameter toBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(latestBlock));
+                        _logger.LogInformation($"CheckForNewLogs-{fromBlock}-{latestBlock}");
                         await blockHandler(fromBlockParameter, toBlockParameter);
                         fromBlock = latestBlock + 1;
                     }
@@ -179,6 +191,7 @@ namespace ITSTILoopCBDCAdapter.Services
                     }
 
                 }
+                lastBlock = latestBlock;
                 await Task.Delay(5000, stoppingToken);
             }
         }

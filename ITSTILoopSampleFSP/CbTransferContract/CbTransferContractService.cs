@@ -86,7 +86,7 @@ namespace Cbdchubcontract.Contracts.CbTransferContract
                 makeTransferFunction.To = to;
                 makeTransferFunction.Amount = amount;
                 makeTransferFunction.Destination = destination;
-                makeTransferFunction.ToType = toType;
+                makeTransferFunction.ToType = toType;                
             
              return ContractHandler.SendRequestAsync(makeTransferFunction);
         }
@@ -98,9 +98,8 @@ namespace Cbdchubcontract.Contracts.CbTransferContract
                 makeTransferFunction.To = to;
                 makeTransferFunction.Amount = amount;
                 makeTransferFunction.Destination = destination;
-                makeTransferFunction.ToType = toType;
-            
-             return ContractHandler.SendRequestAndWaitForReceiptAsync(makeTransferFunction, cancellationToken);
+                makeTransferFunction.ToType = toType;                
+            return ContractHandler.SendRequestAndWaitForReceiptAsync(makeTransferFunction, cancellationToken);
         }
 
         public Task<string> RegisterPSPRequestAsync(RegisterPSPFunction registerPSPFunction)

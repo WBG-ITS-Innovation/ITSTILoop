@@ -32,7 +32,7 @@ namespace ITSTILoopSampleFSP.Services
             _web3 = new Web3(new Account(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_OWNER_KEY,EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_OWNER_KEY_DEFAULT_VALUE),
                 Convert.ToInt32(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_NETWORK_ID, EnvironmentVariableDefaultValues.CBDC_NETWORK_ID_DEFAULT_VALUE))), client);
             _web3.TransactionManager.UseLegacyAsDefault = true;
-            _cbTransferContractService = new CbTransferContractService(_web3, EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_ADDRESS, EnvironmentVariableDefaultValues.CBD));
+            _cbTransferContractService = new CbTransferContractService(_web3, EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_ADDRESS, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_ADDRESS_DEFAULT_VALUE));
         }
 
         public async Task<string> MakeTransfer(string from, string to, int amount, string destination, TransferDestinationType destinationType = TransferDestinationType.Hub )

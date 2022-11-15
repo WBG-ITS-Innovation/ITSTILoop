@@ -1,3 +1,7 @@
+using Cbdchubcontract.Contracts.CbTransferContract;
+using ITSTILoopCBDCAdapter.Services;
+using ITSTILoopLibrary.SampleFSPServices;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,6 +23,12 @@ builder.Services.AddHttpClient("itstiloop", httpClient =>
     httpClient.DefaultRequestHeaders.Add(
         "ApiId", apiId);
 });
+
+builder.Services.AddTransient<IHttpPostClient, HttpPostClient>();
+builder.Services.AddSingleton<EthereumConfig>();
+builder.Services.AddSingleton<EthereumEventRetriever>();
+builder.Services.AddHostedService<BlockchainWatcherService>();
+
 
 var app = builder.Build();
 

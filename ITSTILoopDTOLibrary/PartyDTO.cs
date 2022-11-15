@@ -20,7 +20,7 @@ namespace ITSTILoopDTOLibrary
     public class GlobalPartyIdentifierDTO
     {
         public PartyIdentifierDTO IdentifierDto { get; set; } = new PartyIdentifierDTO();
-        public string FSPName { get; set; } = string.Empty;
+        public string PSPName { get; set; } = string.Empty;
         public string HubName { get; set; } = string.Empty;
     }
 }

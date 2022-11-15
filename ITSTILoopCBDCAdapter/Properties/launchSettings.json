@@ -13,10 +13,17 @@
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5242",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ITSTILOOP_API_ID": "CBDCAPIID",
+        "ITSTILOOP_URI": "http://itstiloop/",
+        "CBDC_TRANSFER_CONTRACT_ADDRESS": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+        "ITSTILOOP_API_KEY": "CBDCAPIKEY",
+        "CBDC_RPC_ENDPOINT": "https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net",
+        "CBDC_NETWORK_ID": "31337",
+        "CBDC_TRANSFER_CONTRACT_OWNER_KEY": "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+      },
+      "applicationUrl": "http://localhost:5242"
     },
     "IIS Express": {
       "commandName": "IISExpress",

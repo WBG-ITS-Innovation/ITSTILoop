@@ -25,10 +25,10 @@ namespace ITSTILoopAddressLookup.Services
                 foreach (var partyString in partiesStringSplit)
                 {
                     string[] partyStringSplit = partyString.Split(':');
-                    string partyIdentifier = partiesStringSplit[0];
-                    string hubName = partiesStringSplit[1];
-                    string fspName = partiesStringSplit[2];
-                    GlobalPartyIdentifierDTO globalPartyIdentifierDTO = new GlobalPartyIdentifierDTO() { FSPName = fspName, HubName = hubName };
+                    string partyIdentifier = partyStringSplit[0];
+                    string hubName = partyStringSplit[1];
+                    string fspName = partyStringSplit[2];
+                    GlobalPartyIdentifierDTO globalPartyIdentifierDTO = new GlobalPartyIdentifierDTO() { PSPName = fspName, HubName = hubName };
                     PartyIdentifierDTO partyIdentifierDto = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = PartyIdTypes.MSISDN };
                     globalPartyIdentifierDTO.IdentifierDto = partyIdentifierDto;
                     Parties.Add(globalPartyIdentifierDTO);

@@ -54,9 +54,12 @@ namespace ITSTILoop.Services
             var participant = CreateParticipant(participantText);
             if (participant != null)
             {
-                var balance = await _cbdcBridgeService.CheckBalanceAsync(participant.CBDCAddress);
+                //TODO: if hub is connected to the cbdc
+                decimal balance = 10000;
+                //var balance = await _cbdcBridgeService.CheckBalanceAsync(participant.CBDCAddress);
                 _logger.LogInformation($"Participant {participant.Name} {participant.CBDCAddress} balance = {balance}");
                 participant.CreateAccount(ITSTILoopDTOLibrary.CurrencyCodes.USD);
+                //TODO: Make this configurable
                 participant.FundAccount(ITSTILoopDTOLibrary.CurrencyCodes.USD, balance);
                 _participantRepository.Save();
                 _settlementWindowRepository.UpdateSettlementWindow();

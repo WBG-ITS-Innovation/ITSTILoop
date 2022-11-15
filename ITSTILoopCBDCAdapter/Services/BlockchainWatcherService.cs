@@ -7,6 +7,9 @@ using ITSTILoopLibrary.SampleFSPServices;
 using ITSTILoopDTOLibrary;
 using System.Text;
 using Cbdchubcontract.Contracts.CbTransferContract;
+using Nethereum.JsonRpc.Client;
+using Nethereum.Web3;
+using Nethereum.Model;
 
 namespace ITSTILoopCBDCAdapter.Services
 {
@@ -16,18 +19,22 @@ namespace ITSTILoopCBDCAdapter.Services
         private readonly EthereumEventRetriever _ethereumEventRetriever;
         private readonly IHttpPostClient _httpPostClient;
         private readonly CbTransferContractService _cbTransferContractService;
+        private readonly Web3 _web3;
         private Event<TransferCreatedEventDTO>? _transferCreatedEvent;
         private Event<TransferSuccessfulEventDTO>? _transferSuccesfullEvent;
         private Event<TransferErrorEventDTO>? _transferErrorEvent;
         private Event<TransferFailEventDTO>? _transferFailEvent;
 
 
-        public BlockchainWatcherService(ILogger<BlockchainWatcherService> logger, EthereumEventRetriever ethereumEventRetriever, IServiceProvider serviceProvider, IHttpPostClient httpPostClient, CbTransferContractService cbTransferContractService)
+        public BlockchainWatcherService(ILogger<BlockchainWatcherService> logger, EthereumEventRetriever ethereumEventRetriever, IHttpPostClient httpPostClient)
         {
             _logger = logger;
             _ethereumEventRetriever = ethereumEventRetriever;
             _httpPostClient = httpPostClient;
-            _cbTransferContractService = cbTransferContractService;
+            IClient client = new RpcClient(new Uri(ethereumEventRetriever.Config.RpcEndpoint));
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(ethereumEventRetriever.Config.ContractOwnerKey, ethereumEventRetriever.Config.NetworkId), client);
+            _web3.TransactionManager.UseLegacyAsDefault = true;
+            _cbTransferContractService = new CbTransferContractService(_web3, ethereumEventRetriever.Config.ContractAddress);
             CreateEventHandlers();
         }
 
@@ -37,6 +44,21 @@ namespace ITSTILoopCBDCAdapter.Services
             _transferSuccesfullEvent = _ethereumEventRetriever.CreateEventHandler<TransferSuccessfulEventDTO>();
             _transferErrorEvent = _ethereumEventRetriever.CreateEventHandler<TransferErrorEventDTO>();
             _transferFailEvent = _ethereumEventRetriever.CreateEventHandler<TransferFailEventDTO>();
+        }
+
+        public async Task ProcessTransferErrorLogsAsync(List<EventLog<TransferErrorEventDTO>> eventLogs)
+        {
+            try
+            {
+                foreach (var transferErrorEvent in eventLogs)
+                {
+                    _logger.LogInformation($"{transferErrorEvent.Event.Reason}");
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public async Task ProcessTransferCreatedLogsAsync(List<EventLog<TransferCreatedEventDTO>> eventLogs)
@@ -49,6 +71,7 @@ namespace ITSTILoopCBDCAdapter.Services
                     PartyIdentifierDTO from = new PartyIdentifierDTO() { Identifier = transferCreatedEvent.Event.From, PartyIdentifierType = PartyIdTypes.MSISDN };
                     PartyIdentifierDTO to = new PartyIdentifierDTO() { Identifier = transferCreatedEvent.Event.To, PartyIdentifierType = PartyIdTypes.MSISDN };
                     TransferRequestDTO transferRequestDTO = new TransferRequestDTO() { Amount = ((decimal)transferCreatedEvent.Event.Amount), From = from, To = to, Currency = CurrencyCodes.USD, HomeTransactionId = Guid.NewGuid(), Note = BitConverter.ToString(transferCreatedEvent.Event.TransferHash) };
+                    _logger.LogInformation($"ProcessTransferCreatedLogsAsync-{transferCreatedEvent.Event.From}-{transferCreatedEvent.Event.To}-{transferCreatedEvent.Event.Amount}");
                     //make the transfer                        
                     var response = await _httpPostClient.PostAsync<TransferRequestDTO, TransferRequestResponseDTO>(transferRequestDTO, "/Transfer", "itstiloop");
                     if (response.Result == HttpPostClientResults.Success)
@@ -69,6 +92,7 @@ namespace ITSTILoopCBDCAdapter.Services
                             _logger.LogInformation($"ProcessTransferCreatedLogsAsync-TransferFail-{transferId}-{transferRequestDTO.Note}-{transactionReceipt.BlockNumber}");
                         }
                     }
+                    else
                     {
                         var transactionReceipt = await _cbTransferContractService.TransferFailRequestAndWaitForReceiptAsync(transferCreatedEvent.Event.TransferHash);
                         _logger.LogInformation($"ProcessTransferCreatedLogsAsync-TransferFail-{transferRequestDTO.Note}-{transactionReceipt.BlockNumber}");
@@ -86,6 +110,7 @@ namespace ITSTILoopCBDCAdapter.Services
             try
             {
                 await _ethereumEventRetriever.RetrievePastLogsAsync<TransferCreatedEventDTO>(_transferCreatedEvent, ProcessTransferCreatedLogsAsync, start, end);
+                await _ethereumEventRetriever.RetrievePastLogsAsync<TransferErrorEventDTO>(_transferErrorEvent, ProcessTransferErrorLogsAsync, start, end);
             }
             catch (Exception ex)
             {

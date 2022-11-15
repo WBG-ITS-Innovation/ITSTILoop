@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.Utility;
 using ITSTILoopSampleFSP.Services;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 //let's configure for participant fsp
-if (Environment.GetEnvironmentVariable("IS_LOOP_PARTICIPANT").ToLower() == "true")
+if (EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.IS_LOOP_PARTICIPANT, EnvironmentVariableDefaultValues.IS_LOOP_PARTICIPANT_DEFAULT_VALUE).ToLower() == "true")
 {
     var loopBaseUriString = Environment.GetEnvironmentVariable("ITSTILOOP_URI");
     var apiId = Environment.GetEnvironmentVariable("ITSTILOOP_API_ID");
@@ -30,6 +31,9 @@ else
     builder.Services.AddHttpClient();
 }
 
+
+builder.Services.AddTransient<CBDCBridgeService>();
+builder.Services.AddTransient<GlobalPartyLookupService>();
 
 
 // Add services to the container.

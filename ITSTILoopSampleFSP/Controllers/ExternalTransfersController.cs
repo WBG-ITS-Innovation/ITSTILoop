@@ -17,13 +17,15 @@ namespace ITSTILoopSampleFSP.Controllers
         private readonly IHttpPostClient _httpPostClient;
         private readonly AccountService _accountService;
         private readonly CBDCBridgeService _cBDCBridgeService;
+        private readonly GlobalPartyLookupService _globalPartyLookupService;
 
-        public ExternalTransfersController(ILogger<ExternalTransfersController> logger, IHttpPostClient httpPostClient, AccountService accountService, CBDCBridgeService cBDCBridgeService)
+        public ExternalTransfersController(ILogger<ExternalTransfersController> logger, IHttpPostClient httpPostClient, AccountService accountService, CBDCBridgeService cBDCBridgeService, GlobalPartyLookupService globalPartyLookupService)
         {
             _logger = logger;
             _httpPostClient = httpPostClient;
             _accountService = accountService;
             _cBDCBridgeService = cBDCBridgeService;
+            _globalPartyLookupService = globalPartyLookupService;
         }
 
         [HttpGet]
@@ -48,11 +50,14 @@ namespace ITSTILoopSampleFSP.Controllers
             }
             else
             {
-                //we need to call the global address lookup
-                //call the bc service
-                
-                //await _cBDCBridgeService.MakeTransfer(transferRequestDTO.From.Identifier, transferRequestDTO.To.Identifier, )
+                var lookupResult = await _globalPartyLookupService.FindPartyAsync(transferRequestDTO.To.PartyIdentifierType, transferRequestDTO.To.Identifier);
+                if (lookupResult.Result == PartyLookupServiceResults.Success)
+                {
+                    var transferResult = await _cBDCBridgeService.MakeTransfer(transferRequestDTO.From.Identifier, transferRequestDTO.To.Identifier, (int)transferRequestDTO.Amount, lookupResult.FoundParty.HubName);
+                    return Ok(new TransferRequestResponseDTO() { Amount = transferRequestDTO.Amount, CurrentState = TransferStates.WaitingForPartyAcceptance, From = transferRequestDTO.From, Note = transferResult });
+                }
             }
+            return Problem();
         }
 
         [HttpPost("{transferId}")]

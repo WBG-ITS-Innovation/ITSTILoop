@@ -18,17 +18,17 @@ namespace ITSTILoopAddressLookup.Controllers
             _partyLookupService = partyLookupService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<GlobalPartyIdentifierDTO>> GetPartyAsync(PartyIdTypes partyIdType, string partyIdentifier)
+        [HttpPost]
+        public async Task<ActionResult<GlobalPartyIdentifierDTO>> GetPartyAsync(PartyIdentifierDTO queryPartyDTO)
         {
-            var partyQueryResult = _partyLookupService.FindParty(partyIdType, partyIdentifier);
+            var partyQueryResult = _partyLookupService.FindParty(queryPartyDTO.PartyIdentifierType, queryPartyDTO.Identifier);
             if (partyQueryResult.Result == PartyLookupServiceResults.Success)
             {
                 return Ok(partyQueryResult.FoundParty);
             }
             else
             {
-                return Problem(partyQueryResult.Result.ToString());
+                return NotFound(partyQueryResult.Result.ToString());
             }
         }
 

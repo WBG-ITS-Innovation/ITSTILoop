@@ -14,6 +14,8 @@ namespace ITSTILoopSampleFSP.Services
     {
         private readonly ILogger<HttpPostClient> _logger;
         private readonly IHttpClientFactory _clientFactory;
+        private string _baseAddress;
+        private HttpClient _client;
 
         public HttpPostClient(ILogger<HttpPostClient> logger, IHttpClientFactory clientFactory)
         {
