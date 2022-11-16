@@ -98,7 +98,7 @@ builder.Services.AddHostedService<CBDCBridgeEventWatcherService>();
 var app = builder.Build();
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
-Thread.Sleep(4000);
+Thread.Sleep(12000);
 //let's recreate if it doesn't exist
 try
 {

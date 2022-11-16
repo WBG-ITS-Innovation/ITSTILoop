@@ -13,11 +13,11 @@
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5092",
       "environmentVariables": {
         "GLOBAL_ADDRESS_LOOKUP_PARTIES": "5551234567:itstiloop:bankbethesda|5551234568:itstiloop:bankbethesda|5551234559:itstiloop:bankprincegeorge|5551234556:itstiloop:bankprincegeorge",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:5092"
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -31,7 +31,7 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-      "publishAllPorts": true
+      "environmentVariables": {}
     }
   }
 }

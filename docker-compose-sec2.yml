@@ -4,7 +4,16 @@ volumes:
   postgresql_data:
     name: postgresql_data
 
-services:   
+services:
+   reverse-proxy:     
+     image: mozdag.azurecr.io/reverseproxysec2
+     build:
+       context: ./ReverseProxy
+       dockerfile: Dockerfile       
+     ports:
+       - "80:80"
+       - "443:443"
+
    db:
      image: postgres
      restart: always
