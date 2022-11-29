@@ -17,22 +17,34 @@ namespace CBDCTransferContract
 {
     public enum TransferSourceDestinationType { Hub, Bank, CBDC};
 
-    public class CBDCBridgeService
+    public class CBDCTransferConfig
     {
-        private readonly ILogger<CBDCBridgeService> _logger;
+        public CBDCTransferConfig()
+        {
+        }
+
+        public string Address { get; set; } = String.Empty;
+        public string Key { get; set; } = String.Empty;
+        public string TransactionHash { get; set; } = String.Empty;
+        public string RpcEndpoint { get; set; } = String.Empty;
+        public int NetworkId { get; set; } = 0;
+    }
+
+    public class CBDCTransferService
+    {
+        private readonly ILogger<CBDCTransferService> _logger;
 
         private readonly Web3 _web3;
         private readonly CbTransferContractService _cbTransferContractService;
 
-        public CBDCBridgeService(ILogger<CBDCBridgeService> logger)
+        public CBDCTransferService(ILogger<CBDCTransferService> logger, IOptions<CBDCTransferConfig> config)
         {
             _logger = logger;
 
-            IClient client = new RpcClient(new Uri(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_RPC_ENDPOINT, EnvironmentVariableDefaultValues.CBDC_RPC_ENDPOINT_DEFAULT_VALUE)));
-            _web3 = new Web3(new Account(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_OWNER_KEY,EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_OWNER_KEY_DEFAULT_VALUE),
-                Convert.ToInt32(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_NETWORK_ID, EnvironmentVariableDefaultValues.CBDC_NETWORK_ID_DEFAULT_VALUE))), client);
+            IClient client = new RpcClient(new Uri(config.Value.RpcEndpoint));
+            _web3 = new Web3(new Account(config.Value.Key,config.Value.NetworkId), client);
             _web3.TransactionManager.UseLegacyAsDefault = true;
-            _cbTransferContractService = new CbTransferContractService(_web3, EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_ADDRESS, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_ADDRESS_DEFAULT_VALUE));
+            _cbTransferContractService = new CbTransferContractService(_web3, config.Value.Address );
         }
 
         public async Task<string> MakeTransfer(string from, string to, int amount, string destination, TransferSourceDestinationType destinationType = TransferSourceDestinationType.Hub )

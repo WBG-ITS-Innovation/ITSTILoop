@@ -1,5 +1,5 @@
 using Cbdchubcontract.Contracts.CbTransferContract;
-using ITSTILoopCBDCAdapter.Configuration;
+using CBDCTransferContract;
 using ITSTILoopCBDCAdapter.Services;
 using ITSTILoopLibrary.UtilityServices;
 using ITSTILoopLibrary.UtilityServices.Interfaces;
@@ -26,12 +26,15 @@ builder.Services.AddHttpClient("itstiloop", httpClient =>
         "ApiId", apiId);
 });
 
-builder.Services.Configure<TransferContractConfig>(
-    builder.Configuration.GetSection("TransferContractConfig"));
+builder.Configuration.AddEnvironmentVariables();
+
+builder.Services.Configure<CBDCTransferConfig>(
+    builder.Configuration.GetSection("CBDCTransferConfig"));
+
 builder.Services.AddTransient<IHttpPostClient, HttpPostClient>();
-builder.Services.AddSingleton<EthereumConfig>();
-builder.Services.AddSingleton<EthereumEventRetriever>();
+builder.Services.AddTransient<EthereumEventRetriever>();
 builder.Services.AddHostedService<BlockchainWatcherService>();
+builder.Services.AddTransient<CBDCTransferService>();
 
 
 var app = builder.Build();

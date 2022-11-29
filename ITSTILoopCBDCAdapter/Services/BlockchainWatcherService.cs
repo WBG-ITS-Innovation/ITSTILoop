@@ -13,7 +13,7 @@ using ITSTILoopLibrary.UtilityServices;
 using ITSTILoopLibrary.DTO;
 using ITSTILoopLibrary.UtilityServices.Interfaces;
 using Microsoft.Extensions.Options;
-using ITSTILoopCBDCAdapter.Configuration;
+using CBDCTransferContract;
 
 namespace ITSTILoopCBDCAdapter.Services
 {
@@ -30,16 +30,16 @@ namespace ITSTILoopCBDCAdapter.Services
         private Event<TransferFailEventDTO>? _transferFailEvent;
 
 
-        public BlockchainWatcherService(ILogger<BlockchainWatcherService> logger, EthereumEventRetriever ethereumEventRetriever, IHttpPostClient httpPostClient, IOptions<TransferContractConfig> config)
+        public BlockchainWatcherService(ILogger<BlockchainWatcherService> logger, EthereumEventRetriever ethereumEventRetriever, IHttpPostClient httpPostClient, IOptions<CBDCTransferConfig> config)
         {
             _logger = logger;
             _ethereumEventRetriever = ethereumEventRetriever;
-            _ethereumEventRetriever.Config = new EthereumConfig() { ContractAddress = config.Value.ContractAddress, ContractOwnerKey = config.Value.ContractOwnerKey, NetworkId = config.Value.NetworkId, RpcEndpoint = config.Value.RpcEndpoint };
+            _ethereumEventRetriever.Config = new EthereumConfig() { ContractAddress = config.Value.Address, ContractOwnerKey = config.Value.Key, NetworkId = config.Value.NetworkId, RpcEndpoint = config.Value.RpcEndpoint };
             _httpPostClient = httpPostClient;
             IClient client = new RpcClient(new Uri(config.Value.RpcEndpoint));
-            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(config.Value.ContractOwnerKey, config.Value.NetworkId), client);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(config.Value.Key, config.Value.NetworkId), client);
             _web3.TransactionManager.UseLegacyAsDefault = true;
-            _cbTransferContractService = new CbTransferContractService(_web3, config.Value.ContractAddress);
+            _cbTransferContractService = new CbTransferContractService(_web3, config.Value.Address);
             CreateEventHandlers();
         }
 

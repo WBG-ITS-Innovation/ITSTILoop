@@ -16,9 +16,9 @@ namespace ITSTILoop.Controllers
     {
         private readonly ILogger<SettlementController> _logger;
         private readonly ISettlementWindowRepository _settlementWindowRepository;
-        private readonly CBDCBridgeService _cbdcBridgeService;
+        private readonly CBDCHubService _cbdcBridgeService;
 
-        public SettlementController(ILogger<SettlementController> logger, ISettlementWindowRepository settlementWindowRepository, CBDCBridgeService cBDCBridgeService)
+        public SettlementController(ILogger<SettlementController> logger, ISettlementWindowRepository settlementWindowRepository, CBDCHubService cBDCBridgeService)
         {
             _logger = logger;
             _settlementWindowRepository = settlementWindowRepository;

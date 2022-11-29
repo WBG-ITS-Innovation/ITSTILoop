@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopAddressLookup", "I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopCBDCAdapter", "ITSTILoopCBDCAdapter\ITSTILoopCBDCAdapter.csproj", "{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CBDCTransferContract", "CBDCTransferContract\CBDCTransferContract.csproj", "{20FD6501-73A8-4361-9398-308151E6B765}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,11 +61,17 @@ Global
 		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20FD6501-73A8-4361-9398-308151E6B765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20FD6501-73A8-4361-9398-308151E6B765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20FD6501-73A8-4361-9398-308151E6B765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20FD6501-73A8-4361-9398-308151E6B765}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {49EF5A47-798B-4F6D-BC86-5505D3C98EEF}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal

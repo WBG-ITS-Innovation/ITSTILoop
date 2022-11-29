@@ -15,12 +15,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ITSTILoopDTOLibrary\ITSTILoopLibrary.csproj" />
+    <ProjectReference Include="..\CBDCTransferContract\CBDCTransferContract.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Configuration\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
 </Project>

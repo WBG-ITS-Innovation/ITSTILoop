@@ -29,6 +29,10 @@ namespace ITSTILoopAddressLookup.Services
                     string hubName = partyStringSplit[1];
                     string fspName = partyStringSplit[2];
                     PartyDTO globalPartyIdentifierDTO = new PartyDTO() { PSPName = fspName, HubName = hubName };
+                    if (hubName == "CBDC")
+                    {
+                        globalPartyIdentifierDTO.CbdcAddress = fspName;
+                    }
                     PartyIdentifierDTO partyIdentifierDto = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = PartyIdTypes.MSISDN };
                     globalPartyIdentifierDTO.PartyIdentifier = partyIdentifierDto;
                     Parties.Add(globalPartyIdentifierDTO);

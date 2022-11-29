@@ -29,28 +29,28 @@ namespace CBDCHubContract.Services
         {
         }
 
-        public string ContractAddress { get; set; } = String.Empty;
-        public string ContractOwnerKey { get; set; } = String.Empty;
-        public string ContractTransactionHash { get; set; } = String.Empty;
+        public string Address { get; set; } = String.Empty;
+        public string Key { get; set; } = String.Empty;
+        public string TransactionHash { get; set; } = String.Empty;
         public string RpcEndpoint { get; set; } = String.Empty;
         public int NetworkId { get; set; } = 0;
     }
 
-    public class CBDCBridgeService
+    public class CBDCHubService
     {
-        private readonly ILogger<CBDCBridgeService> _logger;
+        private readonly ILogger<CBDCHubService> _logger;
         private List<RegisteredFspDTO> _registeredFspDTOs = new List<RegisteredFspDTO>();
         private List<AccountFundedEventDTO> _fundedAccounts = new List<AccountFundedEventDTO>();        
         private readonly Web3 _web3;
         private readonly HubContractService _hubContractService;
 
-        public CBDCBridgeService(ILogger<CBDCBridgeService> logger, EthereumEventRetriever ethereumEventRetriever, IOptions<CBDCBridgeEventWatcherConfig> config)
+        public CBDCHubService(ILogger<CBDCHubService> logger, EthereumEventRetriever ethereumEventRetriever, IOptions<CBDCBridgeEventWatcherConfig> config)
         {
             _logger = logger;
             IClient client = new RpcClient(new Uri(config.Value.RpcEndpoint));
-            _web3 = new Web3(new Account(config.Value.ContractOwnerKey, 1492), client);
+            _web3 = new Web3(new Account(config.Value.Key, config.Value.NetworkId), client);
             _web3.TransactionManager.UseLegacyAsDefault = true;
-            _hubContractService = new HubContractService(_web3, config.Value.ContractAddress);
+            _hubContractService = new HubContractService(_web3, config.Value.Address);
         }
 
         public async Task<Dictionary<string, decimal>> CheckBalancesAsync(List<string> addresses)

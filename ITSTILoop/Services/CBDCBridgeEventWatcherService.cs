@@ -23,7 +23,7 @@ namespace ITSTILoop.Services
         {
             _logger = logger;
             _ethereumEventRetriever = ethereumEventRetriever;
-            _ethereumEventRetriever.Config = new EthereumConfig() { ContractAddress = config.Value.ContractAddress, ContractOwnerKey = config.Value.ContractOwnerKey, NetworkId = config.Value.NetworkId, RpcEndpoint = config.Value.RpcEndpoint };
+            _ethereumEventRetriever.Config = new EthereumConfig() { ContractAddress = config.Value.Address, ContractOwnerKey = config.Value.Key, NetworkId = config.Value.NetworkId, RpcEndpoint = config.Value.RpcEndpoint };
             _accountFunded = _ethereumEventRetriever.CreateEventHandler<AccountFundedEventDTO>();
             _settlement = _ethereumEventRetriever.CreateEventHandler<MultilateralSettlementEventDTO>();
             _fspPayout = _ethereumEventRetriever.CreateEventHandler<FSPpayoutEventDTO>();
