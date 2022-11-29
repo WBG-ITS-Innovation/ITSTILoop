@@ -6,30 +6,13 @@ using Nethereum.Contracts;
 using Nethereum.JsonRpc.Client;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 
 namespace ITSTILoopLibrary.UtilityServices
 {
-    public interface IEthereumConfig
+    public class EthereumConfig
     {
-        public string ContractAddress { get; set; }
-        public string ContractOwnerKey { get; set; }
-        public string ContractTransactionHash { get; set; }
-        public string RpcEndpoint { get; set; }
-        public int NetworkId { get; set; }
-    }
-
-    public class EthereumConfig : IEthereumConfig
-    {
-        public EthereumConfig()
-        {
-            ContractAddress = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_ADDRESS, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_ADDRESS_DEFAULT_VALUE);
-            ContractOwnerKey = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_OWNER_KEY, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_OWNER_KEY_DEFAULT_VALUE);
-            //ContractTransactionHash = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.BESU_CONTRACT_TRANSACTION_HASH, EnvironmentVariableDefaultValues.BESU_CONTRACT_TRANSACTION_HASH_DEFAULT_VALUE);
-            RpcEndpoint = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_RPC_ENDPOINT, EnvironmentVariableDefaultValues.CBDC_RPC_ENDPOINT_DEFAULT_VALUE);
-            NetworkId = Convert.ToInt32(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_NETWORK_ID, EnvironmentVariableDefaultValues.CBDC_NETWORK_ID_DEFAULT_VALUE));
-        }
-
         public string ContractAddress { get; set; } = String.Empty;
         public string ContractOwnerKey { get; set; } = String.Empty;
         public string ContractTransactionHash { get; set; } = String.Empty;
@@ -40,49 +23,74 @@ namespace ITSTILoopLibrary.UtilityServices
     public class EthereumEventRetriever
     {
         private readonly ILogger<EthereumEventRetriever> _logger;
-        private readonly Web3 _web3;
-        private IEthereumConfig _config;
+        private Web3? _web3 = null;
+        private EthereumConfig? _config;
 
-        public IEthereumConfig Config
+        public EthereumConfig? Config
         {
             get
             {
                 return _config;
             }
+            set
+            {
+                if (value != null)
+                {
+                    _config = value;
+                    IClient client = new RpcClient(new Uri(_config.RpcEndpoint));
+                    _web3 = new Web3(client);
+                }
+            }
         }
-        
-        public EthereumEventRetriever(ILogger<EthereumEventRetriever> logger, IEthereumConfig config)
+
+        public EthereumEventRetriever(ILogger<EthereumEventRetriever> logger)
         {
             _logger = logger;
-            _config = config;
-            IClient client = new RpcClient(new Uri(config.RpcEndpoint));
-            _web3 = new Web3(client);
+
         }
 
-        public Event<T> CreateEventHandler<T>() where T : IEventDTO, new()
+        public Event<T>? CreateEventHandler<T>() where T : IEventDTO, new()
         {
-            return _web3.Eth.GetEvent<T>(_config.ContractAddress);
+            if (_web3 != null && _config != null)
+            {
+                return _web3.Eth.GetEvent<T>(_config.ContractAddress);
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        public Event<T> CreateEventHandler<T>(string contractAddress) where T : IEventDTO, new()
+        public Event<T>? CreateEventHandler<T>(string contractAddress) where T : IEventDTO, new()
         {
-            return _web3.Eth.GetEvent<T>(contractAddress);
+            if (_web3 != null)
+            {
+                return _web3.Eth.GetEvent<T>(contractAddress);
+            }
+            else return null;
         }
 
         public async Task<BigInteger> GetLatestBlockAsync()
         {
-            BigInteger latestBlock = 0;
-            try
+            if (_web3 != null)
             {
-                var t = await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
-                latestBlock = t.Value;
-                _logger.LogInformation($"GetLatestBlockAsync-LatestBlock:{latestBlock}");
+                BigInteger latestBlock = 0;
+                try
+                {
+                    var t = await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
+                    latestBlock = t.Value;
+                    _logger.LogInformation($"GetLatestBlockAsync-LatestBlock:{latestBlock}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"GetLatestBlockAsync-GetBlockNumberException:{ex}");
+                }
+                return latestBlock;
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError($"GetLatestBlockAsync-GetBlockNumberException:{ex}");
+                return -1;
             }
-            return latestBlock;
         }
 
         public async Task RetrievePastLogsAsync<T>(Event<T> eventLog, Func<List<EventLog<T>>, Task> logProcessor, BlockParameter fromBlockParameter, BlockParameter toBlockParameter) where T : IEventDTO, new()
@@ -98,69 +106,81 @@ namespace ITSTILoopLibrary.UtilityServices
         public async Task<BigInteger> RetrievePastLogsAsync<T>(Event<T> eventLog, Func<List<EventLog<T>>, Task> logProcessor) where T : IEventDTO, new()
         {
             //get the block
-            var transaction = await _web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(_config.ContractTransactionHash);
-            return await RetrievePastLogsAsync<T>(eventLog, logProcessor, transaction.BlockNumber);
+            if (_web3 != null && _config != null)
+            {
+                var transaction = await _web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(_config.ContractTransactionHash);
+                return await RetrievePastLogsAsync<T>(eventLog, logProcessor, transaction.BlockNumber);
+            }
+            return -1;
         }
 
         public async Task<BigInteger> RetrievePastLogsAsync<T>(Event<T> eventLog, Func<List<EventLog<T>>, Task> logProcessor, BigInteger startFromBlock) where T : IEventDTO, new()
         {
 
             _logger.LogInformation("RetrievePastLogs-ENTRY");
-            BigInteger latestBlock = 0;
-            BigInteger fromBlock = startFromBlock;
-            int increment = 15000;
-            latestBlock = await GetLatestBlockAsync();
-            int successCount = 0;
-            while (true)
+            if (_web3 != null)
             {
-                if (latestBlock > 0 && latestBlock > fromBlock)
+                BigInteger latestBlock = 0;
+                BigInteger fromBlock = startFromBlock;
+                int increment = 15000;
+                latestBlock = await GetLatestBlockAsync();
+                int successCount = 0;
+                while (true)
                 {
-                    try
+                    if (latestBlock > 0 && latestBlock > fromBlock)
                     {
-                        BlockParameter fromBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(fromBlock));
-                        BlockParameter toBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(fromBlock + increment));
-                        //logs
-                        var filterAll = eventLog.CreateFilterInput(fromBlockParameter, toBlockParameter);
-                        _logger.LogInformation($"from {fromBlock} to {fromBlock + increment} {typeof(T)} logs. Increment:{increment}");
-                        var eventLogs = await eventLog.GetAllChangesAsync(filterAll);
-                        if (eventLogs.Count > 0)
+                        try
                         {
-                            await logProcessor(eventLogs);
+                            BlockParameter fromBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(fromBlock));
+                            BlockParameter toBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(fromBlock + increment));
+                            //logs
+                            var filterAll = eventLog.CreateFilterInput(fromBlockParameter, toBlockParameter);
+                            _logger.LogInformation($"from {fromBlock} to {fromBlock + increment} {typeof(T)} logs. Increment:{increment}");
+                            var eventLogs = await eventLog.GetAllChangesAsync(filterAll);
+                            if (eventLogs.Count > 0)
+                            {
+                                await logProcessor(eventLogs);
+                            }
+                            fromBlock = fromBlock + increment;
+                            if (increment < 15000 && successCount > 10)
+                            {
+                                increment = increment + 1500;
+                            }
+                            successCount++;
                         }
-                        fromBlock = fromBlock + increment;
-                        if (increment < 15000 && successCount > 10)
+                        catch (RpcClientTimeoutException)
                         {
-                            increment = increment + 1500;
+                            _logger.LogError("RpcClientTimeoutException");
+                            successCount = 0;
+                            await Task.Delay(1000);
+                            if (increment > 1000) increment = increment / 5;
                         }
-                        successCount++;
+                        catch (RpcClientUnknownException)
+                        {
+                            _logger.LogError("RpcClientUnknownException");
+                            successCount = 0;
+                            await Task.Delay(1000);
+                            if (increment > 1000) increment = increment / 5;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"{ex}");
+                        }
                     }
-                    catch (RpcClientTimeoutException)
+                    else
                     {
-                        _logger.LogError("RpcClientTimeoutException");
-                        successCount = 0;
-                        await Task.Delay(1000);
-                        if (increment > 1000) increment = increment / 5;
+                        break;
                     }
-                    catch (RpcClientUnknownException)
-                    {
-                        _logger.LogError("RpcClientUnknownException");
-                        successCount = 0;
-                        await Task.Delay(1000);
-                        if (increment > 1000) increment = increment / 5;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"{ex}");
-                    }
+                    await Task.Delay(800);
                 }
-                else
-                {
-                    break;
-                }
-                await Task.Delay(800);
+                _logger.LogInformation("RetrievePastLogs-EXIT");
+                return latestBlock;
             }
-            _logger.LogInformation("RetrievePastLogs-EXIT");
-            return latestBlock;
+            else
+            {
+                _logger.LogError("RetrievePastLogs-ERROR-Web3-Null");
+                return -1;
+            }
         }
 
         public async Task GetEventLogsBetweenBlocksAsync<T>(Event<T> eventHandler, BlockParameter startBlock, BlockParameter endBlock, Func<List<EventLog<T>>, Task> logProcessor) where T : IEventDTO, new()
@@ -173,36 +193,43 @@ namespace ITSTILoopLibrary.UtilityServices
         public async Task CheckForNewLogsAsync(Func<BlockParameter, BlockParameter, Task> blockHandler, BigInteger startBlock, CancellationToken stoppingToken)
         {
             _logger.LogInformation("CheckForNewLogs-ENTRY");
-            BigInteger latestBlock = 0;
-            BigInteger fromBlock = 0;
-            BigInteger lastBlock = 0;
-
-            while (!stoppingToken.IsCancellationRequested)
+            if (_web3 != null)
             {
-                latestBlock = await GetLatestBlockAsync();
-                if (latestBlock > 0 && (latestBlock > fromBlock || lastBlock != latestBlock))
+                BigInteger latestBlock = 0;
+                BigInteger fromBlock = 0;
+                BigInteger lastBlock = 0;
+
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    if (fromBlock == 0)
+                    latestBlock = await GetLatestBlockAsync();
+                    if (latestBlock > 0 && (latestBlock > fromBlock || lastBlock != latestBlock))
                     {
-                        fromBlock = startBlock;
-                    }
+                        if (fromBlock == 0)
+                        {
+                            fromBlock = startBlock;
+                        }
 
-                    try
-                    {
-                        BlockParameter fromBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(fromBlock));                        
-                        BlockParameter toBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(latestBlock));
-                        _logger.LogInformation($"CheckForNewLogs-{fromBlock}-{latestBlock}");
-                        await blockHandler(fromBlockParameter, toBlockParameter);
-                        fromBlock = latestBlock + 1;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"CheckForNewLogs-InnerException:{ex}");
-                    }
+                        try
+                        {
+                            BlockParameter fromBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(fromBlock));
+                            BlockParameter toBlockParameter = new BlockParameter(new Nethereum.Hex.HexTypes.HexBigInteger(latestBlock));
+                            _logger.LogInformation($"CheckForNewLogs-{fromBlock}-{latestBlock}");
+                            await blockHandler(fromBlockParameter, toBlockParameter);
+                            fromBlock = latestBlock + 1;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"CheckForNewLogs-InnerException:{ex}");
+                        }
 
+                    }
+                    lastBlock = latestBlock;
+                    await Task.Delay(5000, stoppingToken);
                 }
-                lastBlock = latestBlock;
-                await Task.Delay(5000, stoppingToken);
+            }
+            else
+            {
+                _logger.LogError($"CheckForNewLogs-ERROR-Web3-Null");
             }
         }
 

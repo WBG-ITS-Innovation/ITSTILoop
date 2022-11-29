@@ -23,35 +23,34 @@ namespace CBDCHubContract.Services
         public string Name { get; set; } = String.Empty;
     }
 
+    public class CBDCBridgeEventWatcherConfig
+    {
+        public CBDCBridgeEventWatcherConfig()
+        {
+        }
+
+        public string ContractAddress { get; set; } = String.Empty;
+        public string ContractOwnerKey { get; set; } = String.Empty;
+        public string ContractTransactionHash { get; set; } = String.Empty;
+        public string RpcEndpoint { get; set; } = String.Empty;
+        public int NetworkId { get; set; } = 0;
+    }
+
     public class CBDCBridgeService
     {
-        private readonly EthereumEventRetriever _ethereumEventRetriever;
-        private Event<FSPRegistrationEventDTO> _fspRegistrationHandler;
-        private Event<AccountFundedEventDTO> _accountFunded;
-        private Event<SettlementEventDTO> _settlement;
-        private Event<FSPpayoutEventDTO> _fspPayout;
-        private readonly Event<FSPdebtEventDTO> _fspDebt;
         private readonly ILogger<CBDCBridgeService> _logger;
         private List<RegisteredFspDTO> _registeredFspDTOs = new List<RegisteredFspDTO>();
-        private List<AccountFundedEventDTO> _fundedAccounts = new List<AccountFundedEventDTO>();
-        //private readonly IOptions<EthereumConfig> _config;
+        private List<AccountFundedEventDTO> _fundedAccounts = new List<AccountFundedEventDTO>();        
         private readonly Web3 _web3;
         private readonly HubContractService _hubContractService;
 
-        public CBDCBridgeService(ILogger<CBDCBridgeService> logger, EthereumEventRetriever ethereumEventRetriever, EthereumConfig config)
+        public CBDCBridgeService(ILogger<CBDCBridgeService> logger, EthereumEventRetriever ethereumEventRetriever, IOptions<CBDCBridgeEventWatcherConfig> config)
         {
-            _ethereumEventRetriever = ethereumEventRetriever;
-            _fspRegistrationHandler = _ethereumEventRetriever.CreateEventHandler<FSPRegistrationEventDTO>();
-            _accountFunded = _ethereumEventRetriever.CreateEventHandler<AccountFundedEventDTO>();
-            _settlement = _ethereumEventRetriever.CreateEventHandler<SettlementEventDTO>();
-            _fspPayout = _ethereumEventRetriever.CreateEventHandler<FSPpayoutEventDTO>();
-            _fspDebt = _ethereumEventRetriever.CreateEventHandler<FSPdebtEventDTO>();
             _logger = logger;
-            //_config = config;
-            IClient client = new RpcClient(new Uri(config.RpcEndpoint));
-            _web3 = new Web3(new Account(config.ContractOwnerKey, 1492), client);
+            IClient client = new RpcClient(new Uri(config.Value.RpcEndpoint));
+            _web3 = new Web3(new Account(config.Value.ContractOwnerKey, 1492), client);
             _web3.TransactionManager.UseLegacyAsDefault = true;
-            _hubContractService = new HubContractService(_web3, config.ContractAddress);
+            _hubContractService = new HubContractService(_web3, config.Value.ContractAddress);
         }
 
         public async Task<Dictionary<string, decimal>> CheckBalancesAsync(List<string> addresses)

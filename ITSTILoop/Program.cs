@@ -12,6 +12,7 @@ using CBDCHubContract.Services;
 using ITSTILoopLibrary.UtilityServices;
 using ITSTILoopLibrary.UtilityServices.Interfaces;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -71,13 +72,14 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(requirement2);
 });
 
+builder.Configuration.AddEnvironmentVariables();
 
 var connectionStringName = EnvVars.GetEnvironmentVariable(EnvVarNames.DB_CONNECTION, EnvVarDefaultValues.DB_CONNECTION);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringName)));
 
-//builder.Services.Configure<EthereumConfig>(
-//    builder.Configuration.GetSection(EthereumConfig.Ethereum));
+builder.Services.Configure<CBDCBridgeEventWatcherConfig>(
+    builder.Configuration.GetSection("CBDCBridgeEventWatcherConfig"));
 
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddTransient<IParticipantRepository, ParticipantRepository>();

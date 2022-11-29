@@ -17,4 +17,10 @@
     <ProjectReference Include="..\ITSTILoopDTOLibrary\ITSTILoopLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Configuration\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+  </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 using CBDCHubContract.Services;
 using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoopLibrary.UtilityServices;
+using Microsoft.Extensions.Options;
 using Nethereum.Contracts;
 using Nethereum.RPC.Eth.DTOs;
 using System.Numerics;
@@ -18,10 +19,11 @@ namespace ITSTILoop.Services
         private Event<FSPdebtEventDTO> _fspDebt;
         private readonly IServiceProvider _serviceProvider;
 
-        public CBDCBridgeEventWatcherService(ILogger<CBDCBridgeEventWatcherService> logger, EthereumEventRetriever ethereumEventRetriever, IServiceProvider serviceProvider)
+        public CBDCBridgeEventWatcherService(ILogger<CBDCBridgeEventWatcherService> logger, EthereumEventRetriever ethereumEventRetriever, IServiceProvider serviceProvider, IOptions<CBDCBridgeEventWatcherConfig> config)
         {
             _logger = logger;
-            _ethereumEventRetriever = ethereumEventRetriever;                        
+            _ethereumEventRetriever = ethereumEventRetriever;
+            _ethereumEventRetriever.Config = new EthereumConfig() { ContractAddress = config.Value.ContractAddress, ContractOwnerKey = config.Value.ContractOwnerKey, NetworkId = config.Value.NetworkId, RpcEndpoint = config.Value.RpcEndpoint };
             _accountFunded = _ethereumEventRetriever.CreateEventHandler<AccountFundedEventDTO>();
             _settlement = _ethereumEventRetriever.CreateEventHandler<MultilateralSettlementEventDTO>();
             _fspPayout = _ethereumEventRetriever.CreateEventHandler<FSPpayoutEventDTO>();
