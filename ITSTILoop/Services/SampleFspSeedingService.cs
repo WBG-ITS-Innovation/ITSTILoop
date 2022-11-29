@@ -4,6 +4,7 @@ using ITSTILoop.Model;
 using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services.Interfaces;
 using CBDCHubContract.Services;
+using ITSTILoopLibrary.DTO;
 
 namespace ITSTILoop.Services
 {
@@ -44,7 +45,7 @@ namespace ITSTILoop.Services
             var splitText = partiesText.Split('|');
             foreach (var partyIdentifier in splitText)
             {
-                Party party = new Party() { ParticipantId = participantId, PartyIdentifierType = ITSTILoopDTOLibrary.PartyIdTypes.MSISDN, PartyIdentifier = partyIdentifier };
+                Party party = new Party() { ParticipantId = participantId, PartyIdentifierType = PartyIdTypes.MSISDN, PartyIdentifier = partyIdentifier };
                 _participantRepository.AddPartyToParticipant(participantId, party);                
             }
         }

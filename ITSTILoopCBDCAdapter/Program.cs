@@ -1,6 +1,7 @@
 using Cbdchubcontract.Contracts.CbTransferContract;
 using ITSTILoopCBDCAdapter.Services;
-using ITSTILoopLibrary.SampleFSPServices;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

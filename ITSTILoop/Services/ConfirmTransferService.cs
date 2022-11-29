@@ -1,6 +1,8 @@
 ﻿using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services.Interfaces;
-using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 namespace ITSTILoop.Services
 {
@@ -29,7 +31,7 @@ namespace ITSTILoop.Services
             var participant = _participantRepository.GetById(transferRequestResponseDTO.To.ParticipantId);
             if (participant != null)
             {
-                var postResponse = await _httpPostClient.PostAsync<TransferRequestResponseDTO, TransferRequestCompleteDTO>(transferRequestResponseDTO, participant.ConfirmTransferEndpoint);
+                var postResponse = await _httpPostClient.PostAsync<TransferRequestResponseDTO, TransferRequestCompleteDTO>(transferRequestResponseDTO, participant.ConfirmTransferEndpoint.ToString());
                 if (postResponse.Result == HttpPostClientResults.Success)
                 {
                     result.TransferRequestComplete = postResponse.ResponseContent;

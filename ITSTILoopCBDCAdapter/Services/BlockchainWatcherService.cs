@@ -3,13 +3,15 @@ using System.Numerics;
 using Nethereum.Contracts;
 using Nethereum.RPC.Eth.DTOs;
 using Cbdchubcontract.Contracts.CbTransferContract.ContractDefinition;
-using ITSTILoopLibrary.SampleFSPServices;
 using ITSTILoopDTOLibrary;
 using System.Text;
 using Cbdchubcontract.Contracts.CbTransferContract;
 using Nethereum.JsonRpc.Client;
 using Nethereum.Web3;
 using Nethereum.Model;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.DTO;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 namespace ITSTILoopCBDCAdapter.Services
 {

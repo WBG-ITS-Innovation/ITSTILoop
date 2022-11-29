@@ -8,6 +8,7 @@ using ITSTILoop.Context.Repositories;
 using ITSTILoop.Model;
 using ITSTILoop.Services;
 using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
 using Moq;
 using System;
 using System.Collections.Generic;

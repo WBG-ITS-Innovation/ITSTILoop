@@ -1,16 +1,14 @@
-﻿using ITSTILoopDTOLibrary;
+﻿using ITSTILoopLibrary.DTO;
 using ITSTILoopLibrary.Utility;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
+using Microsoft.Extensions.Logging;
 
-namespace ITSTILoopSampleFSP.Services
+namespace ITSTILoopLibrary.UtilityServices
 {
     public enum PartyLookupServiceResults { Success, UriMalformed, EndpointError, ParticipantNotRegistered, PartyNotFound };
-    public class PartyLookupServiceResult
-    {
-        public PartyLookupServiceResults Result { get; set; }
-        public GlobalPartyIdentifierDTO FoundParty { get; set; }
-    }
 
-    public class GlobalPartyLookupService
+
+    public class GlobalPartyLookupService : IPartyLookupService
     {
         private readonly ILogger<GlobalPartyLookupService> _logger;
         private readonly IHttpPostClient _httpPostClient;
@@ -27,7 +25,7 @@ namespace ITSTILoopSampleFSP.Services
 
             PartyIdentifierDTO queryPartyDTO = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = partyIdType };
             //_httpPostClient.
-            var postResponse = await _httpPostClient.PostAsync<PartyIdentifierDTO, GlobalPartyIdentifierDTO>(queryPartyDTO, EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.GLOBAL_ADDRESS_LOOKUP_URL, EnvironmentVariableDefaultValues.GLOBAL_ADDRESS_LOOKUP_URL_DEFAULT_VALUE));
+            var postResponse = await _httpPostClient.PostAsync<PartyIdentifierDTO, PartyDTO>(queryPartyDTO, EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.GLOBAL_ADDRESS_LOOKUP_URL, EnvironmentVariableDefaultValues.GLOBAL_ADDRESS_LOOKUP_URL_DEFAULT_VALUE));
             if (postResponse.Result == HttpPostClientResults.Success)
             {
                 result.FoundParty = postResponse.ResponseContent;

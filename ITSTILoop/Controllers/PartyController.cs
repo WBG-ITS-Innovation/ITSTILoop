@@ -4,9 +4,11 @@ using ITSTILoop.Model;
 using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services;
 using ITSTILoop.Services.Interfaces;
-using ITSTILoopDTOLibrary;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using ITSTILoopLibrary.DTO;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 namespace ITSTILoop.Controllers
 {

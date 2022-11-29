@@ -69,6 +69,40 @@ namespace Cbdchubcontract.Contracts.CbTransferContract
             return ContractHandler.QueryDeserializingToObjectAsync<GetTransferFunction, GetTransferOutputDTO>(getTransferFunction, blockParameter);
         }
 
+        public Task<string> MakeCBDCTransferRequestAsync(MakeCBDCTransferFunction makeCBDCTransferFunction)
+        {
+             return ContractHandler.SendRequestAsync(makeCBDCTransferFunction);
+        }
+
+        public Task<TransactionReceipt> MakeCBDCTransferRequestAndWaitForReceiptAsync(MakeCBDCTransferFunction makeCBDCTransferFunction, CancellationTokenSource cancellationToken = null)
+        {
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(makeCBDCTransferFunction, cancellationToken);
+        }
+
+        public Task<string> MakeCBDCTransferRequestAsync(string from, string to, BigInteger amount, string source, byte sourceType)
+        {
+            var makeCBDCTransferFunction = new MakeCBDCTransferFunction();
+                makeCBDCTransferFunction.From = from;
+                makeCBDCTransferFunction.To = to;
+                makeCBDCTransferFunction.Amount = amount;
+                makeCBDCTransferFunction.Source = source;
+                makeCBDCTransferFunction.SourceType = sourceType;
+            
+             return ContractHandler.SendRequestAsync(makeCBDCTransferFunction);
+        }
+
+        public Task<TransactionReceipt> MakeCBDCTransferRequestAndWaitForReceiptAsync(string from, string to, BigInteger amount, string source, byte sourceType, CancellationTokenSource cancellationToken = null)
+        {
+            var makeCBDCTransferFunction = new MakeCBDCTransferFunction();
+                makeCBDCTransferFunction.From = from;
+                makeCBDCTransferFunction.To = to;
+                makeCBDCTransferFunction.Amount = amount;
+                makeCBDCTransferFunction.Source = source;
+                makeCBDCTransferFunction.SourceType = sourceType;
+            
+             return ContractHandler.SendRequestAndWaitForReceiptAsync(makeCBDCTransferFunction, cancellationToken);
+        }
+
         public Task<string> MakeTransferRequestAsync(MakeTransferFunction makeTransferFunction)
         {
              return ContractHandler.SendRequestAsync(makeTransferFunction);

@@ -1,6 +1,6 @@
 ﻿using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Model;
-using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
 
 namespace ITSTILoop.Context.Repositories
 {

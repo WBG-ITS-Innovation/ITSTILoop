@@ -17,6 +17,7 @@ namespace ITSTILoop.Helpers
         public const string SAMPLE_FSP_2_PARTIES = "SAMPLE_FSP_2_PARTIES";
         public const string SAMPLE_FSP_3 = "SAMPLE_FSP_3";
         public const string SAMPLE_FSP_3_PARTIES = "SAMPLE_FSP_3_PARTIES";
+        public const string USE_GAL = "USE_GAL";
     }
 
     public class EnvVarDefaultValues
@@ -28,6 +29,7 @@ namespace ITSTILoop.Helpers
         public const string SAMPLE_FSP_2_PARTIES = "5551234569|5551234566|";
         public const string SAMPLE_FSP_3 = "bankprincegeorge|PRINCEGEORGEAPIID|PRINCEGEORGEAPIKEY|0x6a82bf493725771AD037DD0cf1ABa956e73C18ff";
         public const string SAMPLE_FSP_3_PARTIES = "5551234559|5551234556";
+        public const string USE_GAL = "TRUE";
     }
 
     public static class EnvVars

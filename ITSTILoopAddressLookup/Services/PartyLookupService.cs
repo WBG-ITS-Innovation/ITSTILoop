@@ -1,4 +1,4 @@
-﻿using ITSTILoopDTOLibrary;
+﻿using ITSTILoopLibrary.DTO;
 using ITSTILoopLibrary.Utility;
 
 namespace ITSTILoopAddressLookup.Services
@@ -7,13 +7,13 @@ namespace ITSTILoopAddressLookup.Services
     public class PartyLookupServiceResult
     {
         public PartyLookupServiceResults Result { get; set; }
-        public GlobalPartyIdentifierDTO? FoundParty { get; set; }
+        public PartyDTO? FoundParty { get; set; }
     }
 
     public class PartyLookupService
     {
         private readonly ILogger<PartyLookupService> _logger;
-        public List<GlobalPartyIdentifierDTO> Parties { get; set; } = new List<GlobalPartyIdentifierDTO>();
+        public List<PartyDTO> Parties { get; set; } = new List<PartyDTO>();
 
         public PartyLookupService(ILogger<PartyLookupService> logger)
         {
@@ -28,9 +28,9 @@ namespace ITSTILoopAddressLookup.Services
                     string partyIdentifier = partyStringSplit[0];
                     string hubName = partyStringSplit[1];
                     string fspName = partyStringSplit[2];
-                    GlobalPartyIdentifierDTO globalPartyIdentifierDTO = new GlobalPartyIdentifierDTO() { PSPName = fspName, HubName = hubName };
+                    PartyDTO globalPartyIdentifierDTO = new PartyDTO() { PSPName = fspName, HubName = hubName };
                     PartyIdentifierDTO partyIdentifierDto = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = PartyIdTypes.MSISDN };
-                    globalPartyIdentifierDTO.IdentifierDto = partyIdentifierDto;
+                    globalPartyIdentifierDTO.PartyIdentifier = partyIdentifierDto;
                     Parties.Add(globalPartyIdentifierDTO);
                 }
             }
@@ -38,7 +38,7 @@ namespace ITSTILoopAddressLookup.Services
         public PartyLookupServiceResult FindParty(PartyIdTypes partyIdType, string partyIdentifier)
         {
             PartyLookupServiceResult result = new PartyLookupServiceResult() { Result = PartyLookupServiceResults.PartyNotFound };
-            var p = Parties.FirstOrDefault(k => k.IdentifierDto.PartyIdentifierType == partyIdType && k.IdentifierDto.Identifier == partyIdentifier);
+            var p = Parties.FirstOrDefault(k => k.PartyIdentifier.PartyIdentifierType == partyIdType && k.PartyIdentifier.Identifier == partyIdentifier);
             if (p != null)
             {
                 result.FoundParty = p;

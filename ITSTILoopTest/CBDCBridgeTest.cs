@@ -1,5 +1,6 @@
 ﻿using CBDCHubContract.Services;
 using FluentAssertions;
+using ITSTILoopLibrary.UtilityServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -24,11 +25,9 @@ namespace ITSTILoopTest
             // Arrange            
             EthereumConfig ethereumConfig = new EthereumConfig() { ContractAddress = "0x69282EFd96cd19d747944A9FB358feBaf8c16a2D", RpcEndpoint = "https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net/", ContractOwnerKey = "0xb5cc3ddbd4dacedd91eea5994c6cbbcd02b9b8644f89ef4576ce9bad2ae104be" };
             var loggerMock = new Mock<ILogger<EthereumEventRetriever>>();
-            var loggerMock2 = new Mock<ILogger<CBDCBridgeService>>();
-            var option = new Mock<IOptions<EthereumConfig>>();
-            option.Setup(k => k.Value).Returns(ethereumConfig);
-            EthereumEventRetriever eventRetriever = new EthereumEventRetriever(loggerMock.Object, option.Object);
-            CBDCBridgeService service = new CBDCBridgeService(loggerMock2.Object, eventRetriever, option.Object);
+            var loggerMock2 = new Mock<ILogger<CBDCBridgeService>>();            
+            EthereumEventRetriever eventRetriever = new EthereumEventRetriever(loggerMock.Object, ethereumConfig);
+            CBDCBridgeService service = new CBDCBridgeService(loggerMock2.Object, eventRetriever, ethereumConfig);
             var accounts = new List<string>() { "0xE1A6dc4e3Bdb3A8384181a9F70aB76642762557b", "0x34A816710f52a75F4430674a12E2Ad9De1092e86", "0x6a82bf493725771AD037DD0cf1ABa956e73C18ff" };
 
             // Act
@@ -52,8 +51,8 @@ namespace ITSTILoopTest
             var loggerMock2 = new Mock<ILogger<CBDCBridgeService>>();
             var option = new Mock<IOptions<EthereumConfig>>();
             option.Setup(k => k.Value).Returns(ethereumConfig);
-            EthereumEventRetriever eventRetriever = new EthereumEventRetriever(loggerMock.Object, option.Object);
-            CBDCBridgeService service = new CBDCBridgeService(loggerMock2.Object, eventRetriever, option.Object);
+            EthereumEventRetriever eventRetriever = new EthereumEventRetriever(loggerMock.Object, ethereumConfig);
+            CBDCBridgeService service = new CBDCBridgeService(loggerMock2.Object, eventRetriever, ethereumConfig);
             //var accounts = new List<string>() { "0xE1A6dc4e3Bdb3A8384181a9F70aB76642762557b", "0x34A816710f52a75F4430674a12E2Ad9De1092e86", "0x6a82bf493725771AD037DD0cf1ABa956e73C18ff" };
             var accounts = new Dictionary<string, decimal>() { { "0xE1A6dc4e3Bdb3A8384181a9F70aB76642762557b", 2 }, { "0x34A816710f52a75F4430674a12E2Ad9De1092e86", -1 }, { "0x6a82bf493725771AD037DD0cf1ABa956e73C18ff", -1} };
 

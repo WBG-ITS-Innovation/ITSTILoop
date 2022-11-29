@@ -9,6 +9,8 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using ITSTILoopDTOLibrary;
 using CBDCHubContract.Services;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,8 +76,9 @@ var connectionStringName = EnvVars.GetEnvironmentVariable(EnvVarNames.DB_CONNECT
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringName)));
 
-builder.Services.Configure<EthereumConfig>(
-    builder.Configuration.GetSection(EthereumConfig.Ethereum));
+//builder.Services.Configure<EthereumConfig>(
+//    builder.Configuration.GetSection(EthereumConfig.Ethereum));
+
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddTransient<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddTransient<IPartyRepository, PartyRepository>();

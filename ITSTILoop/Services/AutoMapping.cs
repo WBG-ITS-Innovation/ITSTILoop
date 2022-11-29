@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ITSTILoop.DTO;
 using ITSTILoop.Model;
-using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
 
 namespace ITSTILoop.Services
 {

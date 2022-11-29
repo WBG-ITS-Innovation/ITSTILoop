@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using ITSTILoopLibrary.Utility;
+using Microsoft.Extensions.Logging;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Contracts;
 using Nethereum.JsonRpc.Client;
@@ -7,9 +8,18 @@ using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
 
 
-namespace ITSTILoopCBDCAdapter.Services
+namespace ITSTILoopLibrary.UtilityServices
 {
-    public class EthereumConfig
+    public interface IEthereumConfig
+    {
+        public string ContractAddress { get; set; }
+        public string ContractOwnerKey { get; set; }
+        public string ContractTransactionHash { get; set; }
+        public string RpcEndpoint { get; set; }
+        public int NetworkId { get; set; }
+    }
+
+    public class EthereumConfig : IEthereumConfig
     {
         public EthereumConfig()
         {
@@ -31,9 +41,9 @@ namespace ITSTILoopCBDCAdapter.Services
     {
         private readonly ILogger<EthereumEventRetriever> _logger;
         private readonly Web3 _web3;
-        private EthereumConfig _config;
+        private IEthereumConfig _config;
 
-        public EthereumConfig Config
+        public IEthereumConfig Config
         {
             get
             {
@@ -41,7 +51,7 @@ namespace ITSTILoopCBDCAdapter.Services
             }
         }
         
-        public EthereumEventRetriever(ILogger<EthereumEventRetriever> logger, EthereumConfig config)
+        public EthereumEventRetriever(ILogger<EthereumEventRetriever> logger, IEthereumConfig config)
         {
             _logger = logger;
             _config = config;

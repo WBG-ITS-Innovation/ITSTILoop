@@ -1,5 +1,5 @@
 ﻿using ITSTILoopAddressLookup.Services;
-using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -19,7 +19,7 @@ namespace ITSTILoopAddressLookup.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GlobalPartyIdentifierDTO>> GetPartyAsync(PartyIdentifierDTO queryPartyDTO)
+        public async Task<ActionResult<PartyDTO>> GetPartyAsync(PartyIdentifierDTO queryPartyDTO)
         {
             var partyQueryResult = _partyLookupService.FindParty(queryPartyDTO.PartyIdentifierType, queryPartyDTO.Identifier);
             if (partyQueryResult.Result == PartyLookupServiceResults.Success)

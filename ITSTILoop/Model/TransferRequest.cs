@@ -1,4 +1,5 @@
 ﻿using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
 
 namespace ITSTILoop.Model
 {

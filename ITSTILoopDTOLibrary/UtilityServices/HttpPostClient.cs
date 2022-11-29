@@ -1,6 +1,9 @@
-﻿using System.Net;
+﻿using ITSTILoopLibrary.UtilityServices.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Net;
+using System.Net.Http.Json;
 
-namespace ITSTILoopSampleFSP.Services
+namespace ITSTILoopLibrary.UtilityServices
 {
     public enum HttpPostClientResults { Success, UriMalformed, EndpointError };
     public class HttpPostClientResponse<T>
@@ -23,6 +26,11 @@ namespace ITSTILoopSampleFSP.Services
             _clientFactory = clientFactory;
         }
 
+        public async Task<HttpPostClientResponse<TResponseType>> PostAsync<TPostType, TResponseType>(TPostType postContent, Uri endpoint, string clientName = "")
+        {
+            return await PostAsync<TPostType, TResponseType>(postContent, endpoint.ToString(), clientName);
+        }
+
         public async Task<HttpPostClientResponse<TResponseType>> PostAsync<TPostType, TResponseType>(TPostType postContent, string endpoint, string clientName = "")
         {
             HttpPostClientResponse<TResponseType> result = new HttpPostClientResponse<TResponseType>();
@@ -37,7 +45,7 @@ namespace ITSTILoopSampleFSP.Services
             }
 
             if (client != null)
-            { 
+            {
                 var httpResult = await client.PostAsJsonAsync<TPostType>(endpoint, postContent);
                 result.StatusCode = httpResult.StatusCode;
                 if (httpResult.StatusCode == System.Net.HttpStatusCode.Accepted || httpResult.IsSuccessStatusCode)

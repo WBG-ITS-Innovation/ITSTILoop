@@ -5,10 +5,12 @@ using ITSTILoop.DTO;
 using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Model;
 using Microsoft.AspNetCore.Mvc;
-using ITSTILoopDTOLibrary;
 using ITSTILoop.Services;
 using ITSTILoop.Services.Interfaces;
 using ITSTILoop.Context.Repositories;
+using ITSTILoopLibrary.DTO;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 namespace ITSTILoop.Controllers
 {

@@ -1,5 +1,6 @@
 ﻿using CBDCHubContract.Contracts.HubContract;
 using CBDCHubContract.Contracts.HubContract.ContractDefinition;
+using ITSTILoopLibrary.UtilityServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nethereum.Contracts;
@@ -33,11 +34,11 @@ namespace CBDCHubContract.Services
         private readonly ILogger<CBDCBridgeService> _logger;
         private List<RegisteredFspDTO> _registeredFspDTOs = new List<RegisteredFspDTO>();
         private List<AccountFundedEventDTO> _fundedAccounts = new List<AccountFundedEventDTO>();
-        private readonly IOptions<EthereumConfig> _config;
+        //private readonly IOptions<EthereumConfig> _config;
         private readonly Web3 _web3;
         private readonly HubContractService _hubContractService;
 
-        public CBDCBridgeService(ILogger<CBDCBridgeService> logger, EthereumEventRetriever ethereumEventRetriever, IOptions<EthereumConfig> config)
+        public CBDCBridgeService(ILogger<CBDCBridgeService> logger, EthereumEventRetriever ethereumEventRetriever, EthereumConfig config)
         {
             _ethereumEventRetriever = ethereumEventRetriever;
             _fspRegistrationHandler = _ethereumEventRetriever.CreateEventHandler<FSPRegistrationEventDTO>();
@@ -46,11 +47,11 @@ namespace CBDCHubContract.Services
             _fspPayout = _ethereumEventRetriever.CreateEventHandler<FSPpayoutEventDTO>();
             _fspDebt = _ethereumEventRetriever.CreateEventHandler<FSPdebtEventDTO>();
             _logger = logger;
-            _config = config;
-            IClient client = new RpcClient(new Uri(config.Value.RpcEndpoint));
-            _web3 = new Web3(new Account(config.Value.ContractOwnerKey, 1492), client);
+            //_config = config;
+            IClient client = new RpcClient(new Uri(config.RpcEndpoint));
+            _web3 = new Web3(new Account(config.ContractOwnerKey, 1492), client);
             _web3.TransactionManager.UseLegacyAsDefault = true;
-            _hubContractService = new HubContractService(_web3, _config.Value.ContractAddress);
+            _hubContractService = new HubContractService(_web3, config.ContractAddress);
         }
 
         public async Task<Dictionary<string, decimal>> CheckBalancesAsync(List<string> addresses)
