@@ -13,9 +13,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ITSTILoopSampleFSP.Services
+namespace CBDCTransferContract
 {
-    public enum TransferDestinationType { Hub, Bank};
+    public enum TransferSourceDestinationType { Hub, Bank, CBDC};
 
     public class CBDCBridgeService
     {
@@ -35,7 +35,7 @@ namespace ITSTILoopSampleFSP.Services
             _cbTransferContractService = new CbTransferContractService(_web3, EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_ADDRESS, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_ADDRESS_DEFAULT_VALUE));
         }
 
-        public async Task<string> MakeTransfer(string from, string to, int amount, string destination, TransferDestinationType destinationType = TransferDestinationType.Hub )
+        public async Task<string> MakeTransfer(string from, string to, int amount, string destination, TransferSourceDestinationType destinationType = TransferSourceDestinationType.Hub )
         {
             try
             {
@@ -45,6 +45,20 @@ namespace ITSTILoopSampleFSP.Services
             catch (Exception ex)
             {
                 _logger.LogError($"MakeTransfer-EX-{ex}");
+            }
+            return String.Empty;
+        }
+
+        public async Task<string> MakeCBDCTransfer(string from, string to, int amount, string source, TransferSourceDestinationType sourceType = TransferSourceDestinationType.Hub)
+        {
+            try
+            {
+                var txReceipt = await _cbTransferContractService.MakeCBDCTransferRequestAndWaitForReceiptAsync(from, to, amount, source, (byte)sourceType);
+                return txReceipt.TransactionHash;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"MakeCBDCTransfer-EX-{ex}");
             }
             return String.Empty;
         }
