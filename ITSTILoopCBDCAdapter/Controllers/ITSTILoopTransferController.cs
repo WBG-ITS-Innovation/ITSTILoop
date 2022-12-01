@@ -24,7 +24,7 @@ namespace ITSTILoopCBDCAdapter.Controllers
         [HttpPost(Name = "confirmTransfer")]
         public async Task<ActionResult<TransferRequestCompleteDTO>> PostAsync(TransferRequestResponseDTO transferRequestResponseDTO)
         {
-            _logger.LogInformation($"ITSTILoopTransferController-Post-{transferRequestResponseDTO.To.PartyIdentifier.Identifier}");
+            _logger.LogInformation($"PostAsync-ENTRY-{transferRequestResponseDTO.To.PartyIdentifier.Identifier}-{transferRequestResponseDTO.To.CbdcAddress}-{transferRequestResponseDTO.To.PSPName}");
             PartyDTO partyDTO = transferRequestResponseDTO.To;
             var receipt = await _cBDCBridgeService.MakeCBDCTransfer(transferRequestResponseDTO.From.Identifier, partyDTO.CbdcAddress, (int)transferRequestResponseDTO.Amount, "itstiloop");
             if (!String.IsNullOrEmpty(receipt))

@@ -40,6 +40,8 @@ builder.Services.Configure<CBDCTransferConfig>(
     builder.Configuration.GetSection("CBDCTransferConfig"));
 
 builder.Services.AddTransient<CBDCTransferService>();
+
+
 builder.Services.AddTransient<GlobalPartyLookupService>();
 
 

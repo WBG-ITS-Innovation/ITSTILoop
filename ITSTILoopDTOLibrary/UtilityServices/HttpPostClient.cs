@@ -32,7 +32,7 @@ namespace ITSTILoopLibrary.UtilityServices
         }
 
         public async Task<HttpPostClientResponse<TResponseType>> PostAsync<TPostType, TResponseType>(TPostType postContent, string endpoint, string clientName = "")
-        {
+        {            
             HttpPostClientResponse<TResponseType> result = new HttpPostClientResponse<TResponseType>();
             HttpClient? client = null;
             if (String.IsNullOrEmpty(clientName))
@@ -66,6 +66,7 @@ namespace ITSTILoopLibrary.UtilityServices
             {
                 result.Result = HttpPostClientResults.UriMalformed;
             }
+            _logger.LogInformation($"PostAsync-{endpoint}-EXIT");
             return result;
         }
     }

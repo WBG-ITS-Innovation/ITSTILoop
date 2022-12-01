@@ -37,7 +37,7 @@ namespace ITSTILoopCBDCAdapter.Services
             _ethereumEventRetriever.Config = new EthereumConfig() { ContractAddress = config.Value.Address, ContractOwnerKey = config.Value.Key, NetworkId = config.Value.NetworkId, RpcEndpoint = config.Value.RpcEndpoint };
             _httpPostClient = httpPostClient;
             IClient client = new RpcClient(new Uri(config.Value.RpcEndpoint));
-            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(config.Value.Key, config.Value.NetworkId), client);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(config.Value.OwnerKey, config.Value.NetworkId), client);
             _web3.TransactionManager.UseLegacyAsDefault = true;
             _cbTransferContractService = new CbTransferContractService(_web3, config.Value.Address);
             CreateEventHandlers();

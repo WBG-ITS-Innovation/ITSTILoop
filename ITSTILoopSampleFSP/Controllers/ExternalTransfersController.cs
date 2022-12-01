@@ -46,7 +46,7 @@ namespace ITSTILoopSampleFSP.Controllers
                 {
                     _accountService.TransferRequests.Add(response.ResponseContent.TransferId, response.ResponseContent);
 
-                    return response.ResponseContent;
+                    return Ok(response.ResponseContent);
                 }
                 return Problem(response.Result.ToString());
             }

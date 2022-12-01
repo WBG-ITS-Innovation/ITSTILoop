@@ -25,6 +25,7 @@ namespace CBDCTransferContract
 
         public string Address { get; set; } = String.Empty;
         public string Key { get; set; } = String.Empty;
+        public string OwnerKey { get; set; } = String.Empty;
         public string TransactionHash { get; set; } = String.Empty;
         public string RpcEndpoint { get; set; } = String.Empty;
         public int NetworkId { get; set; } = 0;
@@ -63,9 +64,11 @@ namespace CBDCTransferContract
 
         public async Task<string> MakeCBDCTransfer(string from, string to, int amount, string source, TransferSourceDestinationType sourceType = TransferSourceDestinationType.Hub)
         {
+            _logger.LogInformation($"MakeCBDCTransfer-ENTRY-{from}-{to}-{amount}");
             try
             {
                 var txReceipt = await _cbTransferContractService.MakeCBDCTransferRequestAndWaitForReceiptAsync(from, to, amount, source, (byte)sourceType);
+                _logger.LogInformation($"MakeCBDCTransfer-SUCCESS-{from}-{to}-{amount}-{txReceipt.TransactionHash}");
                 return txReceipt.TransactionHash;
             }
             catch (Exception ex)

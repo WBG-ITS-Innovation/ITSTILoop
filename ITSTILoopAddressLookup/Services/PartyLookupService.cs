@@ -29,9 +29,10 @@ namespace ITSTILoopAddressLookup.Services
                     string hubName = partyStringSplit[1];
                     string fspName = partyStringSplit[2];
                     PartyDTO globalPartyIdentifierDTO = new PartyDTO() { PSPName = fspName, HubName = hubName };
-                    if (hubName == "CBDC")
+                    if (hubName.ToLower() == "cbdc")
                     {
                         globalPartyIdentifierDTO.CbdcAddress = fspName;
+                        globalPartyIdentifierDTO.PSPName = "cbdc";
                     }
                     PartyIdentifierDTO partyIdentifierDto = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = PartyIdTypes.MSISDN };
                     globalPartyIdentifierDTO.PartyIdentifier = partyIdentifierDto;
@@ -41,6 +42,7 @@ namespace ITSTILoopAddressLookup.Services
         }
         public PartyLookupServiceResult FindParty(PartyIdTypes partyIdType, string partyIdentifier)
         {
+            _logger.LogInformation($"FindParty-ENTRY-{partyIdType}-{partyIdentifier}");
             PartyLookupServiceResult result = new PartyLookupServiceResult() { Result = PartyLookupServiceResults.PartyNotFound };
             var p = Parties.FirstOrDefault(k => k.PartyIdentifier.PartyIdentifierType == partyIdType && k.PartyIdentifier.Identifier == partyIdentifier);
             if (p != null)
@@ -48,6 +50,7 @@ namespace ITSTILoopAddressLookup.Services
                 result.FoundParty = p;
                 result.Result = PartyLookupServiceResults.Success;
             }
+            _logger.LogInformation($"FindParty-EXIT-{partyIdType}-{partyIdentifier}");
             return result;
         }
     }
