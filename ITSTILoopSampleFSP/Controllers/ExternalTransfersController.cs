@@ -4,6 +4,7 @@ using ITSTILoopLibrary.UtilityServices;
 using ITSTILoopLibrary.UtilityServices.Interfaces;
 using ITSTILoopSampleFSP.Services;
 using Microsoft.AspNetCore.Mvc;
+using CBDCTransferContract;
 
 namespace ITSTILoopSampleFSP.Controllers
 {
@@ -17,10 +18,10 @@ namespace ITSTILoopSampleFSP.Controllers
         private readonly ILogger<ExternalTransfersController> _logger;
         private readonly IHttpPostClient _httpPostClient;
         private readonly AccountService _accountService;
-        private readonly CBDCBridgeService _cBDCBridgeService;
+        private readonly CBDCTransferService _cBDCBridgeService;
         private readonly GlobalPartyLookupService _globalPartyLookupService;
 
-        public ExternalTransfersController(ILogger<ExternalTransfersController> logger, IHttpPostClient httpPostClient, AccountService accountService, CBDCBridgeService cBDCBridgeService, GlobalPartyLookupService globalPartyLookupService)
+        public ExternalTransfersController(ILogger<ExternalTransfersController> logger, IHttpPostClient httpPostClient, AccountService accountService, CBDCTransferService cBDCBridgeService, GlobalPartyLookupService globalPartyLookupService)
         {
             _logger = logger;
             _httpPostClient = httpPostClient;
@@ -45,7 +46,7 @@ namespace ITSTILoopSampleFSP.Controllers
                 {
                     _accountService.TransferRequests.Add(response.ResponseContent.TransferId, response.ResponseContent);
 
-                    return response.ResponseContent;
+                    return Ok(response.ResponseContent);
                 }
                 return Problem(response.Result.ToString());
             }

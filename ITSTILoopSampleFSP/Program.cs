@@ -6,6 +6,7 @@ using ITSTILoopLibrary.UtilityServices.Interfaces;
 using ITSTILoopSampleFSP.Services;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
+using CBDCTransferContract;
 
 var name = Environment.GetEnvironmentVariable("FSP_NAME");
 
@@ -33,8 +34,14 @@ else
     builder.Services.AddHttpClient();
 }
 
+builder.Configuration.AddEnvironmentVariables();
 
-builder.Services.AddTransient<CBDCBridgeService>();
+builder.Services.Configure<CBDCTransferConfig>(
+    builder.Configuration.GetSection("CBDCTransferConfig"));
+
+builder.Services.AddTransient<CBDCTransferService>();
+
+
 builder.Services.AddTransient<GlobalPartyLookupService>();
 
 

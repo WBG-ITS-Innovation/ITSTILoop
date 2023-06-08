@@ -9,10 +9,10 @@ namespace ITSTILoop.Controllers
     [ApiKey]
     public class CBDCBridgeController : ControllerBase
     {
-        private readonly CBDCBridgeService _bridgeService;
+        private readonly CBDCHubService _bridgeService;
         private readonly ILogger<CBDCBridgeController> _logger;
 
-        public CBDCBridgeController(ILogger<CBDCBridgeController> logger, CBDCBridgeService cBDCBridgeService)
+        public CBDCBridgeController(ILogger<CBDCBridgeController> logger, CBDCHubService cBDCBridgeService)
         {
             _bridgeService = cBDCBridgeService;
             _logger = logger;

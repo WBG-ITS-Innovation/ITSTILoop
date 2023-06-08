@@ -13,6 +13,7 @@ namespace ITSTILoop.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ToPartyIdentifier { get; set; }
+        public string ToCbdcAddress { get; set; } = String.Empty;
         public int ToParticipantId { get; set; }
         public int FromParticipantId { get; set; }
         public PartyIdTypes ToPartyIdentifierType { get; set; }

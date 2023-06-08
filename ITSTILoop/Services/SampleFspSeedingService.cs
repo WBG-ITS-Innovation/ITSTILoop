@@ -13,9 +13,9 @@ namespace ITSTILoop.Services
         private readonly ILogger<SampleFspSeedingService> _logger;
         private readonly IParticipantRepository _participantRepository;
         private readonly ISettlementWindowRepository _settlementWindowRepository;
-        private readonly CBDCBridgeService _cbdcBridgeService;
+        private readonly CBDCHubService _cbdcBridgeService;
 
-        public SampleFspSeedingService(ILogger<SampleFspSeedingService> logger, IParticipantRepository participantRepository, ISettlementWindowRepository settlementWindowRepository, CBDCBridgeService cBDCBridgeService)
+        public SampleFspSeedingService(ILogger<SampleFspSeedingService> logger, IParticipantRepository participantRepository, ISettlementWindowRepository settlementWindowRepository, CBDCHubService cBDCBridgeService)
         {
             _logger = logger;
             _participantRepository = participantRepository;

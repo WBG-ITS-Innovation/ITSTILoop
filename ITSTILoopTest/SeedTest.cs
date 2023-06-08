@@ -49,7 +49,7 @@ namespace ITSTILoopTest
             var participantRepository = new ParticipantRepository(_context);
             var loggerMock = new Mock<ILogger<SampleFspSeedingService>>();
             var settlementMon = new Mock<ISettlementWindowRepository>();
-            var cbdcMock = new Mock<CBDCBridgeService>();
+            var cbdcMock = new Mock<CBDCHubService>();
 
             var sut = new SampleFspSeedingService(loggerMock.Object, participantRepository, settlementMon.Object, cbdcMock.Object);
             //act

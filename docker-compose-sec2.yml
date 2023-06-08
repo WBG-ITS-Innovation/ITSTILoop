@@ -13,6 +13,8 @@ services:
      ports:
        - "80:80"
        - "443:443"
+     depends_on:
+       - itstiloop
 
    db:
      image: postgres
@@ -31,7 +33,9 @@ services:
        context: .
        dockerfile: ITSTILoopAddressLookup/Dockerfile
      environment:
-       GLOBAL_ADDRESS_LOOKUP_PARTIES: 5551234567:itstiloop:bankbethesda|5551234568:itstiloop:bankbethesda|5551234559:itstiloop:bankprincegeorge|5551234556:itstiloop:bankprincegeorge
+       GLOBAL_ADDRESS_LOOKUP_PARTIES: 5552234567:cbdc:0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC|5551234567:itstiloop:bankbethesda|5551234568:itstiloop:bankbethesda|5551234559:itstiloop:bankprincegeorge|5551234556:itstiloop:bankprincegeorge
+     ports:
+       - "8086:80"
 
    itstiloop:
      image: mozdag.azurecr.io/itstiloop
@@ -39,13 +43,18 @@ services:
        context: .
        dockerfile: ITSTILoop/Dockerfile
      environment:
+       GLOBAL_ADDRESS_LOOKUP_URL: http://globalpartylookup/Party
        DB_CONNECTION: PostgresComposeConnection
        SAMPLE_FSP_1: bankbethesda|BETHESDAAPIID|BETHESDAAPIKEY|0xE1A6dc4e3Bdb3A8384181a9F70aB76642762557b
        SAMPLE_FSP_1_PARTIES: 5551234567|5551234568
-       SAMPLE_FSP_2: CBDC|CBDCAPIID|CBDCAPIKEY|0x34A816710f52a75F4430674a12E2Ad9De1092e86
+       SAMPLE_FSP_2: cbdc|CBDCAPIID|CBDCAPIKEY|0x34A816710f52a75F4430674a12E2Ad9De1092e86
        SAMPLE_FSP_2_PARTIES: 5551234569|5551234566
        SAMPLE_FSP_3: bankprincegeorge|PRINCEGEORGEAPIID|PRINCEGEORGEAPIKEY|0x6a82bf493725771AD037DD0cf1ABa956e73C18ff
        SAMPLE_FSP_3_PARTIES: 5551234559|5551234556
+       CBDCBridgeEventWatcherConfig__Address: 0x69282EFd96cd19d747944A9FB358feBaf8c16a2D
+       CBDCBridgeEventWatcherConfig__RpcEndpoint: https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net
+       CBDCBridgeEventWatcherConfig__NetworkId: 31337
+       CBDCBridgeEventWatcherConfig__Key: 0xb5cc3ddbd4dacedd91eea5994c6cbbcd02b9b8644f89ef4576ce9bad2ae104be
      ports:
        - "8081:80"
      depends_on:
@@ -65,10 +74,10 @@ services:
        ACCOUNTS: Mert:Ozdag:5551234567:250|Ava:Jeay:5551234568:250
        IS_LOOP_PARTICIPANT: false
        GLOBAL_ADDRESS_LOOKUP_URL: http://globalpartylookup/Party
-       CBDC_TRANSFER_CONTRACT_ADDRESS: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
-       CBDC_RPC_ENDPOINT: https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net
-       CBDC_NETWORK_ID: 31337
-       CBDC_TRANSFER_CONTRACT_OWNER_KEY: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+       CBDCTransferConfig__Address: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+       CBDCTransferConfig__RpcEndpoint: https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net
+       CBDCTransferConfig__NetworkId: 31337
+       CBDCTransferConfig__Key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
      ports:
        - "8083:80"
      depends_on:
@@ -83,10 +92,11 @@ services:
        ITSTILOOP_URI: http://itstiloop/
        ITSTILOOP_API_ID: CBDCAPIID
        ITSTILOOP_API_KEY: CBDCAPIKEY
-       CBDC_TRANSFER_CONTRACT_ADDRESS: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
-       CBDC_RPC_ENDPOINT: https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net
-       CBDC_NETWORK_ID: 31337
-       CBDC_TRANSFER_CONTRACT_OWNER_KEY: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+       CBDCTransferConfig__Address: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+       CBDCTransferConfig__RpcEndpoint: https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net
+       CBDCTransferConfig__NetworkId: 31337
+       CBDCTransferConfig__Key: 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a
+       CBDCTransferConfig__OwnerKey: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
      ports:
        - "8084:80"
      depends_on:
@@ -104,6 +114,10 @@ services:
        ITSTILOOP_API_ID: PRINCEGEORGEAPIID
        ITSTILOOP_API_KEY: PRINCEGEORGEAPIKEY
        ACCOUNTS: Grace:Crown:5551234559:250|Abigail:Crown:5551234556:250
+       CBDCTransferConfig__Address: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+       CBDCTransferConfig__RpcEndpoint: https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net
+       CBDCTransferConfig__NetworkId: 31337
+       CBDCTransferConfig__Key: 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a
      ports:
        - "8085:80"
      depends_on:

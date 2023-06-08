@@ -21,13 +21,16 @@ namespace ITSTILoopAddressLookup.Controllers
         [HttpPost]
         public async Task<ActionResult<PartyDTO>> GetPartyAsync(PartyIdentifierDTO queryPartyDTO)
         {
+            _logger.LogInformation($"GetPartyAsync-ENTRY-{queryPartyDTO.Identifier}");
             var partyQueryResult = _partyLookupService.FindParty(queryPartyDTO.PartyIdentifierType, queryPartyDTO.Identifier);
             if (partyQueryResult.Result == PartyLookupServiceResults.Success)
             {
+                _logger.LogInformation($"GetPartyAsync-EXIT-{partyQueryResult.Result}");
                 return Ok(partyQueryResult.FoundParty);
             }
             else
             {
+                _logger.LogInformation($"GetPartyAsync-EXIT-{partyQueryResult.Result}");
                 return NotFound(partyQueryResult.Result.ToString());
             }
         }

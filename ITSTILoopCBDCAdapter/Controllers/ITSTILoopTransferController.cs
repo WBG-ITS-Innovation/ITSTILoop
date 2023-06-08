@@ -1,6 +1,7 @@
 ﻿using ITSTILoopLibrary.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using CBDCTransferContract;
 
 namespace ITSTILoopCBDCAdapter.Controllers
 {
@@ -9,27 +10,31 @@ namespace ITSTILoopCBDCAdapter.Controllers
     [ApiController]
     public class ITSTILoopTransferController : ControllerBase
     {       
-        private readonly ILogger<ITSTILoopTransferController> _logger;        
+        private readonly ILogger<ITSTILoopTransferController> _logger;
+        private readonly CBDCTransferService _cBDCBridgeService;
 
-        public ITSTILoopTransferController(ILogger<ITSTILoopTransferController> logger)
+        public ITSTILoopTransferController(ILogger<ITSTILoopTransferController> logger, CBDCTransferService cBDCBridgeService)
         {
-            _logger = logger;            
+            _logger = logger;
+            _cBDCBridgeService = cBDCBridgeService;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TransferRequestCompleteDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost(Name = "confirmTransfer")]
-        public ActionResult<TransferRequestCompleteDTO> Post(TransferRequestResponseDTO transferRequestResponseDTO)
+        public async Task<ActionResult<TransferRequestCompleteDTO>> PostAsync(TransferRequestResponseDTO transferRequestResponseDTO)
         {
-            _logger.LogInformation($"ITSTILoopTransferController-Post-{transferRequestResponseDTO.To.PartyIdentifier.Identifier}");
-            var partyIdentifierDTO = transferRequestResponseDTO.To.PartyIdentifier;
-            //var account = _accountService.Accounts.FirstOrDefault(k => k.PartyDefinition.PartyIdentifier.Identifier == partyIdentifierDTO.Identifier && k.PartyDefinition.PartyIdentifier.PartyIdentifierType == partyIdentifierDTO.PartyIdentifierType);
-            //if (account != null)
-            //{
-            //    account.TransferIn(transferRequestResponseDTO.Amount); 
-            //    return new TransferRequestCompleteDTO() { TransferId = transferRequestResponseDTO.TransferId, Fullfilment = "Fullfilled" };
-            //}
-            return NotFound();
+            _logger.LogInformation($"PostAsync-ENTRY-{transferRequestResponseDTO.To.PartyIdentifier.Identifier}-{transferRequestResponseDTO.To.CbdcAddress}-{transferRequestResponseDTO.To.PSPName}");
+            PartyDTO partyDTO = transferRequestResponseDTO.To;
+            var receipt = await _cBDCBridgeService.MakeCBDCTransfer(transferRequestResponseDTO.From.Identifier, partyDTO.CbdcAddress, (int)transferRequestResponseDTO.Amount, "itstiloop");
+            if (!String.IsNullOrEmpty(receipt))
+            {
+                return new TransferRequestCompleteDTO() { TransferId = transferRequestResponseDTO.TransferId, Fullfilment = "Fullfilled" };
+            }
+            else
+            {
+                return Problem();
+            }
         }
     }
 }
