@@ -1,7 +1,7 @@
-﻿using ITSTILoopDTOLibrary;
+﻿using ITSTILoopLibrary.DTO;
 
 namespace ITSTILoop.Model
-{    
+{
     public class Party
     {
         public int PartyId { get; set; }

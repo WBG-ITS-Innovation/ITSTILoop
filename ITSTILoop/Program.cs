@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using ITSTILoopDTOLibrary;
+using CBDCHubContract.Services;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,10 +73,15 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
+
 var connectionStringName = EnvVars.GetEnvironmentVariable(EnvVarNames.DB_CONNECTION, EnvVarDefaultValues.DB_CONNECTION);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString(connectionStringName)));
 
+builder.Configuration.AddEnvironmentVariables();
+
+builder.Services.Configure<CBDCBridgeEventWatcherConfig>(
+    builder.Configuration.GetSection("CBDCBridgeEventWatcherConfig"));
 
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddTransient<IParticipantRepository, ParticipantRepository>();
@@ -80,18 +89,34 @@ builder.Services.AddTransient<IPartyRepository, PartyRepository>();
 builder.Services.AddTransient<ISettlementWindowRepository, SettlementWindowRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
 builder.Services.AddTransient<ITransferRequestRepository, TransferRequestRepository>();
-builder.Services.AddTransient<IPartyLookupService, PartyLookupService>();
+
 builder.Services.AddTransient<IHttpPostClient, HttpPostClient>();
 builder.Services.AddTransient<IConfirmTransferService, ConfirmTransferService>();
 builder.Services.AddTransient<ISampleFspSeedingService, SampleFspSeedingService>();
+builder.Services.AddTransient<EthereumEventRetriever>();
+builder.Services.AddTransient<CBDCHubService>();
+
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
+
+if(EnvVars.GetEnvironmentVariable(EnvVarNames.USE_GAL, EnvVarDefaultValues.USE_GAL).ToLower() == "true")
+{
+    builder.Services.AddTransient<IPartyLookupService, GlobalPartyLookupService>();
+}
+else
+{
+    builder.Services.AddTransient<IPartyLookupService, PartyLookupService>();
+}
+
+
 builder.Services.AddHostedService<TimedSettlementWindowService>();
+builder.Services.AddHostedService<CBDCBridgeEventWatcherService>();
 
 
 var app = builder.Build();
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
+Thread.Sleep(12000);
 //let's recreate if it doesn't exist
 try
 {
@@ -101,10 +126,15 @@ try
         context?.Database.EnsureDeleted();
         context?.Database.EnsureCreated();
         SampleFspSeedingService? seeding = (SampleFspSeedingService?)scope.ServiceProvider.GetRequiredService<ISampleFspSeedingService>();
-        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1, EnvVarDefaultValues.SAMPLE_FSP_1),
-            EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_1_PARTIES));
-        seeding.SeedFsp(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2, EnvVarDefaultValues.SAMPLE_FSP_2),
-                    EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_2_PARTIES));
+        if (seeding != null)
+        {
+            seeding.SeedFspAsync(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1, EnvVarDefaultValues.SAMPLE_FSP_1),
+                EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_1_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_1_PARTIES)).Wait();
+            seeding.SeedFspAsync(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2, EnvVarDefaultValues.SAMPLE_FSP_2),
+                        EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_2_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_2_PARTIES)).Wait();
+            seeding.SeedFspAsync(EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_3, EnvVarDefaultValues.SAMPLE_FSP_3),
+                        EnvVars.GetEnvironmentVariable(EnvVarNames.SAMPLE_FSP_3_PARTIES, EnvVarDefaultValues.SAMPLE_FSP_3_PARTIES)).Wait();
+        }
     }
 }
 catch (Exception ex)

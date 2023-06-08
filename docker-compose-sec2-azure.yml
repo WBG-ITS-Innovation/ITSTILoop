@@ -1,0 +1,106 @@
+version: '3.4'
+
+volumes:
+  postgresql_data:
+    name: postgresql_data
+
+services:   
+   reverse-proxy:     
+      image: mozdag.azurecr.io/reverseproxysec2
+      ports:
+        - "80:80"
+        - "443:443"
+
+   db:
+     image: postgres
+     restart: always
+     environment:
+       POSTGRES_PASSWORD: example
+       PGDATA: /var/lib/postgresql/data/pgdata
+     volumes:
+       - postgresql_data:/var/lib/postgresql/data/pgdata
+     ports:
+       - "5432:5432"
+
+   globalpartylookup:
+     image: mozdag.azurecr.io/globalpartylookup
+     build:
+       context: .
+       dockerfile: ITSTILoopAddressLookup/Dockerfile
+     environment:
+       GLOBAL_ADDRESS_LOOKUP_PARTIES: ${GLOBAL_PARTIES}
+
+   itstiloop:
+     image: mozdag.azurecr.io/itstiloop
+     build:
+       context: .
+       dockerfile: ITSTILoop/Dockerfile
+     environment:
+       GLOBAL_ADDRESS_LOOKUP_URL: http://globalpartylookup/Party
+       CBDCBridgeEventWatcherConfig__Address: 0x69282EFd96cd19d747944A9FB358feBaf8c16a2D
+       CBDCBridgeEventWatcherConfig__RpcEndpoint: ${RPC}
+       CBDCBridgeEventWatcherConfig__NetworkId: 31337
+       CBDCBridgeEventWatcherConfig__Key: ${OWNERKEY}
+     ports:
+       - "8081:80"
+     depends_on:
+       - db
+
+   bankbethesda:
+     image: mozdag.azurecr.io/itstiloopsamplefsp
+     build:
+       context: .
+       dockerfile: ITSTILoopSampleFSP/Dockerfile
+     environment:
+       FSP_NAME: BANKBETHESDA
+       PARTICIPANT_ID: 1
+       ITSTILOOP_URI: http://itstiloop/
+       ITSTILOOP_API_ID: BETHESDAAPIID
+       ITSTILOOP_API_KEY: BETHESDAAPIKEY
+       ACCOUNTS: Mert:Ozdag:5551234567:250|Ava:Jeay:5551234568:250
+       IS_LOOP_PARTICIPANT: false
+       GLOBAL_ADDRESS_LOOKUP_URL: http://globalpartylookup/Party
+       CBDCTransferConfig__Address: ${TRADDDRESS}
+       CBDCTransferConfig__RpcEndpoint: ${RPC}
+       CBDCTransferConfig__NetworkId: 31337
+       CBDCTransferConfig__Key: ${BETHESDAKEY} 
+     ports:
+       - "8083:80"
+     depends_on:
+       - itstiloop
+
+   cbdc:
+     image: mozdag.azurecr.io/itstiloopcbdcadapter
+     build:
+       context: .
+       dockerfile: ITSTILoopCBDCAdapter/Dockerfile
+     environment:
+       ITSTILOOP_URI: http://itstiloop/
+       ITSTILOOP_API_ID: CBDCAPIID
+       ITSTILOOP_API_KEY: CBDCAPIKEY
+       CBDCTransferConfig__Address: ${TRADDDRESS}
+       CBDCTransferConfig__RpcEndpoint: ${RPC}
+       CBDCTransferConfig__NetworkId: 31337
+       CBDCTransferConfig__Key: ${CBDCKEY}
+       CBDCTransferConfig__OwnerKey: ${OWNERKEY}
+     ports:
+       - "8084:80"
+     depends_on:
+       - itstiloop  
+
+   bankprincegeorge:
+     image: mozdag.azurecr.io/itstiloopsamplefsp
+     build:
+       context: .
+       dockerfile: ITSTILoopSampleFSP/Dockerfile
+     environment:
+       FSP_NAME: BANKPRINCEGEORGE
+       PARTICIPANT_ID: 3
+       ITSTILOOP_URI: http://itstiloop/
+       ITSTILOOP_API_ID: PRINCEGEORGEAPIID
+       ITSTILOOP_API_KEY: PRINCEGEORGEAPIKEY
+       ACCOUNTS: Grace:Crown:5551234559:250|Abigail:Crown:5551234556:250
+     ports:
+       - "8085:80"
+     depends_on:
+       - itstiloop

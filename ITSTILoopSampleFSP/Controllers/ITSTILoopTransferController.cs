@@ -1,4 +1,4 @@
-﻿using ITSTILoopDTOLibrary;
+﻿using ITSTILoopLibrary.DTO;
 using ITSTILoopSampleFSP.Models;
 using ITSTILoopSampleFSP.Services;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +31,7 @@ namespace ITSTILoopSampleFSP.Controllers
             if (account != null)
             {
                 account.TransferIn(transferRequestResponseDTO.Amount); 
-                return new TransferRequestCompleteDTO() { TransferId = transferRequestResponseDTO.TransferId, Fullfilment = "Fullfilled" };
+                return Ok(new TransferRequestCompleteDTO() { TransferId = transferRequestResponseDTO.TransferId, Fullfilment = "Fullfilled" });
             }
             return NotFound();
         }

@@ -8,6 +8,7 @@ namespace ITSTILoop.DTO
         public string Name { get; set; }        
         public Uri PartyLookupEndpoint { get; set; }
         public Uri ConfirmTransferEndpoint { get; set; }
+        public string CBDCAddress { get; set; }
     }
 
     public class RegisterParticipantDTO
@@ -23,6 +24,14 @@ namespace ITSTILoop.DTO
     {
         public int ParticipantId { get; set; }
         public decimal Amount { get; set; }
+        public CurrencyCodes Currency { get; set; }
+    }
+
+    public class ModifyParticipantDTO
+    {
+        public int ParticipantId { get; set; }
+        public decimal Position { get; set; }
+        public decimal NetSettlement { get; set; }
         public CurrencyCodes Currency { get; set; }
     }
 }

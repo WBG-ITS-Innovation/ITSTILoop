@@ -1,7 +1,10 @@
-﻿using ITSTILoopDTOLibrary;
+﻿using ITSTILoopLibrary.DTO;
+using ITSTILoopLibrary.Utility;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 using ITSTILoopSampleFSP.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using CBDCTransferContract;
 
 namespace ITSTILoopSampleFSP.Controllers
 {
@@ -15,12 +18,16 @@ namespace ITSTILoopSampleFSP.Controllers
         private readonly ILogger<ExternalTransfersController> _logger;
         private readonly IHttpPostClient _httpPostClient;
         private readonly AccountService _accountService;
+        private readonly CBDCTransferService _cBDCBridgeService;
+        private readonly GlobalPartyLookupService _globalPartyLookupService;
 
-        public ExternalTransfersController(ILogger<ExternalTransfersController> logger, IHttpPostClient httpPostClient, AccountService accountService)
+        public ExternalTransfersController(ILogger<ExternalTransfersController> logger, IHttpPostClient httpPostClient, AccountService accountService, CBDCTransferService cBDCBridgeService, GlobalPartyLookupService globalPartyLookupService)
         {
             _logger = logger;
             _httpPostClient = httpPostClient;
             _accountService = accountService;
+            _cBDCBridgeService = cBDCBridgeService;
+            _globalPartyLookupService = globalPartyLookupService;
         }
 
         [HttpGet]
@@ -32,15 +39,27 @@ namespace ITSTILoopSampleFSP.Controllers
         [HttpPost(Name = "InitiateTransfer")]
         public async Task<ActionResult<TransferRequestResponseDTO>> PostAsync(TransferRequestDTO transferRequestDTO)
         {
-            
-            var response = await _httpPostClient.PostAsync<TransferRequestDTO, TransferRequestResponseDTO>(transferRequestDTO, "/Transfer", "itstiloop");
-            if (response.Result == HttpPostClientResults.Success)
+            if (EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.IS_LOOP_PARTICIPANT, EnvironmentVariableDefaultValues.IS_LOOP_PARTICIPANT_DEFAULT_VALUE).ToLower() == "true")
             {
-                _accountService.TransferRequests.Add(response.ResponseContent.TransferId, response.ResponseContent);
-                
-                return response.ResponseContent;
+                var response = await _httpPostClient.PostAsync<TransferRequestDTO, TransferRequestResponseDTO>(transferRequestDTO, "/Transfer", "itstiloop");
+                if (response.Result == HttpPostClientResults.Success)
+                {
+                    _accountService.TransferRequests.Add(response.ResponseContent.TransferId, response.ResponseContent);
+
+                    return Ok(response.ResponseContent);
+                }
+                return Problem(response.Result.ToString());
             }
-            return Problem(response.Result.ToString());
+            else
+            {
+                var lookupResult = await _globalPartyLookupService.FindPartyAsync(transferRequestDTO.To.PartyIdentifierType, transferRequestDTO.To.Identifier);
+                if (lookupResult.Result == PartyLookupServiceResults.Success)
+                {
+                    var transferResult = await _cBDCBridgeService.MakeTransfer(transferRequestDTO.From.Identifier, transferRequestDTO.To.Identifier, (int)transferRequestDTO.Amount, lookupResult.FoundParty.HubName);
+                    return Ok(new TransferRequestResponseDTO() { Amount = transferRequestDTO.Amount, CurrentState = TransferStates.WaitingForPartyAcceptance, From = transferRequestDTO.From, Note = transferResult });
+                }
+            }
+            return Problem();
         }
 
         [HttpPost("{transferId}")]

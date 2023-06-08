@@ -1,6 +1,8 @@
-﻿using ITSTILoopDTOLibrary;
+﻿using ITSTILoopLibrary.DTO;
+using Microsoft.Extensions.Logging;
+using System.Net.Http.Json;
 
-namespace ITSTILoopSampleFSP.Services
+namespace ITSTILoopLibrary.SampleFSPServices
 {
     public enum ITSTITransferServiceResults { Success, UriMalformed, EndpointError, ParticipantNotRegistered, PartyNotFound };
     public class StartTransferResult

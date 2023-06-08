@@ -5,8 +5,10 @@ namespace ITSTILoop.Context.Repositories.Interfaces
     public interface ISettlementWindowRepository : IGenericRepository<SettlementWindow>
     {
         void CloseOpenSettlementWindow();
-        SettlementWindow CreateNewSettlementWindow();
-        void SettleSettlementWindow();
+        SettlementWindow CreateNewSettlementWindow();        
+        Dictionary<string, decimal> GetNetSettlementDictionary(int id);
+        //void SettleSettlementWindow();
+        void SettleSettlementWindow(int windowId);
         void UpdateSettlementWindow();
     }
 }

@@ -16,12 +16,12 @@ namespace ITSTILoop.Context.Repositories
             return _context.SettlementWindows.Include(k => k.SettlementAccounts).ToList();
         }
 
-        public void SettleSettlementWindow()
+        public void SettleSettlementWindow(int windowId)
         {
-            SettlementWindow? settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.Status == SettlementWindowStatuses.Open);
+            var settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.SettlementWindowId == windowId);            
             if (settlementWindow != null)
             {
-                foreach (var participant in _context.Participants)
+                foreach (var participant in _context.Participants.Include(k => k.Accounts))
                 {
                     Account? account = participant.Accounts.FirstOrDefault();
                     if (account != null)
@@ -34,7 +34,8 @@ namespace ITSTILoop.Context.Repositories
                     }
                 }
                 settlementWindow.Status = SettlementWindowStatuses.Settled;
-                settlementWindow.ModifiedAt = DateTime.Now;
+                settlementWindow.ModifiedAt = DateTime.Now.ToUniversalTime();
+                CreateNewSettlementWindow();
             }
             _context.SaveChanges();
         }
@@ -59,7 +60,7 @@ namespace ITSTILoop.Context.Repositories
                 Account? account = participant.Accounts.FirstOrDefault();
                 if (account != null)
                 {
-                    SettlementAccount settlementAccount = new SettlementAccount() { AccountId = account.AccountId, ParticipantName = participant.Name, NetSettlementAmount = account.Settlement };
+                    SettlementAccount settlementAccount = new SettlementAccount() { AccountId = account.AccountId, ParticipantName = participant.Name, NetSettlementAmount = account.Position };
                     settlementWindow.SettlementAccounts.Add(settlementAccount);
                 }
             }
@@ -94,6 +95,28 @@ namespace ITSTILoop.Context.Repositories
                 settlementWindow.ModifiedAt = DateTime.Now.ToUniversalTime();
             }
             _context.SaveChanges();
+        }
+
+        public Dictionary<string, decimal> GetNetSettlementDictionary(int id)
+        {
+            Dictionary<string, decimal> result = new Dictionary<string, decimal>();
+            SettlementWindow? settlementWindow = _context.SettlementWindows.Include(k => k.SettlementAccounts).FirstOrDefault(k => k.SettlementWindowId == id);
+            if (settlementWindow != null)
+            {
+                foreach (var participant in _context.Participants.Include(k => k.Accounts))
+                {
+                    Account? account = participant.Accounts.FirstOrDefault();
+                    if (account != null)
+                    {
+                        SettlementAccount? settlementAccount = settlementWindow.SettlementAccounts.FirstOrDefault(k => k.AccountId == account.AccountId);
+                        if (settlementAccount != null)
+                        {                            
+                            result.Add(participant.CBDCAddress, settlementAccount.NetSettlementAmount);
+                        }
+                    }
+                }
+            }
+            return result;
         }
     }
 }

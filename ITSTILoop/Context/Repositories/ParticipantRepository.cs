@@ -58,12 +58,39 @@ namespace ITSTILoop.Context.Repositories
             }
         }
 
-        public Participant CreateParticipant(string name, string apiId, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint)
+        public Participant CreateParticipant(string name, string apiId, string apiKey, Uri partyLookupEndpoint, Uri confirmTransferEndpoint, string cdbcAddress)
         {
-            Participant participant = new Participant() { Name = name, ApiId = apiId, ApiKey = apiKey, PartyLookupEndpoint = partyLookupEndpoint, ConfirmTransferEndpoint = confirmTransferEndpoint };
+            Participant participant = new Participant() { Name = name, ApiId = apiId, ApiKey = apiKey, PartyLookupEndpoint = partyLookupEndpoint, ConfirmTransferEndpoint = confirmTransferEndpoint, CBDCAddress = cdbcAddress };
             _context.Participants.Add(participant);
             Save();
             return participant;
+        }
+
+        public void FundParticipant(string cbdcAddress, decimal tokens)
+        {
+            var part = _context.Participants.Include(k => k.Accounts).FirstOrDefault(k => k.CBDCAddress.ToUpper() == cbdcAddress.ToUpper());
+            if (part != null)
+            {
+                part.FundAccount(ITSTILoopDTOLibrary.CurrencyCodes.USD, tokens);
+                _context.SaveChanges();
+            }
+        }
+
+        public void ModifyParticipant(int participantId, CurrencyCodes currency, decimal position, decimal netSettlement)
+        {
+            var part = _context.Participants.Include(k => k.Accounts).FirstOrDefault(k => k.ParticipantId == participantId);
+            if (part != null)
+            {
+                var account = part.Accounts.FirstOrDefault(k => k.Currency == currency);
+                if (account != null)
+                {
+                    account.Position = position;
+                    account.Settlement = netSettlement;
+                    _context.SaveChanges();
+                }
+                
+
+            }
         }
     }
 }

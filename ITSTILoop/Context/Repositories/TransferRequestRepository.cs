@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ITSTILoop.Model;
 using ITSTILoop.Context.Repositories.Interfaces;
-using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
 
 namespace ITSTILoop.Context.Repositories
 {
@@ -27,6 +27,7 @@ namespace ITSTILoop.Context.Repositories
             transferRequest.ToParticipantId = partyDTO.ParticipantId;
             transferRequest.FromParticipantId = fromParticipantId;
             transferRequest.TransferId = Guid.NewGuid();
+            transferRequest.ToCbdcAddress = partyDTO.CbdcAddress;
             _context.TransferRequests.Add(transferRequest);
             Save();
             var response = _mapper.Map<TransferRequestResponseDTO>(transferRequestDTO);
@@ -50,6 +51,7 @@ namespace ITSTILoop.Context.Repositories
                 transferRequestDTO.To.ParticipantId = transferRequest.ToParticipantId;
                 transferRequestDTO.To.FirstName = transferRequest.FirstName;
                 transferRequestDTO.To.LastName = transferRequest.LastName;
+                transferRequestDTO.To.CbdcAddress = transferRequest.ToCbdcAddress;
                 transferRequestDTO.FromParticipantId = transferRequest.FromParticipantId;
                 return transferRequestDTO;
             }

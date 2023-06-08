@@ -5,16 +5,27 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoop", "ITSTILoop\ITSTILoop.csproj", "{42578122-78BE-4BE1-8658-640FA73F0567}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopDTOLibrary", "ITSTILoopDTOLibrary\ITSTILoopDTOLibrary.csproj", "{8E56BB24-E705-4A93-8EB8-34343BD4E12E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopLibrary", "ITSTILoopDTOLibrary\ITSTILoopLibrary.csproj", "{8E56BB24-E705-4A93-8EB8-34343BD4E12E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopTest", "ITSTILoopTest\ITSTILoopTest.csproj", "{3CC0375D-88AA-4625-8BFE-EDFDA82C0DE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITSTILoopSampleFSP", "ITSTILoopSampleFSP\ITSTILoopSampleFSP.csproj", "{B10B346F-483E-48B1-B06B-76A0919B6E29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopSampleFSP", "ITSTILoopSampleFSP\ITSTILoopSampleFSP.csproj", "{B10B346F-483E-48B1-B06B-76A0919B6E29}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8997FE24-0CD3-4E17-971B-D77E81504AE5}"
 	ProjectSection(SolutionItems) = preProject
+		docker-compose-azure.yml = docker-compose-azure.yml
+		docker-compose-sec2.yml = docker-compose-sec2.yml
 		docker-compose.yml = docker-compose.yml
+		docker-compose-sec2-azure.yml = docker-compose-sec2-azure.yml
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CBDCHubContract", "CBDCHubContract\CBDCHubContract.csproj", "{6D82DCE7-01ED-4837-A004-9CF68FDB88FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopAddressLookup", "ITSTILoopAddressLookup\ITSTILoopAddressLookup.csproj", "{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITSTILoopCBDCAdapter", "ITSTILoopCBDCAdapter\ITSTILoopCBDCAdapter.csproj", "{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CBDCTransferContract", "CBDCTransferContract\CBDCTransferContract.csproj", "{20FD6501-73A8-4361-9398-308151E6B765}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,11 +49,29 @@ Global
 		{B10B346F-483E-48B1-B06B-76A0919B6E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B10B346F-483E-48B1-B06B-76A0919B6E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B10B346F-483E-48B1-B06B-76A0919B6E29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D82DCE7-01ED-4837-A004-9CF68FDB88FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D82DCE7-01ED-4837-A004-9CF68FDB88FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D82DCE7-01ED-4837-A004-9CF68FDB88FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D82DCE7-01ED-4837-A004-9CF68FDB88FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B6A3450-EDAE-496F-BABD-AB71CA3EDC72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24A86761-87FA-45EA-8AE7-1A6691C6D1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20FD6501-73A8-4361-9398-308151E6B765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20FD6501-73A8-4361-9398-308151E6B765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20FD6501-73A8-4361-9398-308151E6B765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20FD6501-73A8-4361-9398-308151E6B765}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {49EF5A47-798B-4F6D-BC86-5505D3C98EEF}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal

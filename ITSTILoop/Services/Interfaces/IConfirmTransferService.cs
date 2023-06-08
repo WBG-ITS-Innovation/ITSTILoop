@@ -1,4 +1,4 @@
-﻿using ITSTILoopDTOLibrary;
+﻿using ITSTILoopLibrary.DTO;
 
 namespace ITSTILoop.Services.Interfaces
 {

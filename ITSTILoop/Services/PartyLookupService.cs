@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
 using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Services.Interfaces;
-using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 namespace ITSTILoop.Services
 {
-    public enum PartyLookupServiceResults { Success, UriMalformed, EndpointError, ParticipantNotRegistered, PartyNotFound };
-    public class PartyLookupServiceResult
-    {
-        public PartyLookupServiceResults Result { get; set; }
-        public PartyDTO FoundParty { get; set; }
-    }
+
+
 
     public class PartyLookupService : IPartyLookupService
     {
@@ -37,7 +35,7 @@ namespace ITSTILoop.Services
                 if (participant != null)
                 {
                     PartyIdentifierDTO queryPartyDTO = new PartyIdentifierDTO() { Identifier = partyIdentifier, PartyIdentifierType = partyIdType };                    
-                    var postResponse = await _httpPostClient.PostAsync<PartyIdentifierDTO, PartyDTO>(queryPartyDTO, participant.PartyLookupEndpoint);
+                    var postResponse = await _httpPostClient.PostAsync<PartyIdentifierDTO, PartyDTO>(queryPartyDTO, participant.PartyLookupEndpoint.ToString());
                     if (postResponse.Result == HttpPostClientResults.Success)
                     {
                         result.FoundParty = postResponse.ResponseContent;

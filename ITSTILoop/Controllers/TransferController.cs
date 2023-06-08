@@ -5,10 +5,12 @@ using ITSTILoop.DTO;
 using ITSTILoop.Context.Repositories.Interfaces;
 using ITSTILoop.Model;
 using Microsoft.AspNetCore.Mvc;
-using ITSTILoopDTOLibrary;
 using ITSTILoop.Services;
 using ITSTILoop.Services.Interfaces;
 using ITSTILoop.Context.Repositories;
+using ITSTILoopLibrary.DTO;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 namespace ITSTILoop.Controllers
 {
@@ -51,8 +53,17 @@ namespace ITSTILoop.Controllers
                 var partyLookupResult = await _partyLookupService.FindPartyAsync(transferRequestDTO.To.PartyIdentifierType, transferRequestDTO.To.Identifier);
                 if (partyLookupResult.Result == PartyLookupServiceResults.Success)
                 {
-                    var transferRequestResponse = _transferRequestRepository.CreateTransferRequest(transferRequestDTO, partyLookupResult.FoundParty, participant.ParticipantId);
-                    return transferRequestResponse;
+                    var toParticipant = _participantRepository.GetParticipantByName(partyLookupResult.FoundParty.PSPName);
+                    if (toParticipant != null)
+                    {
+                        partyLookupResult.FoundParty.ParticipantId = toParticipant.ParticipantId;
+                        var transferRequestResponse = _transferRequestRepository.CreateTransferRequest(transferRequestDTO, partyLookupResult.FoundParty, participant.ParticipantId);
+                        return transferRequestResponse;
+                    }
+                    else
+                    {
+                        return Problem("Couldn't find participant from name");
+                    }
                 }
                 return Problem(partyLookupResult.Result.ToString());
             }
@@ -63,12 +74,14 @@ namespace ITSTILoop.Controllers
         [HttpPost("{transferId}")]
         public async Task<ActionResult<TransferRequestCompleteDTO>> Confirm(Guid transferId, [FromBody] TransferAcceptRejectDTO transferAcceptRejectDTO)
         {
+            _logger.LogInformation($"Confirm-ENTRY-{transferId}-{transferAcceptRejectDTO.AcceptTransfer}");
             Participant? participant = _participantRepository.GetParticipantFromApiKeyId(Request.Headers);
             if (participant != null)
             {
                 TransferRequestResponseDTO? transferRequestResponseDTO = _transferRequestRepository.RetrieveTransferRequest(transferId);
                 if (transferRequestResponseDTO != null)
                 {
+                    _logger.LogInformation($"Confirm-{transferRequestResponseDTO.FromParticipantId}-{transferRequestResponseDTO.To.ParticipantId}-{transferRequestResponseDTO.To.CbdcAddress}-{transferRequestResponseDTO.To.PSPName}");
                     if (participant.ParticipantId == transferRequestResponseDTO.FromParticipantId)
                     {
                         //TODO:Let's check balances

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ITSTILoopDTOLibrary;
 
-namespace ITSTILoopDTOLibrary
+namespace ITSTILoopLibrary.DTO
 {
     public class TransferAcceptRejectDTO
     {
@@ -12,14 +13,14 @@ namespace ITSTILoopDTOLibrary
     }
 
 
-    public enum TransferStates { WaitingForPartyAcceptance, WaitingForQuoteAcceptance, Completed}
+    public enum TransferStates { WaitingForPartyAcceptance, WaitingForQuoteAcceptance, Completed }
     public class TransferRequestDTO
     {
         public Guid HomeTransactionId { get; set; }
         public PartyIdentifierDTO From { get; set; }
         public PartyIdentifierDTO To { get; set; }
         public CurrencyCodes Currency { get; set; }
-        public Decimal Amount { get; set; }
+        public decimal Amount { get; set; }
         public string Note { get; set; }
     }
 
@@ -31,13 +32,13 @@ namespace ITSTILoopDTOLibrary
         public PartyIdentifierDTO From { get; set; } = new PartyIdentifierDTO();
         public PartyDTO To { get; set; } = new PartyDTO();
         public CurrencyCodes Currency { get; set; }
-        public Decimal Amount { get; set; }
+        public decimal Amount { get; set; }
         public string Note { get; set; }
         public TransferStates CurrentState { get; set; }
         public DateTime InitiatedTimestamp { get; set; }
     }
 
-    
+
     public class TransferRequestCompleteDTO
     {
         public DateTime CompletedTimestamp { get; set; }

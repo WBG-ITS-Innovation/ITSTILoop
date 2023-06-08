@@ -31,7 +31,8 @@ namespace ITSTILoop.Controllers
         public IEnumerable<ParticipantDTO> Get()
         {
             //TODO: add to interface
-            return _mapper.Map<IEnumerable<Participant>, IEnumerable<ParticipantDTO>>(_participantRepository.GetAll());            
+            var allParticipants = _participantRepository.GetAll();
+            return _mapper.Map<IEnumerable<Participant>, IEnumerable<ParticipantDTO>>(allParticipants);            
         }
 
         [HttpGet("{id}")]
@@ -49,16 +50,16 @@ namespace ITSTILoop.Controllers
         [HttpPost]
         public ActionResult<ParticipantDTO> Post(RegisterParticipantDTO registerParticipantDTO)
         {            
-            var participant = _participantRepository.CreateParticipant(registerParticipantDTO.Name, registerParticipantDTO.ApiId, registerParticipantDTO.ApiKey, registerParticipantDTO.PartyLookupEndpoint, registerParticipantDTO.ConfirmTransferEndpoint);            
+            var participant = _participantRepository.CreateParticipant(registerParticipantDTO.Name, registerParticipantDTO.ApiId, registerParticipantDTO.ApiKey, registerParticipantDTO.PartyLookupEndpoint, registerParticipantDTO.ConfirmTransferEndpoint,"");            
             var participantDto = _mapper.Map<ParticipantDTO>(participant);
             return CreatedAtAction("GetParticipant", new { id = participant.ParticipantId }, participantDto);
         }
 
-        [Route("Fund")]
+        [Route("Modify")]
         [HttpPost]
-        public ActionResult FundParticipant([FromBody] FundParticipantDTO fundParticipantDTO)
+        public ActionResult ModifyParticipant([FromBody] ModifyParticipantDTO modifyParticipantDTO)
         {
-            _participantRepository.FundParticipant(fundParticipantDTO.ParticipantId, fundParticipantDTO.Currency, fundParticipantDTO.Amount);
+            _participantRepository.ModifyParticipant(modifyParticipantDTO.ParticipantId, modifyParticipantDTO.Currency, modifyParticipantDTO.Position, modifyParticipantDTO.NetSettlement);
             _settlementWindowRepository.UpdateSettlementWindow();
             return Ok();
         }

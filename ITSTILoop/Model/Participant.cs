@@ -12,6 +12,7 @@ namespace ITSTILoop.Model
         public List<Party> Parties { get; set; } = new List<Party>();
         public string ApiKey { get; set; }
         public string ApiId { get; set; }
+        public string CBDCAddress { get; set; }
 
         public void FundAccount(CurrencyCodes currency, decimal amount)
         {
@@ -19,12 +20,24 @@ namespace ITSTILoop.Model
             if (account != null)
             {
                 account.FundsIn(amount);
-            }
-            else
+            }            
+        }
+
+        public void CreateAccount(CurrencyCodes currency)
+        {
+            Account? account = Accounts.FirstOrDefault(k => k.Currency == currency);
+            if (account == null)
             {
-                Account newAccount = new Account() { Currency = currency };
-                newAccount.FundsIn(amount);
-                Accounts.Add(newAccount);
+                Accounts.Add(new Account() { Currency = currency });
+            }
+        }
+
+        public void SetPosition(decimal position, CurrencyCodes currency)
+        {
+            Account? account = Accounts.FirstOrDefault(k => k.Currency == currency);
+            if (account != null)
+            {
+                account.Position = position;
             }
         }
     }

@@ -1,5 +1,4 @@
 using ITSTILoop.Services;
-using ITSTILoopDTOLibrary;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Contrib.HttpClient;
@@ -13,6 +12,9 @@ using ITSTILoop.Model;
 using AutoFixture.AutoMoq;
 using ITSTILoop.Services.Interfaces;
 using ITSTILoop.Context.Repositories.Interfaces;
+using ITSTILoopLibrary.DTO;
+using ITSTILoopLibrary.UtilityServices;
+using ITSTILoopLibrary.UtilityServices.Interfaces;
 
 namespace ITSTILoopTest
 {

@@ -13,12 +13,23 @@
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7034;http://localhost:5034",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DB_CONNECTION": "PostgresConnection"
-      },
-      "applicationUrl": "https://localhost:7034;http://localhost:5034",
-      "dotnetRunMessages": true
+        "DB_CONNECTION": "PostgresConnection",
+        "SAMPLE_FSP_1": "bankbethesda|BETHESDAAPIID|BETHESDAAPIKEY|0xE1A6dc4e3Bdb3A8384181a9F70aB76642762557b",
+        "SAMPLE_FSP_1_PARTIES": "5551234567|5551234568",
+        "SAMPLE_FSP_2": "bankwheaton|WHEATONAPIID|WHEATONAPIKEY|0x34A816710f52a75F4430674a12E2Ad9De1092e86",
+        "SAMPLE_FSP_2_PARTIES": "5551234569|5551234566",
+        "SAMPLE_FSP_3": "bankprincegeorge|PRINCEGEORGEAPIID|PRINCEGEORGEAPIKEY|0x6a82bf493725771AD037DD0cf1ABa956e73C18ff",
+        "SAMPLE_FSP_3_PARTIES": "5551234559|5551234556",
+        "CBDCBridgeEventWatcherConfig__Address": "0x69282EFd96cd19d747944A9FB358feBaf8c16a2D",
+        "CBDCBridgeEventWatcherConfig__RpcEndpoint": "https://cbdcuser:testTEST11@cbdcethereum.azurewebsites.net",
+        "CBDCBridgeEventWatcherConfig__NetworkId": "31337",
+        "CBDCBridgeEventWatcherConfig__Key": "0xb5cc3ddbd4dacedd91eea5994c6cbbcd02b9b8644f89ef4576ce9bad2ae104be",
+        "GLOBAL_ADDRESS_LOOKUP_URL": ""
+
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -32,8 +43,7 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-      "publishAllPorts": true,
-      "useSSL": true
+      "environmentVariables": {}
     }
   }
 }

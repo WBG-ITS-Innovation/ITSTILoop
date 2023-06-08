@@ -8,6 +8,7 @@ using ITSTILoop.Context.Repositories;
 using ITSTILoop.Model;
 using ITSTILoop.Services;
 using ITSTILoopDTOLibrary;
+using ITSTILoopLibrary.DTO;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -71,8 +72,9 @@ namespace ITSTILoopTest
                 var participantApiId = fixture.Create<string>();
                 var participantEndpoint = fixture.Create<Uri>();
                 var participantEndpoint2 = fixture.Create<Uri>();
+                var participantCdbcAddress = fixture.Create<string>();
                 // Act
-                _participantRepository.CreateParticipant(participantName, participantApiId, participantApiKey, participantEndpoint, participantEndpoint2);
+                _participantRepository.CreateParticipant(participantName, participantApiId, participantApiKey, participantEndpoint, participantEndpoint2, participantCdbcAddress);
                 // Assert
                 var participantResult = _participantRepository.Find(k => k.Name == participantName).First();
                 participantResult.Should().NotBeNull();
@@ -90,9 +92,10 @@ namespace ITSTILoopTest
                 var participantEndpoint = fixture.Create<Uri>();
                 var participantEndpoint2 = fixture.Create<Uri>();
                 var participantApiId = fixture.Create<string>();
+                var participantCdbcAddress = fixture.Create<string>();
                 var amount = fixture.Create<Decimal>();
                 var currency = fixture.Create<CurrencyCodes>();
-                var participant = _participantRepository.CreateParticipant(participantName, participantApiId, participantApiKey, participantEndpoint, participantEndpoint2);
+                var participant = _participantRepository.CreateParticipant(participantName, participantApiId, participantApiKey, participantEndpoint, participantEndpoint2, participantCdbcAddress);
                 // Act
                 _participantRepository.FundParticipant(participant.ParticipantId, currency, amount);
                 // Assert
