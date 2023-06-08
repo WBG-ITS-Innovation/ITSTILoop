@@ -19,23 +19,7 @@ namespace ITSTILoopLibrary.UtilityServices
         public int NetworkId { get; set; }
     }
 
-    public class EthereumConfig : IEthereumConfig
-    {
-        public EthereumConfig()
-        {
-            ContractAddress = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_ADDRESS, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_ADDRESS_DEFAULT_VALUE);
-            ContractOwnerKey = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_TRANSFER_CONTRACT_OWNER_KEY, EnvironmentVariableDefaultValues.CBDC_TRANSFER_CONTRACT_OWNER_KEY_DEFAULT_VALUE);
-            //ContractTransactionHash = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.BESU_CONTRACT_TRANSACTION_HASH, EnvironmentVariableDefaultValues.BESU_CONTRACT_TRANSACTION_HASH_DEFAULT_VALUE);
-            RpcEndpoint = EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_RPC_ENDPOINT, EnvironmentVariableDefaultValues.CBDC_RPC_ENDPOINT_DEFAULT_VALUE);
-            NetworkId = Convert.ToInt32(EnvironmentVariables.GetEnvironmentVariable(EnvironmentVariableNames.CBDC_NETWORK_ID, EnvironmentVariableDefaultValues.CBDC_NETWORK_ID_DEFAULT_VALUE));
-        }
 
-        public string ContractAddress { get; set; } = String.Empty;
-        public string ContractOwnerKey { get; set; } = String.Empty;
-        public string ContractTransactionHash { get; set; } = String.Empty;
-        public string RpcEndpoint { get; set; } = String.Empty;
-        public int NetworkId { get; set; } = 0;
-    }
 
     public class EthereumEventRetriever
     {
